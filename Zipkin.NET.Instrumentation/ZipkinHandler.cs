@@ -10,15 +10,18 @@ namespace Zipkin.NET.Instrumentation
 {
     public class ZipkinHandler : DelegatingHandler
     {
+	    private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContext _traceContext;
         private readonly ITraceIdentifierGenerator _traceIdGenerator;
 
         public ZipkinHandler(
+			string applicationName,
             IReporter reporter, 
             ITraceContext traceContext,
             ITraceIdentifierGenerator traceIdGenerator)
         {
+	        _applicationName = applicationName;
             _reporter = reporter;
             _traceContext = traceContext;
             _traceIdGenerator = traceIdGenerator;

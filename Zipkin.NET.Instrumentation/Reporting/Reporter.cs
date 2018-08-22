@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zipkin.NET.Instrumentation.Models;
 
@@ -18,15 +15,7 @@ namespace Zipkin.NET.Instrumentation.Reporting
 
         public async Task ReportAsync(Span span)
         {
-            // TODO this is a test
-            var jsonSpan = JsonConvert.ToString(span);
-            var binaryFormatter = new BinaryFormatter();
-            using (var memoryStream = new MemoryStream())
-            {
-                binaryFormatter.Serialize(memoryStream, jsonSpan);
-                var encodedSpan = memoryStream.ToArray();
-                await _sender.SendSpansAsync(new List<byte[]> {encodedSpan});
-            }
+	        await _sender.SendSpansAsync(new List<Span> {span});
         }
     }
 }

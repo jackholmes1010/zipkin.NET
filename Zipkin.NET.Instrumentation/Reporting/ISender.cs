@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Zipkin.NET.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Reporting
 {
@@ -13,14 +14,14 @@ namespace Zipkin.NET.Instrumentation.Reporting
     public interface ISender
     {
         /// <summary>
-        /// Sends a list of encoded spans to a transport such as HTTP or Kafka.
+        /// Sends a list of spans to a transport such as HTTP or Kafka.
         /// </summary>
-        /// <param name="encodedSpans">
-        /// A list of encoded spans to send.
+        /// <param name="spans">
+        /// A list of spans to send.
         /// </param>
         /// <returns>
         /// A <see cref="Task"/> representing the result of the async operation.
         /// </returns>
-        Task SendSpansAsync(IEnumerable<byte[]> encodedSpans);
+        Task SendSpansAsync(IEnumerable<Span> spans);
     }
 }

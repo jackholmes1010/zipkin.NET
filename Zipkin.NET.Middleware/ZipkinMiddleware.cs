@@ -10,19 +10,18 @@ namespace Zipkin.NET.Middleware
 {
     public class ZipkinMiddleware : IMiddleware
     {
-        private readonly RequestDelegate _next;
-
+	    private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContext _traceContext;
         private readonly ITraceIdentifierGenerator _traceIdGenerator;
 
         public ZipkinMiddleware(
-            RequestDelegate next, 
+			string applicationName,
             IReporter reporter,
             ITraceContext traceContext,
             ITraceIdentifierGenerator traceIdGenerator)
         {
-            _next = next;
+	        _applicationName = applicationName;
             _reporter = reporter;
             _traceContext = traceContext;
             _traceIdGenerator = traceIdGenerator;
@@ -57,11 +56,12 @@ namespace Zipkin.NET.Middleware
                 TraceId = traceId,
                 ParentId = parentId,
                 TimeStamp = startTime,
+				Name = _applicationName,
                 Kind = SpanKind.Server
             };
 
             // Call the next delegate/middleware in the pipeline
-            await _next(context);
+            await next(context);
 
             // Get the server send time (span duration)
             span.Duration = GetTimeStamp() - startTime;

@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Zipkin.Instrumentation;
-using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Middleware;
 
 namespace Zipkin.NET.Demo
@@ -30,7 +22,11 @@ namespace Zipkin.NET.Demo
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Register Zipkin dependencies
-            services.AddZipkin();
+            services.AddZipkin("test-api");
+
+			// Register ZipkinHandler for HttpClients
+	        services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");
+			// services.AddHttpClient("tracingClient").AddHttpMessageHandler<ZipkinHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,10 +37,10 @@ namespace Zipkin.NET.Demo
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
-
 			// Register tracing middleware
-	        app.UseZipkinTracing();
+			app.UseZipkinTracing();
+
+			app.UseMvc();
         }
     }
 }
