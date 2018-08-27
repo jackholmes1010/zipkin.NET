@@ -3,15 +3,15 @@ using Zipkin.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Models
 {
-    /// <summary>
-    /// A span is a single-host view of an operation.
-    /// </summary>
-    /// <remarks>
-    /// A trace is a series of spans (often RPC calls) which nest to form a latency tree. 
-    /// Spans are in the same a trace when they share the same trace ID. 
-    /// The ParentId field establishes the position of one span in the tree.
-    /// </remarks>
-    public class Span
+	/// <summary>
+	/// A span is a single-host view of an operation.
+	/// </summary>
+	/// <remarks>
+	/// A trace is a series of spans (often RPC calls) which nest to form a latency tree. 
+	/// Spans are in the same a trace when they share the same trace ID. 
+	/// The ParentId field establishes the position of one span in the tree.
+	/// </remarks>
+	public class Span
     {
         /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
@@ -22,7 +22,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// ffdc9bb9a6453df3.
         /// </example>
-        public string SpanId { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Randomly generated, unique identifier for a trace, set on all spans within it.
@@ -40,14 +40,14 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </summary>
         public string ParentId { get; set; }
 
-        /// <summary>
-        /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
-        /// </summary>
-        /// <remars>
-        /// When absent, the span is local or incomplete. Unlike client and server, there is
-        /// no direct critical path latency relationship between producer and consumer spans.
-        /// </remars>
-        public SpanKind? Kind { get; set; }
+		/// <summary>
+		/// When present, kind clarifies timestamp, duration and remoteEndpoint. 
+		/// </summary>
+		/// <remarks>
+		/// When absent, the span is local or incomplete. Unlike client and server, there is
+		/// no direct critical path latency relationship between producer and consumer spans.
+		/// </remarks>
+		public SpanKind? Kind { get; set; }
 
         /// <summary>
         /// The logical operation this span represents in lowercase (e.g. rpc method).
@@ -100,6 +100,6 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <summary>
         /// Event information associated with this span.
         /// </summary>
-        public IEnumerable<Annotation> Annotation { get; set; }
+        public IEnumerable<Annotation> Annotations { get; set; }
     }
 }

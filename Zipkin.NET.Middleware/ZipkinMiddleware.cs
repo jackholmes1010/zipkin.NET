@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Zipkin.Instrumentation.Models;
 using Zipkin.NET.Instrumentation;
+using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 using Span = Zipkin.NET.Instrumentation.Models.Span;
 
@@ -52,13 +52,13 @@ namespace Zipkin.NET.Middleware
 
             var span = new Span
             {
-                SpanId = spanId,
+                Id = spanId,
                 TraceId = traceId,
                 ParentId = parentId,
                 TimeStamp = startTime,
-				Name = _applicationName,
-                Kind = SpanKind.Server
-            };
+				Name = context.Request.Method,
+                Kind = SpanKind.Server,
+			};
 
             // Call the next delegate/middleware in the pipeline
             await next(context);

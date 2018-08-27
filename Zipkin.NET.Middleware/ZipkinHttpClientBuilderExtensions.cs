@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
 
@@ -9,7 +6,8 @@ namespace Zipkin.NET.Middleware
 {
 	public static class ZipkinHttpClientBuilderExtensions
 	{
-		public static IHttpClientBuilder AddZipkinMessageHandler(this IHttpClientBuilder builder, string applicationName = null)
+		public static IHttpClientBuilder AddZipkinMessageHandler(
+			this IHttpClientBuilder builder, string applicationName = null)
 		{
 			builder.AddHttpMessageHandler(provider =>
 			{

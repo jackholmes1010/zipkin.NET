@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Zipkin.NET.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Reporting
@@ -12,10 +13,14 @@ namespace Zipkin.NET.Instrumentation.Reporting
 	    public async Task SendSpansAsync(IEnumerable<Span> spans)
 	    {
 			var client = new HttpClient();
-		    var content = new StringContent(JsonConvert.SerializeObject(spans));
+		    var content = new StringContent(JsonConvert.SerializeObject(spans, new JsonSerializerSettings
+		    {
+			    ContractResolver = new CamelCasePropertyNamesContractResolver()
+		    }));
+
 		    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-		    var result = await client.PostAsync("http://localhost:9411/api/v2/spans", content);
-		    var resultContent = await result.Content.ReadAsStringAsync();
+			var result = await client.PostAsync("http://localhost:9411/api/v2/spans", content);
+			var resultContent = await result.Content.ReadAsStringAsync();
 		}
     }
 }
