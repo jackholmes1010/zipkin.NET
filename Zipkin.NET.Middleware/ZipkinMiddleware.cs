@@ -73,7 +73,7 @@ namespace Zipkin.NET.Middleware
 	        span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
-            await _reporter.ReportAsync(span);
+            _reporter.Report(span);
         }
 	}
 }

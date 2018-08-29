@@ -54,11 +54,11 @@ namespace Zipkin.NET.Instrumentation
 
             var result = await base.SendAsync(request, cancellationToken);
 
-            // Record the client recieve time (span duration)
+            // Record the client receive time (span duration)
 	        span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
-            await _reporter.ReportAsync(span);
+            _reporter.Report(span);
 
             return result;
         }

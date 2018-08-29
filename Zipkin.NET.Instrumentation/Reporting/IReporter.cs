@@ -14,6 +14,6 @@ namespace Zipkin.NET.Instrumentation.Reporting
         /// <param name="span">
         /// The span to be reported.
         /// </param>
-        Task ReportAsync(Span span);
+        void Report(Span span);
     }
 }
