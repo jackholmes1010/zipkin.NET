@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Zipkin.Instrumentation.Models;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
@@ -30,7 +32,7 @@ namespace Zipkin.NET.Middleware
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             // Record the server start time (span timestamp)
-            var startTime = GetTimeStamp();
+            var startTime = DateTime.Now;
 
 			// Extract X-B3 headers
 	        var b3TraceId = context.Request.Headers.TryGetValue("X-B3-TraceId", out var value)
@@ -55,31 +57,24 @@ namespace Zipkin.NET.Middleware
                 Id = spanId,
                 TraceId = traceId,
                 ParentId = parentId,
-                TimeStamp = startTime,
+                Timestamp = startTime,
 				Name = context.Request.Method,
                 Kind = SpanKind.Server,
+				LocalEndpoint = new Endpoint
+				{
+					ServiceName = _applicationName,
+					Ipv4 = "127.0.0.1"
+				}
 			};
 
             // Call the next delegate/middleware in the pipeline
             await next(context);
 
             // Get the server send time (span duration)
-            span.Duration = GetTimeStamp() - startTime;
+	        span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
             await _reporter.ReportAsync(span);
         }
-
-        /// <summary>
-        /// Get the current timestamp.
-        /// </summary>
-        /// <returns>
-        /// The timestamp in microseconds.
-        /// </returns>
-        private long GetTimeStamp()
-        {
-            // TODO put in helper class?
-            return DateTime.Now.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
-        }
-    }
+	}
 }

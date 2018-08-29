@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using Zipkin.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Models
@@ -60,7 +62,8 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// 1502787600000000 corresponds to 2017-08-15 09:00 UTC.
         /// </example>
-        public long TimeStamp { get; set; }
+        [JsonConverter(typeof(UnixTimeStampDateTimeConverter))]
+        public DateTime Timestamp { get; set; }
 
         /// <summary>
         /// Duration in microseconds of the critical path, if known. 
@@ -72,7 +75,8 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// 150 milliseconds is 150000 microseconds.
         /// </example>
-        public long Duration { get; set; }
+        [JsonConverter(typeof(TimeSpanConverter))]
+        public TimeSpan Duration { get; set; }
 
         /// <summary>
         /// True is a request to store this span even if it overrides sampling policy.

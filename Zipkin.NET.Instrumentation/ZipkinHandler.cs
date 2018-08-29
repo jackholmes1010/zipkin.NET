@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Zipkin.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
@@ -30,16 +32,20 @@ namespace Zipkin.NET.Instrumentation
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Record the client send time (span timestamp)
-            var startTime = GetTimeStamp();
+	        var startTime = DateTime.Now;
 
             var span = new Span
             {
                 Id = _traceIdGenerator.GenerateId(),
                 TraceId = _traceContext.CurrentTraceId,
                 ParentId = _traceContext.CurrentSpanId,
-                TimeStamp = startTime,
+                Timestamp = startTime,
 				Name = request.Method.ToString(),
                 Kind = SpanKind.Client,
+				RemoteEndpoint = new Endpoint
+				{
+					ServiceName = _applicationName
+				}
 			};
 
             // Add X-B3 headers to the outgoing request
@@ -50,24 +56,12 @@ namespace Zipkin.NET.Instrumentation
             var result = await base.SendAsync(request, cancellationToken);
 
             // Record the client recieve time (span duration)
-            span.Duration = GetTimeStamp() - startTime;
+	        span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
             await _reporter.ReportAsync(span);
 
             return result;
         }
-
-        /// <summary>
-        /// Get the current timestamp.
-        /// </summary>
-        /// <returns>
-        /// The timestamp in microseconds.
-        /// </returns>
-        private long GetTimeStamp()
-        {
-            // TODO put in helper class?
-            return DateTime.Now.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
-        }
-    }
+	}
 }
