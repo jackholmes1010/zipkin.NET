@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
@@ -9,6 +8,10 @@ using Span = Zipkin.NET.Instrumentation.Models.Span;
 
 namespace Zipkin.NET.Middleware
 {
+    /// <summary>
+    /// Middleware responsible for extracting trace ID's from X-B3
+    /// headers and reporting completed server spans to a Zipkin server.
+    /// </summary>
     public class ZipkinMiddleware : IMiddleware
     {
 	    private readonly string _applicationName;
@@ -28,6 +31,22 @@ namespace Zipkin.NET.Middleware
             _traceIdGenerator = traceIdGenerator;
         }
 
+        /// <summary>
+        /// Creates a new span before calling the next middleware in the
+        /// pipeline. Records the duration and reports the completed span.
+        /// </summary>
+        /// <remarks>
+        /// Completed spans contain both the server receive and server send times.
+        /// </remarks>
+        /// <param name="context">
+        /// The <see cref="HttpContext"/> for the current request.
+        /// </param>
+        /// <param name="next">
+        /// The delegate representing the remaining middleware in the request pipeline.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the execution of this middleware.
+        /// </returns>
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             // Record the server start time (span timestamp)
@@ -62,7 +81,6 @@ namespace Zipkin.NET.Middleware
 				LocalEndpoint = new Endpoint
 				{
 					ServiceName = _applicationName,
-					Ipv4 = "127.0.0.1"
 				}
 			};
 

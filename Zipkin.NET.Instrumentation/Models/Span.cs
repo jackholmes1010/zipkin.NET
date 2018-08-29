@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Zipkin.NET.Instrumentation.Converters;
 
 namespace Zipkin.NET.Instrumentation.Models
 {
@@ -22,7 +23,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// Encoded as 16 lowercase hex characters.
         /// </remarks>
         /// <example>
-        /// ffdc9bb9a6453df3.
+        /// "ffdc9bb9a6453df3"
         /// </example>
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -34,7 +35,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// Encoded as 16 or 32 lowercase hex characters corresponding to 64 or 128 bits.
         /// </remarks>
         /// <example>
-        /// A 128-bit trace ID looks like 4e441824ec2b6a44ffdc9bb9a6453df3.
+        /// A 128-bit trace ID looks like "4e441824ec2b6a44ffdc9bb9a6453df3".
         /// </example>
         [JsonProperty("traceId")]
         public string TraceId { get; set; }

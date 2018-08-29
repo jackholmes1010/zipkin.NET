@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Zipkin.NET.Instrumentation.Models;
+﻿using Zipkin.NET.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Reporting
 {

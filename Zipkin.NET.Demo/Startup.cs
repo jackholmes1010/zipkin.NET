@@ -26,7 +26,6 @@ namespace Zipkin.NET.Demo
 
 			// Register ZipkinHandler for HttpClients
 	        services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");
-			// services.AddHttpClient("tracingClient").AddHttpMessageHandler<ZipkinHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

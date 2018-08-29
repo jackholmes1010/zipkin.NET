@@ -8,6 +8,11 @@ using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.Instrumentation
 {
+    /// <summary>
+    /// A <see cref="DelegatingHandler"/> responsible for propagating
+    /// X-B3 trace ID headers to downstream services and reporting
+    /// completed client spans to a Zipkin server.
+    /// </summary>
     public class ZipkinHandler : DelegatingHandler
     {
 	    private readonly string _applicationName;
@@ -27,6 +32,22 @@ namespace Zipkin.NET.Instrumentation
             _traceIdGenerator = traceIdGenerator;
         }
 
+        /// <summary>
+        /// Creates a new span before sending the request on to the inner
+        /// handler. Records the duration and reports the completed span.
+        /// </summary>
+        /// <remarks>
+        /// Completed spans contain both the client send and client receive times.
+        /// </remarks>
+        /// <param name="request">
+        /// The HTTP request message to send to the server.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// A cancellation token to cancel operation.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {

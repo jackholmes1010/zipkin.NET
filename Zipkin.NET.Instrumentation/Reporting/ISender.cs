@@ -5,7 +5,7 @@ using Zipkin.NET.Instrumentation.Models;
 namespace Zipkin.NET.Instrumentation.Reporting
 {
     /// <summary>
-    /// Sends a list of encoded spans to a transport such as HTTP or Kafka. 
+    /// Sends a list of spans to a transport such as HTTP or Kafka.
     /// </summary>
     /// <remarks>
     /// Usually, this involves encoding them into a message and enqueueing them for 

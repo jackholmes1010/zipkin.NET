@@ -9,7 +9,7 @@
         /// Encoded as 16 lowercase hex characters.
         /// </remarks>
         /// <example>
-        /// ffdc9bb9a6453df3.
+        /// "ffdc9bb9a6453df3"
         /// </example>
         /// <returns></returns>
         string GenerateId();

@@ -2,8 +2,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Zipkin.NET.Instrumentation
+namespace Zipkin.NET.Instrumentation.Converters
 {
+    /// <summary>
+    /// Converts a <see cref="DateTime"/> to a JSON string representing the value as a unix timestamp.
+    /// </summary>
 	public class UnixTimeStampDateTimeConverter : DateTimeConverterBase
 	{
 		private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
