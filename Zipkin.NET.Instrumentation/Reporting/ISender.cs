@@ -9,7 +9,7 @@ namespace Zipkin.NET.Instrumentation.Reporting
     /// </summary>
     /// <remarks>
     /// Usually, this involves encoding them into a message and enqueueing them for 
-    /// transport over http or Kafka. The typical end recipient is a zipkin collector.
+    /// transport over HTTP or Kafka. The typical end recipient is a zipkin collector.
     /// </remarks>
     public interface ISender
     {

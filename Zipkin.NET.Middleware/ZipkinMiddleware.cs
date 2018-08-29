@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Zipkin.Instrumentation.Models;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
@@ -57,7 +56,7 @@ namespace Zipkin.NET.Middleware
                 Id = spanId,
                 TraceId = traceId,
                 ParentId = parentId,
-                Timestamp = startTime,
+                TimeStamp = startTime,
 				Name = context.Request.Method,
                 Kind = SpanKind.Server,
 				LocalEndpoint = new Endpoint

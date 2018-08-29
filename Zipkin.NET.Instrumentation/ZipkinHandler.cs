@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Zipkin.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
@@ -39,7 +38,7 @@ namespace Zipkin.NET.Instrumentation
                 Id = _traceIdGenerator.GenerateId(),
                 TraceId = _traceContext.CurrentTraceId,
                 ParentId = _traceContext.CurrentSpanId,
-                Timestamp = startTime,
+                TimeStamp = startTime,
 				Name = request.Method.ToString(),
                 Kind = SpanKind.Client,
 				RemoteEndpoint = new Endpoint

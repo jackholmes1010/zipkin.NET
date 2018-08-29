@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Zipkin.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation.Models
 {
@@ -13,6 +12,7 @@ namespace Zipkin.NET.Instrumentation.Models
 	/// Spans are in the same a trace when they share the same trace ID. 
 	/// The ParentId field establishes the position of one span in the tree.
 	/// </remarks>
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Span
     {
         /// <summary>
@@ -24,6 +24,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// ffdc9bb9a6453df3.
         /// </example>
+        [JsonProperty("id")]
         public string Id { get; set; }
 
         /// <summary>
@@ -35,25 +36,29 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// A 128-bit trace ID looks like 4e441824ec2b6a44ffdc9bb9a6453df3.
         /// </example>
+        [JsonProperty("traceId")]
         public string TraceId { get; set; }
 
         /// <summary>
         /// The parent span ID or absent if this the root span in a trace.
         /// </summary>
+        [JsonProperty("parentId")]
         public string ParentId { get; set; }
 
-		/// <summary>
-		/// When present, kind clarifies timestamp, duration and remoteEndpoint. 
-		/// </summary>
-		/// <remarks>
-		/// When absent, the span is local or incomplete. Unlike client and server, there is
-		/// no direct critical path latency relationship between producer and consumer spans.
-		/// </remarks>
-		public SpanKind? Kind { get; set; }
+        /// <summary>
+        /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
+        /// </summary>
+        /// <remarks>
+        /// When absent, the span is local or incomplete. Unlike client and server, there is
+        /// no direct critical path latency relationship between producer and consumer spans.
+        /// </remarks>
+        [JsonProperty("kind")]
+        public SpanKind? Kind { get; set; }
 
         /// <summary>
         /// The logical operation this span represents in lowercase (e.g. rpc method).
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -63,7 +68,8 @@ namespace Zipkin.NET.Instrumentation.Models
         /// 1502787600000000 corresponds to 2017-08-15 09:00 UTC.
         /// </example>
         [JsonConverter(typeof(UnixTimeStampDateTimeConverter))]
-        public DateTime Timestamp { get; set; }
+        [JsonProperty("timestamp")]
+        public DateTime TimeStamp { get; set; }
 
         /// <summary>
         /// Duration in microseconds of the critical path, if known. 
@@ -76,6 +82,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// 150 milliseconds is 150000 microseconds.
         /// </example>
         [JsonConverter(typeof(TimeSpanConverter))]
+        [JsonProperty("duration")]
         public TimeSpan Duration { get; set; }
 
         /// <summary>
@@ -84,26 +91,31 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <remarks>
         /// This is true when the X-B3-Flags header has a value of 1.
         /// </remarks>
+        [JsonProperty("false")]
         public bool Debug { get; set; }
 
         /// <summary>
         /// True if we are contributing to a span started by another tracer (ex on a different host).
         /// </summary>
+        [JsonProperty("shared")]
         public bool Shared { get; set; }
 
         /// <summary>
         /// The host that recorded this span, primarily for query by service name.
         /// </summary>
+        [JsonProperty("localEndpoint")]
         public Endpoint LocalEndpoint { get; set; }
 
         /// <summary>
         /// When an RPC (or messaging) span, indicates the other side of the connection.
         /// </summary>
+        [JsonProperty("remoteEndpoint")]
         public Endpoint RemoteEndpoint { get; set; }
 
         /// <summary>
         /// Event information associated with this span.
         /// </summary>
+        [JsonProperty("annotations")]
         public IEnumerable<Annotation> Annotations { get; set; }
     }
 }

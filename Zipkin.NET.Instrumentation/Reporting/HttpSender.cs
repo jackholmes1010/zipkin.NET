@@ -20,7 +20,7 @@ namespace Zipkin.NET.Instrumentation.Reporting
 
 		    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 			var result = await client.PostAsync("http://localhost:9411/api/v2/spans", content);
-			var resultContent = await result.Content.ReadAsStringAsync();
+			await result.Content.ReadAsStringAsync();
 		}
     }
 }
