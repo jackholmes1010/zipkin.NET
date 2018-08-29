@@ -24,11 +24,21 @@ namespace Zipkin.NET.Demo.Controllers
         public async Task<ActionResult<IEnumerable<string>>> Get()
         {
 	        var httpClient = _httpClientFactory.CreateClient("tracingClient");
+            var httpClient2 = _httpClientFactory.CreateClient("tracingClient2");
 	        var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://www.google.com"));
+	        var httpRequest2 = new HttpRequestMessage(HttpMethod.Get, new Uri("http://www.google.com"));
 
-			var result = await httpClient.SendAsync(httpRequest);
+			var resultTask = httpClient.SendAsync(httpRequest);
+			var result2Task = httpClient2.SendAsync(httpRequest2);
 
-            return new string[] { "result", result.Content.ToString() };
+            var result = await resultTask;
+            var result2 = await result2Task;
+
+            return new string[]
+            {
+                "result", result.Content.ToString(),
+                "result2", result2.Content.ToString(),
+            };
         }
     }
 }
