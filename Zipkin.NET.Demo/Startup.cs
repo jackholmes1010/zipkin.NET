@@ -24,8 +24,8 @@ namespace Zipkin.NET.Demo
             // Register Zipkin dependencies
             services.AddZipkin("test-api");
 
-			// Register ZipkinHandler for HttpClients
-	        services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");
+            // Register ZipkinHandler for HttpClients
+            services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");
             services.AddHttpClient("tracingClient2").AddZipkinMessageHandler("google-2");
         }
 
@@ -37,10 +37,10 @@ namespace Zipkin.NET.Demo
                 app.UseDeveloperExceptionPage();
             }
 
-			// Register tracing middleware
-			app.UseZipkinTracing();
+            // Register tracing middleware
+            app.UseZipkinTracing();
 
-			app.UseMvc();
+            app.UseMvc();
         }
     }
 }

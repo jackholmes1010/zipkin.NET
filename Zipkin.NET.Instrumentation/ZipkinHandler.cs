@@ -15,18 +15,18 @@ namespace Zipkin.NET.Instrumentation
     /// </summary>
     public class ZipkinHandler : DelegatingHandler
     {
-	    private readonly string _applicationName;
+        private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContext _traceContext;
         private readonly ITraceIdentifierGenerator _traceIdGenerator;
 
         public ZipkinHandler(
-			string applicationName,
+            string applicationName,
             IReporter reporter, 
             ITraceContext traceContext,
             ITraceIdentifierGenerator traceIdGenerator)
         {
-	        _applicationName = applicationName;
+            _applicationName = applicationName;
             _reporter = reporter;
             _traceContext = traceContext;
             _traceIdGenerator = traceIdGenerator;
@@ -52,7 +52,7 @@ namespace Zipkin.NET.Instrumentation
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Record the client send time (span timestamp)
-	        var startTime = DateTime.Now;
+            var startTime = DateTime.Now;
 
             var span = new Span
             {
@@ -60,13 +60,13 @@ namespace Zipkin.NET.Instrumentation
                 TraceId = _traceContext.CurrentTraceId,
                 ParentId = _traceContext.CurrentSpanId,
                 TimeStamp = startTime,
-				Name = request.Method.ToString(),
+                Name = request.Method.ToString(),
                 Kind = SpanKind.Client,
-				RemoteEndpoint = new Endpoint
-				{
-					ServiceName = _applicationName
-				}
-			};
+                RemoteEndpoint = new Endpoint
+                {
+                    ServiceName = _applicationName
+                }
+            };
 
             // Add X-B3 headers to the outgoing request
             request.Headers.Add("X-B3-TraceId", span.TraceId);
@@ -76,12 +76,12 @@ namespace Zipkin.NET.Instrumentation
             var result = await base.SendAsync(request, cancellationToken);
 
             // Record the client receive time (span duration)
-	        span.Duration = DateTime.Now.Subtract(startTime);
+            span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
             _reporter.Report(span);
 
             return result;
         }
-	}
+    }
 }

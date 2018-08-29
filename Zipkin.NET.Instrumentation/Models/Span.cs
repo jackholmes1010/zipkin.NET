@@ -5,16 +5,16 @@ using Zipkin.NET.Instrumentation.Converters;
 
 namespace Zipkin.NET.Instrumentation.Models
 {
-	/// <summary>
-	/// A span is a single-host view of an operation.
-	/// </summary>
-	/// <remarks>
-	/// A trace is a series of spans (often RPC calls) which nest to form a latency tree. 
-	/// Spans are in the same a trace when they share the same trace ID. 
-	/// The ParentId field establishes the position of one span in the tree.
-	/// </remarks>
-	[JsonObject(MemberSerialization.OptIn)]
-	public class Span
+    /// <summary>
+    /// A span is a single-host view of an operation.
+    /// </summary>
+    /// <remarks>
+    /// A trace is a series of spans (often RPC calls) which nest to form a latency tree. 
+    /// Spans are in the same a trace when they share the same trace ID. 
+    /// The ParentId field establishes the position of one span in the tree.
+    /// </remarks>
+    [JsonObject(MemberSerialization.OptIn)]
+    public class Span
     {
         /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.

@@ -14,18 +14,18 @@ namespace Zipkin.NET.Middleware
     /// </summary>
     public class ZipkinMiddleware : IMiddleware
     {
-	    private readonly string _applicationName;
+        private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContext _traceContext;
         private readonly ITraceIdentifierGenerator _traceIdGenerator;
 
         public ZipkinMiddleware(
-			string applicationName,
+            string applicationName,
             IReporter reporter,
             ITraceContext traceContext,
             ITraceIdentifierGenerator traceIdGenerator)
         {
-	        _applicationName = applicationName;
+            _applicationName = applicationName;
             _reporter = reporter;
             _traceContext = traceContext;
             _traceIdGenerator = traceIdGenerator;
@@ -52,21 +52,21 @@ namespace Zipkin.NET.Middleware
             // Record the server start time (span timestamp)
             var startTime = DateTime.Now;
 
-			// Extract X-B3 headers
-	        var b3TraceId = context.Request.Headers.TryGetValue("X-B3-TraceId", out var value)
-		        ? value.ToString()
-		        : null;
+            // Extract X-B3 headers
+            var b3TraceId = context.Request.Headers.TryGetValue("X-B3-TraceId", out var value)
+                ? value.ToString()
+                : null;
 
-	        var b3SpanId = context.Request.Headers.TryGetValue("X-B3-SpanId", out value)
-		        ? value.ToString()
-		        : null;
+            var b3SpanId = context.Request.Headers.TryGetValue("X-B3-SpanId", out value)
+                ? value.ToString()
+                : null;
 
-	        var traceId = b3TraceId ?? _traceIdGenerator.GenerateId();
+            var traceId = b3TraceId ?? _traceIdGenerator.GenerateId();
             var spanId = _traceIdGenerator.GenerateId();
-	        var parentId = b3SpanId;
+            var parentId = b3SpanId;
 
-			// Record the current trace and span ID's on a shared trace
-			// context so we can later retrieve the values for the client trace.
+            // Record the current trace and span ID's on a shared trace
+            // context so we can later retrieve the values for the client trace.
             _traceContext.CurrentTraceId = traceId;
             _traceContext.CurrentSpanId = spanId;
 
@@ -76,22 +76,22 @@ namespace Zipkin.NET.Middleware
                 TraceId = traceId,
                 ParentId = parentId,
                 TimeStamp = startTime,
-				Name = context.Request.Method,
+                Name = context.Request.Method,
                 Kind = SpanKind.Server,
-				LocalEndpoint = new Endpoint
-				{
-					ServiceName = _applicationName,
-				}
-			};
+                LocalEndpoint = new Endpoint
+                {
+                    ServiceName = _applicationName,
+                }
+            };
 
             // Call the next delegate/middleware in the pipeline
             await next(context);
 
             // Get the server send time (span duration)
-	        span.Duration = DateTime.Now.Subtract(startTime);
+            span.Duration = DateTime.Now.Subtract(startTime);
 
             // Report the complete span
             _reporter.Report(span);
         }
-	}
+    }
 }
