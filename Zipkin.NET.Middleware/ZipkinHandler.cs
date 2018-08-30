@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Globalization;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
-namespace Zipkin.NET.Instrumentation
+namespace Zipkin.NET.Middleware
 {
     /// <summary>
     /// A <see cref="DelegatingHandler"/> responsible for propagating
@@ -17,19 +18,19 @@ namespace Zipkin.NET.Instrumentation
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
-        private readonly ITraceContext _traceContext;
-        private readonly ITraceIdentifierGenerator _traceIdGenerator;
+	    private readonly ITraceContextAccessor _traceContextAccessor;
+	    private readonly IB3Propagator _propagator;
 
         public ZipkinHandler(
             string applicationName,
             IReporter reporter, 
-            ITraceContext traceContext,
-            ITraceIdentifierGenerator traceIdGenerator)
+            ITraceContextAccessor traceContextAccessor, 
+            IB3Propagator propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;
-            _traceContext = traceContext;
-            _traceIdGenerator = traceIdGenerator;
+	        _traceContextAccessor = traceContextAccessor;
+	        _propagator = propagator;
         }
 
         /// <summary>
@@ -51,32 +52,29 @@ namespace Zipkin.NET.Instrumentation
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Record the client send time (span timestamp)
-            var startTime = DateTime.Now;
-
-            var span = new Span
-            {
-                Id = _traceIdGenerator.GenerateId(),
-                TraceId = _traceContext.CurrentTraceId,
-                ParentId = _traceContext.CurrentSpanId,
-                TimeStamp = startTime,
-                Name = request.Method.ToString(),
-                Kind = SpanKind.Client,
-                RemoteEndpoint = new Endpoint
-                {
-                    ServiceName = _applicationName
-                }
-            };
+			// Get the server trace context
+	        var traceContext = _traceContextAccessor.Context.Refresh();
 
             // Add X-B3 headers to the outgoing request
-            request.Headers.Add("X-B3-TraceId", span.TraceId);
-            request.Headers.Add("X-B3-SpanId", span.Id);
-            request.Headers.Add("X-B3-ParentSpanId", span.ParentId);
+	        _propagator.Inject(request, traceContext);
 
-            var result = await base.SendAsync(request, cancellationToken);
+			var span = new Span(traceContext)
+	        {
+		        Name = request.Method.ToString(),
+		        Kind = SpanKind.Client,
+		        RemoteEndpoint = new Endpoint
+		        {
+			        ServiceName = _applicationName
+		        }
+	        };
 
-            // Record the client receive time (span duration)
-            span.Duration = DateTime.Now.Subtract(startTime);
+	        var timer = new Stopwatch();
+	        timer.Start();
+
+			var result = await base.SendAsync(request, cancellationToken);
+
+	        timer.Stop();
+	        span.Duration = timer.Elapsed;
 
             // Report the complete span
             _reporter.Report(span);

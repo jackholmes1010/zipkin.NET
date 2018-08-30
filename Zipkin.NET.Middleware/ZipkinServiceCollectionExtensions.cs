@@ -12,17 +12,19 @@ namespace Zipkin.NET.Middleware
             // TODO is this needed?
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ITraceIdentifierGenerator, TraceIdentifierGenerator>();
-            services.AddTransient<ITraceContext, TraceContext>();
             services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender, HttpSender>();
+	        services.AddTransient<ITraceContextAccessor, TraceContextAccessor>();
+	        services.AddTransient<IB3Propagator, B3Propagator>();
 
             // Register middleware
             services.AddTransient(provider =>
             {
                 var reporter = provider.GetService<IReporter>();
-                var traceContext = provider.GetService<ITraceContext>();
-                var traceIdGenerator = provider.GetService<ITraceIdentifierGenerator>();
-                var middleware = new ZipkinMiddleware(applicationName, reporter, traceContext, traceIdGenerator);
+	            var propagator = provider.GetService<IB3Propagator>();
+	            var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
+	            var middleware = new ZipkinMiddleware(
+		            applicationName, reporter, propagator, traceContextAccessor);
                 return middleware;
             });
 

@@ -16,6 +16,25 @@ namespace Zipkin.NET.Instrumentation.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
+	    public Span(string id, string traceId, string parentId) : this()
+	    {
+		    Id = id;
+		    TraceId = traceId;
+		    ParentId = ParentId;
+	    }
+
+	    public Span(TraceContext trace) : this()
+	    {
+		    Id = trace.SpanId;
+		    TraceId = trace.TraceId;
+		    ParentId = trace.ParentSpanId;
+	    }
+
+	    private Span()
+	    {
+		    StartTime = DateTime.Now;
+	    }
+
         /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
         /// </summary>
@@ -26,7 +45,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// "ffdc9bb9a6453df3"
         /// </example>
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id { get; }
 
         /// <summary>
         /// Randomly generated, unique identifier for a trace, set on all spans within it.
@@ -38,13 +57,13 @@ namespace Zipkin.NET.Instrumentation.Models
         /// A 128-bit trace ID looks like "4e441824ec2b6a44ffdc9bb9a6453df3".
         /// </example>
         [JsonProperty("traceId")]
-        public string TraceId { get; set; }
+        public string TraceId { get; }
 
         /// <summary>
         /// The parent span ID or absent if this the root span in a trace.
         /// </summary>
         [JsonProperty("parentId")]
-        public string ParentId { get; set; }
+        public string ParentId { get; }
 
         /// <summary>
         /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
@@ -70,7 +89,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </example>
         [JsonConverter(typeof(UnixTimeStampDateTimeConverter))]
         [JsonProperty("timestamp")]
-        public DateTime TimeStamp { get; set; }
+        public DateTime StartTime { get; }
 
         /// <summary>
         /// Duration in microseconds of the critical path, if known. 
