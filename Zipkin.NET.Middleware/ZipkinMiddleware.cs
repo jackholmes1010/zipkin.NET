@@ -50,9 +50,6 @@ namespace Zipkin.NET.Middleware
         /// </returns>
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-	        var timer = new Stopwatch();
-	        timer.Start();
-
             // Extract X-B3 headers
 	        var serverTrace = _propagator
 		        .Extract(context)
@@ -75,12 +72,8 @@ namespace Zipkin.NET.Middleware
             // Call the next delegate/middleware in the pipeline
             await next(context);
 
-			// Get the server send time (span duration)
-	        timer.Stop();
-	        span.Duration = timer.Elapsed;
-
-            // Report the complete span
-            _reporter.Report(span);
+	        span.RecordDuration();
+	        _reporter.Report(span);
         }
     }
 }

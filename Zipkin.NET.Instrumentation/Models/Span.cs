@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Newtonsoft.Json;
 using Zipkin.NET.Instrumentation.Converters;
 
@@ -16,6 +17,8 @@ namespace Zipkin.NET.Instrumentation.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
+		private readonly Stopwatch _timer;
+
 	    public Span(string id, string traceId, string parentId) : this()
 	    {
 		    Id = id;
@@ -33,9 +36,23 @@ namespace Zipkin.NET.Instrumentation.Models
 	    private Span()
 	    {
 		    StartTime = DateTime.Now;
+		    _timer = new Stopwatch();
+		    _timer.Start();
+		}
+
+		/// <summary>
+		/// Calculate the duration from the time the object was initialized.
+		/// </summary>
+	    public void RecordDuration()
+	    {
+		    if (_timer == null)
+			    return;
+
+		    _timer.Stop();
+		    Duration = _timer.Elapsed;
 	    }
 
-        /// <summary>
+	    /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
         /// </summary>
         /// <remarks>
@@ -45,7 +62,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// "ffdc9bb9a6453df3"
         /// </example>
         [JsonProperty("id")]
-        public string Id { get; }
+        public string Id { get; private set; }
 
         /// <summary>
         /// Randomly generated, unique identifier for a trace, set on all spans within it.
@@ -57,13 +74,13 @@ namespace Zipkin.NET.Instrumentation.Models
         /// A 128-bit trace ID looks like "4e441824ec2b6a44ffdc9bb9a6453df3".
         /// </example>
         [JsonProperty("traceId")]
-        public string TraceId { get; }
+        public string TraceId { get; private set; }
 
         /// <summary>
         /// The parent span ID or absent if this the root span in a trace.
         /// </summary>
         [JsonProperty("parentId")]
-        public string ParentId { get; }
+        public string ParentId { get; private set; }
 
         /// <summary>
         /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
@@ -89,7 +106,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </example>
         [JsonConverter(typeof(UnixTimeStampDateTimeConverter))]
         [JsonProperty("timestamp")]
-        public DateTime StartTime { get; }
+        public DateTime StartTime { get; private set; }
 
         /// <summary>
         /// Duration in microseconds of the critical path, if known. 
@@ -103,7 +120,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </example>
         [JsonConverter(typeof(TimeSpanConverter))]
         [JsonProperty("duration")]
-        public TimeSpan Duration { get; set; }
+        public TimeSpan Duration { get; private set; }
 
         /// <summary>
         /// True is a request to store this span even if it overrides sampling policy.

@@ -52,7 +52,7 @@ namespace Zipkin.NET.Middleware
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-			// Get the server trace context
+			// Get the server trace context and refresh the trace ID's
 	        var traceContext = _traceContextAccessor.Context.Refresh();
 
             // Add X-B3 headers to the outgoing request
@@ -68,17 +68,10 @@ namespace Zipkin.NET.Middleware
 		        }
 	        };
 
-	        var timer = new Stopwatch();
-	        timer.Start();
-
 			var result = await base.SendAsync(request, cancellationToken);
 
-	        timer.Stop();
-	        span.Duration = timer.Elapsed;
-
-            // Report the complete span
+			span.RecordDuration();
             _reporter.Report(span);
-
             return result;
         }
     }
