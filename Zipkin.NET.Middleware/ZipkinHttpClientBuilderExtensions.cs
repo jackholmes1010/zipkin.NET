@@ -15,10 +15,10 @@ namespace Zipkin.NET.Middleware
                     applicationName = builder.Name;
 
                 var reporter = provider.GetService<IReporter>();
-	            var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
-	            var propagator = provider.GetService<IB3Propagator>();
-				var zipkinHandler = new ZipkinHandler(
-					applicationName, reporter, traceContextAccessor, propagator);
+                var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
+                var propagator = provider.GetService<IB3Propagator>();
+                var zipkinHandler = new ZipkinHandler(
+                    applicationName, reporter, traceContextAccessor, propagator);
                 return zipkinHandler;
             });
 

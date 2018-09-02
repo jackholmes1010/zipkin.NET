@@ -18,8 +18,8 @@ namespace Zipkin.NET.Middleware
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
-	    private readonly ITraceContextAccessor _traceContextAccessor;
-	    private readonly IB3Propagator _propagator;
+        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly IB3Propagator _propagator;
 
         public ZipkinHandler(
             string applicationName,
@@ -29,8 +29,8 @@ namespace Zipkin.NET.Middleware
         {
             _applicationName = applicationName;
             _reporter = reporter;
-	        _traceContextAccessor = traceContextAccessor;
-	        _propagator = propagator;
+            _traceContextAccessor = traceContextAccessor;
+            _propagator = propagator;
         }
 
         /// <summary>
@@ -52,21 +52,21 @@ namespace Zipkin.NET.Middleware
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-			// Get the server trace context and refresh the trace ID's
-	        var traceContext = _traceContextAccessor.Context.Refresh();
+            // Get the server trace context and refresh the trace ID's
+            var traceContext = _traceContextAccessor.Context.Refresh();
 
             // Add X-B3 headers to the outgoing request
-	        _propagator.Inject(request, traceContext);
+            _propagator.Inject(request, traceContext);
 
-			var span = new Span(traceContext)
-	        {
-		        Name = request.Method.ToString(),
-		        Kind = SpanKind.Client,
-		        RemoteEndpoint = new Endpoint
-		        {
-			        ServiceName = _applicationName
-		        }
-	        };
+            var span = new Span(traceContext)
+            {
+                Name = request.Method.ToString(),
+                Kind = SpanKind.Client,
+                RemoteEndpoint = new Endpoint
+                {
+                    ServiceName = _applicationName
+                }
+            };
 
             return await SendAsync(request, cancellationToken, span);
         }

@@ -17,8 +17,8 @@ namespace Zipkin.NET.Middleware
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
-	    private readonly IB3Propagator _propagator;
-		private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly IB3Propagator _propagator;
+        private readonly ITraceContextAccessor _traceContextAccessor;
 
         public ZipkinMiddleware(
             string applicationName,
@@ -28,8 +28,8 @@ namespace Zipkin.NET.Middleware
         {
             _applicationName = applicationName;
             _reporter = reporter;
-	        _propagator = propagator;
-	        _traceContextAccessor = traceContextAccessor;
+            _propagator = propagator;
+            _traceContextAccessor = traceContextAccessor;
         }
 
         /// <summary>
@@ -51,13 +51,13 @@ namespace Zipkin.NET.Middleware
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             // Extract X-B3 headers
-	        var serverTrace = _propagator
-		        .Extract(context)
-		        .Refresh();
+            var serverTrace = _propagator
+                .Extract(context)
+                .Refresh();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
-	        _traceContextAccessor.Context = serverTrace;
+            _traceContextAccessor.Context = serverTrace;
 
             var span = new Span(serverTrace)
             {
