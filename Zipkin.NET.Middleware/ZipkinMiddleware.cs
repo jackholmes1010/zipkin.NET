@@ -69,11 +69,28 @@ namespace Zipkin.NET.Middleware
                 }
             };
 
-            // Call the next delegate/middleware in the pipeline
-            await next(context);
+            await InvokeAsync(context, next, span);
+        }
 
-	        span.RecordDuration();
-	        _reporter.Report(span);
+        private async Task InvokeAsync(HttpContext context, RequestDelegate next, Span span)
+        {
+            span.RecordStartTime();
+
+            try
+            {
+                // Call the next delegate/middleware in the pipeline
+                await next(context);
+            }
+            catch (Exception ex)
+            {
+                // Add annotation?
+                throw ex;
+            }
+            finally
+            {
+                span.RecordDuration();
+                _reporter.Report(span);
+            }
         }
     }
 }

@@ -17,23 +17,19 @@ namespace Zipkin.NET.Instrumentation.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
-		private readonly Stopwatch _timer;
+		private Stopwatch _timer;
 
-	    public Span(string id, string traceId, string parentId) : this()
-	    {
-		    Id = id;
-		    TraceId = traceId;
-		    ParentId = ParentId;
-	    }
-
-	    public Span(TraceContext trace) : this()
+	    public Span(TraceContext trace)
 	    {
 		    Id = trace.SpanId;
 		    TraceId = trace.TraceId;
 		    ParentId = trace.ParentSpanId;
 	    }
 
-	    private Span()
+        /// <summary>
+        /// Record the start time and start duration timer.
+        /// </summary>
+	    public void RecordStartTime()
 	    {
 		    StartTime = DateTime.Now;
 		    _timer = new Stopwatch();
@@ -41,7 +37,7 @@ namespace Zipkin.NET.Instrumentation.Models
 		}
 
 		/// <summary>
-		/// Calculate the duration from the time the object was initialized.
+		/// Calculate the duration from the time the  start time was recorded.
 		/// </summary>
 	    public void RecordDuration()
 	    {

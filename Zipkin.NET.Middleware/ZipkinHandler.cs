@@ -68,11 +68,29 @@ namespace Zipkin.NET.Middleware
 		        }
 	        };
 
-			var result = await base.SendAsync(request, cancellationToken);
+            return await SendAsync(request, cancellationToken, span);
+        }
 
-			span.RecordDuration();
-            _reporter.Report(span);
-            return result;
+        private async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken, Span span)
+        {
+            span.RecordStartTime();
+
+            try
+            {
+                var result = await base.SendAsync(request, cancellationToken);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Add annotation?
+                throw ex;
+            }
+            finally
+            {
+                span.RecordDuration();
+                _reporter.Report(span);
+            }
         }
     }
 }
