@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using Zipkin.NET.Instrumentation.Converters;
 
@@ -17,15 +16,6 @@ namespace Zipkin.NET.Instrumentation.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
-        private Stopwatch _timer;
-
-        public Span(TraceContext trace)
-        {
-            Id = trace.SpanId;
-            TraceId = trace.TraceId;
-            ParentId = trace.ParentSpanId;
-        }
-
         /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
         /// </summary>
@@ -36,7 +26,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// "ffdc9bb9a6453df3"
         /// </example>
         [JsonProperty("id")]
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Randomly generated, unique identifier for a trace, set on all spans within it.
@@ -48,13 +38,13 @@ namespace Zipkin.NET.Instrumentation.Models
         /// A 128-bit trace ID looks like "4e441824ec2b6a44ffdc9bb9a6453df3".
         /// </example>
         [JsonProperty("traceId")]
-        public string TraceId { get; private set; }
+        public string TraceId { get; set; }
 
         /// <summary>
         /// The parent span ID or absent if this the root span in a trace.
         /// </summary>
         [JsonProperty("parentId")]
-        public string ParentId { get; private set; }
+        public string ParentId { get; set; }
 
         /// <summary>
         /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
@@ -80,7 +70,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </example>
         [JsonConverter(typeof(UnixTimeStampDateTimeConverter))]
         [JsonProperty("timestamp")]
-        public DateTime StartTime { get; private set; }
+        public DateTime StartTime { get; set; }
 
         /// <summary>
         /// Duration in microseconds of the critical path, if known. 
@@ -94,7 +84,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// </example>
         [JsonConverter(typeof(TimeSpanConverter))]
         [JsonProperty("duration")]
-        public TimeSpan Duration { get; private set; }
+        public TimeSpan Duration { get; set; }
 
         /// <summary>
         /// True is a request to store this span even if it overrides sampling policy.
@@ -127,76 +117,12 @@ namespace Zipkin.NET.Instrumentation.Models
         /// Event information associated with this span.
         /// </summary>
         [JsonProperty("annotations")]
-        public IList<Annotation> Annotations { get; private set; }
+        public IList<Annotation> Annotations { get; set; }
 
         /// <summary>
         /// Adds context to a span, for search, viewing and analysis.
         /// </summary>
         [JsonProperty("tags")]
-        public IDictionary<string, string> Tags { get; private set; }
-
-        /// <summary>
-        /// Record the start time and start duration timer.
-        /// </summary>
-        public void Start()
-        {
-            StartTime = DateTime.Now;
-            _timer = new Stopwatch();
-            _timer.Start();
-        }
-
-        /// <summary>
-        /// Calculate the duration from the time the  start time was recorded.
-        /// </summary>
-        public void End()
-        {
-            if (_timer == null)
-                return;
-
-            _timer.Stop();
-            Duration = _timer.Elapsed;
-        }
-
-        /// <summary>
-        /// Add additional context information to a span.
-        /// </summary>
-        /// <param name="name">
-        /// The tag key. This should be unique.
-        /// </param>
-        /// <param name="value">
-        /// The tag value.
-        /// </param>
-        public void Tag(string name, string value)
-        {
-            if (Tags == null)
-                Tags = new Dictionary<string, string>();
-
-            Tags.Add(name, value);
-        }
-
-        /// <summary>
-        /// Add error context information to a span.
-        /// </summary>
-        /// <param name="message">
-        /// The error message.
-        /// </param>
-        public void Error(string message)
-        {
-            Tag("error", message);
-        }
-
-        /// <summary>
-        /// Add an event that explains latency with a timestamp.
-        /// </summary>
-        /// <param name="annotation">
-        /// The value and associated timestamp.
-        /// </param>
-        public void Annotate(Annotation annotation)
-        {
-            if (Annotations == null)
-                Annotations = new List<Annotation>();
-
-            Annotations.Add(annotation);
-        }
+        public IDictionary<string, string> Tags { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
+using Trace = Zipkin.NET.Instrumentation.Trace;
 
 namespace Zipkin.NET.Middleware
 {
@@ -58,23 +58,21 @@ namespace Zipkin.NET.Middleware
             // Add X-B3 headers to the outgoing request
             _propagator.Inject(request, traceContext);
 
-            var span = new Span(traceContext)
-            {
-                Name = request.Method.ToString(),
-                Kind = SpanKind.Client,
-                RemoteEndpoint = new Endpoint
-                {
-                    ServiceName = _applicationName
-                }
-            };
+	        var clientTrace = new ClientTrace(
+		        traceContext, 
+		        request.Method.ToString(), 
+		        remoteEndpoint: new Endpoint
+		        {
+			        ServiceName = _applicationName
+		        });
 
-            return await SendAsync(request, cancellationToken, span);
+            return await SendAsync(request, cancellationToken, clientTrace);
         }
 
         private async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken, Span span)
+            HttpRequestMessage request, CancellationToken cancellationToken, Trace trace)
         {
-            span.Start();
+            trace.Start();
 
             try
             {
@@ -83,13 +81,13 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-                span.Error(ex.Message);
+                trace.Error(ex.Message);
                 throw;
             }
             finally
             {
-                span.End();
-                _reporter.Report(span);
+                trace.End();
+                _reporter.Report(trace.Span);
             }
         }
     }
