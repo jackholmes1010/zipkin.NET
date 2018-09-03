@@ -74,7 +74,7 @@ namespace Zipkin.NET.Middleware
         private async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken, Span span)
         {
-            span.RecordStartTime();
+            span.Start();
 
             try
             {
@@ -83,12 +83,12 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-                span.Tag("exception", ex.Message);
+                span.Error(ex.Message);
 	            throw;
             }
             finally
             {
-	            span.RecordDuration();
+	            span.End();
 				_reporter.Report(span);
             }
         }

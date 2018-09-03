@@ -74,7 +74,7 @@ namespace Zipkin.NET.Middleware
 
         private async Task InvokeAsync(HttpContext context, RequestDelegate next, Span span)
         {
-            span.RecordStartTime();
+            span.Start();
 
             try
             {
@@ -88,7 +88,7 @@ namespace Zipkin.NET.Middleware
 			}
             finally
             {
-                span.RecordDuration();
+                span.End();
                 _reporter.Report(span);
             }
         }

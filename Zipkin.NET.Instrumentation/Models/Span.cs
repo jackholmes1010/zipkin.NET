@@ -138,7 +138,7 @@ namespace Zipkin.NET.Instrumentation.Models
 	    /// <summary>
 	    /// Record the start time and start duration timer.
 	    /// </summary>
-	    public void RecordStartTime()
+	    public void Start()
 	    {
 		    StartTime = DateTime.Now;
 		    _timer = new Stopwatch();
@@ -148,7 +148,7 @@ namespace Zipkin.NET.Instrumentation.Models
 	    /// <summary>
 	    /// Calculate the duration from the time the  start time was recorded.
 	    /// </summary>
-	    public void RecordDuration()
+	    public void End()
 	    {
 		    if (_timer == null)
 			    return;
@@ -172,6 +172,17 @@ namespace Zipkin.NET.Instrumentation.Models
 			    Tags = new Dictionary<string, string>();
 
 		    Tags.Add(name, value);
+	    }
+
+		/// <summary>
+		/// Add error context information to a span.
+		/// </summary>
+		/// <param name="message">
+		/// The error message.
+		/// </param>
+	    public void Error(string message)
+	    {
+			Tag("error", message);
 	    }
 
 	    /// <summary>
