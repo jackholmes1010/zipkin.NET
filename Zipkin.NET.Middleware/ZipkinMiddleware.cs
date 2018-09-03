@@ -52,40 +52,40 @@ namespace Zipkin.NET.Middleware
             // Extract X-B3 headers
             var traceContext = _propagator
                 .Extract(context)
-                .Refresh();
+                .StartNew();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
             _traceContextAccessor.Context = traceContext;
 
 			var serverTrace = new ServerTrace(
-				traceContext, context.Request.Method, new Endpoint
+				traceContext, 
+				context.Request.Method, 
+				localEndpoint: new Endpoint
 				{
 					ServiceName = _applicationName
 				});
 
-            await InvokeAsync(context, next, serverTrace);
-        }
+			// Record server recieve start time and start duration timer
+	        serverTrace.RecordStart();
 
-        private async Task InvokeAsync(HttpContext context, RequestDelegate next, Trace trace)
-        {
-	        trace.Start();
+	        try
+	        {
+		        await next(context);
 
-            try
-            {
-                // Call the next delegate/middleware in the pipeline
-                await next(context);
-            }
-            catch (Exception ex)
-            {
-	            trace.Tag("exception", ex.Message);
-                throw;
-            }
-            finally
-            {
-	            trace.End();
-                _reporter.Report(trace.Span);
-            }
-        }
+	        }
+	        catch (Exception ex)
+	        {
+		        serverTrace.RecordError(ex.Message);
+				throw;
+	        }
+	        finally
+	        {
+		        serverTrace.RecordEnd();
+
+				// Report completed span to Zipkin
+		        _reporter.Report(serverTrace.Span);
+	        }
+		}
     }
 }

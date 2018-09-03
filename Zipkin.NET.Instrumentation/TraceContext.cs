@@ -58,7 +58,7 @@
         /// The same trace with a new span ID and the
         /// parent span ID is equal to the previous span ID.
         /// </returns>
-        public TraceContext Refresh()
+        public TraceContext StartNew()
         {
             TraceId = TraceId ?? _traceIdGenerator.GenerateId();
             ParentSpanId = SpanId ?? _traceIdGenerator.GenerateId();

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
-using Trace = Zipkin.NET.Instrumentation.Trace;
 
 namespace Zipkin.NET.Middleware
 {
@@ -52,9 +51,12 @@ namespace Zipkin.NET.Middleware
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceContextAccessor.Context.Refresh();
+            var traceContext = _traceContextAccessor.Context.StartNew();
 
-	        var clientTrace = new ClientTrace(
+	        // Add X-B3 headers to the outgoing request
+	        request = _propagator.Inject(request, traceContext);
+
+			var clientTrace = new ClientTrace(
 		        traceContext, 
 		        request.Method.ToString(), 
 		        remoteEndpoint: new Endpoint
@@ -62,32 +64,25 @@ namespace Zipkin.NET.Middleware
 			        ServiceName = _applicationName
 		        });
 
-	        // Add X-B3 headers to the outgoing request
-	        request = _propagator.Inject(request, traceContext);
+			// Record client send time and start duration timer
+	        clientTrace.RecordStart();
 
-			return await SendAsync(request, cancellationToken, clientTrace);
-        }
+	        try
+	        {
+		        return await base.SendAsync(request, cancellationToken);
+	        }
+	        catch (Exception ex)
+	        {
+		        clientTrace.RecordError(ex.Message);
+		        throw;
+	        }
+	        finally
+	        {
+		        clientTrace.RecordEnd();
 
-        private async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken, Trace trace)
-        {
-            trace.Start();
-
-            try
-            {
-                var result = await base.SendAsync(request, cancellationToken);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                trace.Error(ex.Message);
-                throw;
-            }
-            finally
-            {
-                trace.End();
-                _reporter.Report(trace.Span);
-            }
-        }
+		        // Report completed span to Zipkin
+				_reporter.Report(clientTrace.Span);
+	        }
+		}
     }
 }

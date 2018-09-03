@@ -14,7 +14,7 @@ namespace Zipkin.NET.Middleware
             services.AddSingleton<ITraceIdentifierGenerator, TraceIdentifierGenerator>();
             services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender, HttpSender>();
-            services.AddTransient<ITraceContextAccessor, TraceContextAccessor>();
+            services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
             services.AddTransient<IB3Propagator, B3Propagator>();
 
             // Register middleware

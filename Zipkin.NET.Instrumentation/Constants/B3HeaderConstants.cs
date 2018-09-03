@@ -1,4 +1,4 @@
-﻿namespace Zipkin.NET.Instrumentation
+﻿namespace Zipkin.NET.Instrumentation.Constants
 {
     public class B3HeaderConstants
     {

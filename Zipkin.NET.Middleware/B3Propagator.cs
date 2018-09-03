@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
+using Zipkin.NET.Instrumentation.Constants;
 
 namespace Zipkin.NET.Middleware
 {
@@ -32,6 +33,16 @@ namespace Zipkin.NET.Middleware
                 traceContext.SpanId = value;
             }
 
+	        if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
+	        {
+		        traceContext.Sampled = value == "1";
+	        }
+
+	        if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
+	        {
+		        traceContext.Debug = value == "1";
+	        }
+
             return traceContext;
         }
 
@@ -47,9 +58,11 @@ namespace Zipkin.NET.Middleware
         /// <returns></returns>
         public HttpRequestMessage Inject(HttpRequestMessage request, TraceContext traceContext)
         {
-            request.Headers.Add("X-B3-TraceId", traceContext.TraceId);
-            request.Headers.Add("X-B3-SpanId", traceContext.SpanId);
-            request.Headers.Add("X-B3-ParentSpanId", traceContext.ParentSpanId);
+            request.Headers.Add(B3HeaderConstants.TraceId, traceContext.TraceId);
+            request.Headers.Add(B3HeaderConstants.SpanId, traceContext.SpanId);
+            request.Headers.Add(B3HeaderConstants.ParentSpanId, traceContext.ParentSpanId);
+            request.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled ? "1" : "0");
+            request.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug ? "1" : "0");
             return request;
         }
     }
