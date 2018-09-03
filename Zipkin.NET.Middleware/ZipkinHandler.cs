@@ -79,17 +79,17 @@ namespace Zipkin.NET.Middleware
             try
             {
                 var result = await base.SendAsync(request, cancellationToken);
-                return result;
+				return result;
             }
             catch (Exception ex)
             {
-                // Add annotation?
-                throw ex;
+                span.Tag("exception", ex.Message);
+	            throw;
             }
             finally
             {
-                span.RecordDuration();
-                _reporter.Report(span);
+	            span.RecordDuration();
+				_reporter.Report(span);
             }
         }
     }

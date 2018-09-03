@@ -83,9 +83,9 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-                // Add annotation?
-                throw ex;
-            }
+				span.Tag("exception", ex.Message);
+	            throw;
+			}
             finally
             {
                 span.RecordDuration();
