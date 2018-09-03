@@ -17,16 +17,16 @@ namespace Zipkin.NET.Instrumentation.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
-		private Stopwatch _timer;
+        private Stopwatch _timer;
 
-	    public Span(TraceContext trace)
-	    {
-		    Id = trace.SpanId;
-		    TraceId = trace.TraceId;
-		    ParentId = trace.ParentSpanId;
-	    }
+        public Span(TraceContext trace)
+        {
+            Id = trace.SpanId;
+            TraceId = trace.TraceId;
+            ParentId = trace.ParentSpanId;
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
         /// </summary>
         /// <remarks>
@@ -129,74 +129,74 @@ namespace Zipkin.NET.Instrumentation.Models
         [JsonProperty("annotations")]
         public IList<Annotation> Annotations { get; private set; }
 
-		/// <summary>
-		/// Adds context to a span, for search, viewing and analysis.
-		/// </summary>
-		[JsonProperty("tags")]
-		public IDictionary<string, string> Tags { get; private set; }
+        /// <summary>
+        /// Adds context to a span, for search, viewing and analysis.
+        /// </summary>
+        [JsonProperty("tags")]
+        public IDictionary<string, string> Tags { get; private set; }
 
-	    /// <summary>
-	    /// Record the start time and start duration timer.
-	    /// </summary>
-	    public void Start()
-	    {
-		    StartTime = DateTime.Now;
-		    _timer = new Stopwatch();
-		    _timer.Start();
-	    }
+        /// <summary>
+        /// Record the start time and start duration timer.
+        /// </summary>
+        public void Start()
+        {
+            StartTime = DateTime.Now;
+            _timer = new Stopwatch();
+            _timer.Start();
+        }
 
-	    /// <summary>
-	    /// Calculate the duration from the time the  start time was recorded.
-	    /// </summary>
-	    public void End()
-	    {
-		    if (_timer == null)
-			    return;
+        /// <summary>
+        /// Calculate the duration from the time the  start time was recorded.
+        /// </summary>
+        public void End()
+        {
+            if (_timer == null)
+                return;
 
-		    _timer.Stop();
-		    Duration = _timer.Elapsed;
-	    }
+            _timer.Stop();
+            Duration = _timer.Elapsed;
+        }
 
-	    /// <summary>
-	    /// Add additional context information to a span.
-	    /// </summary>
-	    /// <param name="name">
-	    /// The tag key. This should be unique.
-	    /// </param>
-	    /// <param name="value">
-	    /// The tag value.
-	    /// </param>
-	    public void Tag(string name, string value)
-	    {
-		    if (Tags == null)
-			    Tags = new Dictionary<string, string>();
+        /// <summary>
+        /// Add additional context information to a span.
+        /// </summary>
+        /// <param name="name">
+        /// The tag key. This should be unique.
+        /// </param>
+        /// <param name="value">
+        /// The tag value.
+        /// </param>
+        public void Tag(string name, string value)
+        {
+            if (Tags == null)
+                Tags = new Dictionary<string, string>();
 
-		    Tags.Add(name, value);
-	    }
+            Tags.Add(name, value);
+        }
 
-		/// <summary>
-		/// Add error context information to a span.
-		/// </summary>
-		/// <param name="message">
-		/// The error message.
-		/// </param>
-	    public void Error(string message)
-	    {
-			Tag("error", message);
-	    }
+        /// <summary>
+        /// Add error context information to a span.
+        /// </summary>
+        /// <param name="message">
+        /// The error message.
+        /// </param>
+        public void Error(string message)
+        {
+            Tag("error", message);
+        }
 
-	    /// <summary>
-	    /// Add an event that explains latency with a timestamp.
-	    /// </summary>
-	    /// <param name="annotation">
-	    /// The value and associated timestamp.
-	    /// </param>
-	    public void Annotate(Annotation annotation)
-	    {
-		    if (Annotations == null)
-			    Annotations = new List<Annotation>();
+        /// <summary>
+        /// Add an event that explains latency with a timestamp.
+        /// </summary>
+        /// <param name="annotation">
+        /// The value and associated timestamp.
+        /// </param>
+        public void Annotate(Annotation annotation)
+        {
+            if (Annotations == null)
+                Annotations = new List<Annotation>();
 
-		    Annotations.Add(annotation);
-	    }
-	}
+            Annotations.Add(annotation);
+        }
+    }
 }

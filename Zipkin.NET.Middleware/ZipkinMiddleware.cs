@@ -83,9 +83,9 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-				span.Tag("exception", ex.Message);
-	            throw;
-			}
+                span.Tag("exception", ex.Message);
+                throw;
+            }
             finally
             {
                 span.End();
