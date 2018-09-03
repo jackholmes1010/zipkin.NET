@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
-using Trace = Zipkin.NET.Instrumentation.Trace;
 
 namespace Zipkin.NET.Middleware
 {
@@ -58,34 +57,34 @@ namespace Zipkin.NET.Middleware
             // later retrieve the values for the client trace.
             _traceContextAccessor.Context = traceContext;
 
-			var serverTrace = new ServerTrace(
-				traceContext, 
-				context.Request.Method, 
-				localEndpoint: new Endpoint
-				{
-					ServiceName = _applicationName
-				});
+            var serverTrace = new ServerTrace(
+                traceContext, 
+                context.Request.Method, 
+                localEndpoint: new Endpoint
+                {
+                    ServiceName = _applicationName
+                });
 
-			// Record server recieve start time and start duration timer
-	        serverTrace.RecordStart();
+            // Record server recieve start time and start duration timer
+            serverTrace.RecordStart();
 
-	        try
-	        {
-		        await next(context);
+            try
+            {
+                await next(context);
 
-	        }
-	        catch (Exception ex)
-	        {
-		        serverTrace.RecordError(ex.Message);
-				throw;
-	        }
-	        finally
-	        {
-		        serverTrace.RecordEnd();
+            }
+            catch (Exception ex)
+            {
+                serverTrace.RecordError(ex.Message);
+                throw;
+            }
+            finally
+            {
+                serverTrace.RecordEnd();
 
-				// Report completed span to Zipkin
-		        _reporter.Report(serverTrace.Span);
-	        }
-		}
+                // Report completed span to Zipkin
+                _reporter.Report(serverTrace.Span);
+            }
+        }
     }
 }

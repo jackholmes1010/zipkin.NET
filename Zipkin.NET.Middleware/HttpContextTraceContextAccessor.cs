@@ -3,9 +3,9 @@ using Zipkin.NET.Instrumentation;
 
 namespace Zipkin.NET.Middleware
 {
-	/// <summary>
-	/// Retrieves and saves the current <see cref="TraceContext"/> to and from the <see cref="HttpContext"/>.
-	/// </summary>
+    /// <summary>
+    /// Retrieves and saves the current <see cref="TraceContext"/> to and from the <see cref="HttpContext"/>.
+    /// </summary>
     public class HttpContextTraceContextAccessor : ITraceContextAccessor
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -15,9 +15,9 @@ namespace Zipkin.NET.Middleware
             _httpContextAccessor = httpContextAccessor;
         }
 
-		/// <summary>
-		/// The <see cref="TraceContext"/> stored on the <see cref="HttpContext"/>.
-		/// </summary>
+        /// <summary>
+        /// The <see cref="TraceContext"/> stored on the <see cref="HttpContext"/>.
+        /// </summary>
         public TraceContext Context
         {
             get => _httpContextAccessor.HttpContext.Items["server-trace"] as TraceContext;

@@ -7,13 +7,14 @@ namespace Zipkin.NET.Middleware
 {
     public static class ZipkinServiceCollectionExtensions
     {
-        public static IServiceCollection AddZipkin(this IServiceCollection services, string applicationName)
+        public static IServiceCollection AddZipkin(
+            this IServiceCollection services, string applicationName, string zipkinHost)
         {
             // TODO is this needed?
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ITraceIdentifierGenerator, TraceIdentifierGenerator>();
             services.AddTransient<IReporter, Reporter>();
-            services.AddTransient<ISender, HttpSender>();
+            services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
             services.AddTransient<IB3Propagator, B3Propagator>();
 

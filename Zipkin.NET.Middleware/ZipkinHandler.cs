@@ -53,36 +53,36 @@ namespace Zipkin.NET.Middleware
         {
             var traceContext = _traceContextAccessor.Context.StartNew();
 
-	        // Add X-B3 headers to the outgoing request
-	        request = _propagator.Inject(request, traceContext);
+            // Add X-B3 headers to the outgoing request
+            request = _propagator.Inject(request, traceContext);
 
-			var clientTrace = new ClientTrace(
-		        traceContext, 
-		        request.Method.ToString(), 
-		        remoteEndpoint: new Endpoint
-		        {
-			        ServiceName = _applicationName
-		        });
+            var clientTrace = new ClientTrace(
+                traceContext, 
+                request.Method.ToString(), 
+                remoteEndpoint: new Endpoint
+                {
+                    ServiceName = _applicationName
+                });
 
-			// Record client send time and start duration timer
-	        clientTrace.RecordStart();
+            // Record client send time and start duration timer
+            clientTrace.RecordStart();
 
-	        try
-	        {
-		        return await base.SendAsync(request, cancellationToken);
-	        }
-	        catch (Exception ex)
-	        {
-		        clientTrace.RecordError(ex.Message);
-		        throw;
-	        }
-	        finally
-	        {
-		        clientTrace.RecordEnd();
+            try
+            {
+                return await base.SendAsync(request, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                clientTrace.RecordError(ex.Message);
+                throw;
+            }
+            finally
+            {
+                clientTrace.RecordEnd();
 
-		        // Report completed span to Zipkin
-				_reporter.Report(clientTrace.Span);
-	        }
-		}
+                // Report completed span to Zipkin
+                _reporter.Report(clientTrace.Span);
+            }
+        }
     }
 }

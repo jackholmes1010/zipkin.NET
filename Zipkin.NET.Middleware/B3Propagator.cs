@@ -33,15 +33,15 @@ namespace Zipkin.NET.Middleware
                 traceContext.SpanId = value;
             }
 
-	        if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
-	        {
-		        traceContext.Sampled = value == "1";
-	        }
+            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
+            {
+                traceContext.Sampled = value == "1";
+            }
 
-	        if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
-	        {
-		        traceContext.Debug = value == "1";
-	        }
+            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
+            {
+                traceContext.Debug = value == "1";
+            }
 
             return traceContext;
         }

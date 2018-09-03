@@ -5,97 +5,97 @@ using Zipkin.NET.Instrumentation.Models;
 
 namespace Zipkin.NET.Instrumentation
 {
-	/// <summary>
-	/// Base trace class acting as a convenience wrapper around a <see cref="Models.Span"/>.
-	/// </summary>
-	public abstract class Trace
-	{
-		private Stopwatch _timer;
+    /// <summary>
+    /// Base trace class acting as a convenience wrapper around a <see cref="Models.Span"/>.
+    /// </summary>
+    public abstract class Trace
+    {
+        private Stopwatch _timer;
 
-		protected Trace(
-			TraceContext traceContext, 
-			string name,
-			Endpoint localEndpoint = null, 
-			Endpoint remoteEndpoint = null)
-		{
-			Span = new Span
-			{
-				Name = name,
-				Id = traceContext.SpanId,
-				TraceId = traceContext.TraceId,
-				ParentId = traceContext.ParentSpanId,
-				LocalEndpoint = localEndpoint,
-				RemoteEndpoint = remoteEndpoint
-			};
-		}
+        protected Trace(
+            TraceContext traceContext, 
+            string name,
+            Endpoint localEndpoint = null, 
+            Endpoint remoteEndpoint = null)
+        {
+            Span = new Span
+            {
+                Name = name,
+                Id = traceContext.SpanId,
+                TraceId = traceContext.TraceId,
+                ParentId = traceContext.ParentSpanId,
+                LocalEndpoint = localEndpoint,
+                RemoteEndpoint = remoteEndpoint
+            };
+        }
 
-		/// <summary>
-		/// The span associated with this trace.
-		/// </summary>
-		public Span Span { get; }
+        /// <summary>
+        /// The span associated with this trace.
+        /// </summary>
+        public Span Span { get; }
 
-		/// <summary>
-		/// Record the start time and start duration timer.
-		/// </summary>
-		public void RecordStart()
-		{
-			Span.StartTime = DateTime.Now;
-			_timer = new Stopwatch();
-			_timer.Start();
-		}
+        /// <summary>
+        /// Record the start time and start duration timer.
+        /// </summary>
+        public void RecordStart()
+        {
+            Span.StartTime = DateTime.Now;
+            _timer = new Stopwatch();
+            _timer.Start();
+        }
 
-		/// <summary>
-		/// Calculate the duration from the time the  start time was recorded.
-		/// </summary>
-		public void RecordEnd()
-		{
-			if (_timer == null)
-				return;
+        /// <summary>
+        /// Calculate the duration from the time the  start time was recorded.
+        /// </summary>
+        public void RecordEnd()
+        {
+            if (_timer == null)
+                return;
 
-			_timer.Stop();
-			Span.Duration = _timer.Elapsed;
-		}
+            _timer.Stop();
+            Span.Duration = _timer.Elapsed;
+        }
 
-		/// <summary>
-		/// Add additional context information to a trace.
-		/// </summary>
-		/// <param name="name">
-		/// The tag key. This should be unique.
-		/// </param>
-		/// <param name="value">
-		/// The tag value.
-		/// </param>
-		public void Tag(string name, string value)
-		{
-			if (Span.Tags == null)
-				Span.Tags = new Dictionary<string, string>();
+        /// <summary>
+        /// Add additional context information to a trace.
+        /// </summary>
+        /// <param name="name">
+        /// The tag key. This should be unique.
+        /// </param>
+        /// <param name="value">
+        /// The tag value.
+        /// </param>
+        public void Tag(string name, string value)
+        {
+            if (Span.Tags == null)
+                Span.Tags = new Dictionary<string, string>();
 
-			Span.Tags.Add(name, value);
-		}
+            Span.Tags.Add(name, value);
+        }
 
-		/// <summary>
-		/// Add error context information to a trace.
-		/// </summary>
-		/// <param name="message">
-		/// The error message.
-		/// </param>
-		public void RecordError(string message)
-		{
-			Tag("error", message);
-		}
+        /// <summary>
+        /// Add error context information to a trace.
+        /// </summary>
+        /// <param name="message">
+        /// The error message.
+        /// </param>
+        public void RecordError(string message)
+        {
+            Tag("error", message);
+        }
 
-		/// <summary>
-		/// Add an event that explains latency with a timestamp.
-		/// </summary>
-		/// <param name="annotation">
-		/// The value and associated timestamp.
-		/// </param>
-		public void Annotate(Annotation annotation)
-		{
-			if (Span.Annotations == null)
-				Span.Annotations = new List<Annotation>();
+        /// <summary>
+        /// Add an event that explains latency with a timestamp.
+        /// </summary>
+        /// <param name="annotation">
+        /// The value and associated timestamp.
+        /// </param>
+        public void Annotate(Annotation annotation)
+        {
+            if (Span.Annotations == null)
+                Span.Annotations = new List<Annotation>();
 
-			Span.Annotations.Add(annotation);
-		}
-	}
+            Span.Annotations.Add(annotation);
+        }
+    }
 }
