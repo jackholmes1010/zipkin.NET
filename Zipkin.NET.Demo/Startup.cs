@@ -22,7 +22,7 @@ namespace Zipkin.NET.Demo
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Register Zipkin dependencies
-            services.AddZipkin("test-api", "http://localhost:9411");
+            services.AddZipkin("test-api", "http://localhost:8888");
 
             // Register ZipkinHandler for HttpClients
             services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");

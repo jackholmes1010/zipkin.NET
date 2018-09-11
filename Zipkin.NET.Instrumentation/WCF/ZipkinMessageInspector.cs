@@ -1,8 +1,8 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation.Constants;
+using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.Instrumentation.WCF
@@ -38,7 +38,11 @@ namespace Zipkin.NET.Instrumentation.WCF
 			httpRequest.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled == true ? "1" : "0");
 			httpRequest.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug == true ? "1" : "0");
 
-			_trace = new ClientTrace(traceContext, "soap");
+			_trace = new ClientTrace(traceContext, "soap", remoteEndpoint: new Endpoint
+			{
+				ServiceName = "wcf-service"
+			});
+
 			_trace.Start();
 
 			return null;

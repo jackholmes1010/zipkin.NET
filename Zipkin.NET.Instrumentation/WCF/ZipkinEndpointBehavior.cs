@@ -31,7 +31,7 @@ namespace Zipkin.NET.Instrumentation.WCF
 		public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 			var traceContextAccessor = new HttpContextTraceContextAccessor(new HttpContextAccessor());
-			var reporter = new Reporter(new HttpSender("http://localhost:9411"));
+			var reporter = new Reporter(new HttpSender("http://localhost:8888"));
 			clientRuntime.ClientMessageInspectors.Add(new ZipkinMessageInspector(traceContextAccessor, reporter));
 		}
 	}

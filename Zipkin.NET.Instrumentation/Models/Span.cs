@@ -92,7 +92,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <remarks>
         /// This is true when the X-B3-Flags header has a value of 1.
         /// </remarks>
-        [JsonProperty("false")]
+        [JsonProperty("debug")]
         public bool Debug { get; set; }
 
         /// <summary>

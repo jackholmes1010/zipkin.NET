@@ -3,6 +3,7 @@ using System.Linq;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Instrumentation;
+using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 using Zipkin.NET.Instrumentation.Sampling;
 
@@ -44,16 +45,17 @@ namespace Zipkin.NET.WCF.Demo
 				traceContext.Sampled = sampled == "1";
 			}
 
-			var trace = new ServerTrace(traceContext, "soap");
+			var trace = new ServerTrace(traceContext, "soap", localEndpoint: new Endpoint
+			{
+				ServiceName = "wcf-service"
+			});
 
 			trace.Start();
+			var reporter = new Reporter(new HttpSender("http://localhost:8888"));
 
 			// Do stuff before call
 			var res = _originalInvoker.Invoke(instance, inputs, out outputs);
-
 			trace.End();
-
-			var reporter = new Reporter(new HttpSender("http://localhost:9411"));
 			reporter.Report(trace.Span);
 
 			// stuff after call

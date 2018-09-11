@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Threading;
 
 namespace Zipkin.NET.WCF.Demo
 {
@@ -15,6 +16,7 @@ namespace Zipkin.NET.WCF.Demo
 	{
 		public string GetData(int value)
 		{
+			Thread.Sleep(500);
 			return string.Format("You entered: {0}", value);
 		}
 
