@@ -53,6 +53,8 @@ namespace Zipkin.NET.Instrumentation
 
 	    /// <summary>
 	    /// The sampled value associated with the current trace.
+	    /// This SHOULD NOT be set unless a sampling decision has
+	    /// already been made by an upstream service.
 	    /// </summary>
 	    /// <remarks>
 	    /// If this is not set explicitly, a sampling

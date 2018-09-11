@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Zipkin.NET.WCF.Demo.DataService" CodeBehind="DataService.svc.cs" %>

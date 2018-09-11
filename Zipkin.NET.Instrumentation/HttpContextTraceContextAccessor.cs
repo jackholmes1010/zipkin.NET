@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Zipkin.NET.Instrumentation;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Instrumentation
 {
     /// <summary>
     /// Retrieves and saves the current <see cref="TraceContext"/> to and from the <see cref="HttpContext"/>.

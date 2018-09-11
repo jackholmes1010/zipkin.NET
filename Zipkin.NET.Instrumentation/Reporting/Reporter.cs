@@ -49,7 +49,7 @@ namespace Zipkin.NET.Instrumentation.Reporting
             {
                 await _sender.SendSpansAsync(new List<Span> {span});
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO Maybe log exception?
             }

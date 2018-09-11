@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Zipkin.NET.Instrumentation
@@ -7,15 +8,21 @@ namespace Zipkin.NET.Instrumentation
     {
         public string GenerateId()
         {
-            // TODO this is stupid
-            var random = new Random();
-            var builder = new StringBuilder();
-            for (var i = 0; i < 16; i++)
-            {
-                builder.Append(random.Next(0, 15).ToString("X").ToLower());
-            }
+			// TODO this is stupid
+			var random = new Random();
+			var builder = new StringBuilder();
+			for (var i = 0; i < 16; i++)
+			{
+				builder.Append(random.Next(0, 15).ToString("X").ToLower());
+			}
 
-            return builder.ToString();
-        }
+			return builder.ToString();
+
+			//      var bytes = new byte[8];
+			//      var cryptoProvider = new RNGCryptoServiceProvider();
+			//cryptoProvider.GetBytes(bytes);
+			//      var id = BitConverter.ToString(bytes);
+			//      return id.Replace("-", string.Empty);
+		}
     }
 }
