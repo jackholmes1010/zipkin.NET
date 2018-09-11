@@ -51,7 +51,7 @@ namespace Zipkin.NET.Middleware
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceContextAccessor.Context.StartNew();
+            var traceContext = _traceContextAccessor.Context.NewChild();
 
             // Add X-B3 headers to the outgoing request
             request = _propagator.Inject(request, traceContext);
@@ -65,7 +65,7 @@ namespace Zipkin.NET.Middleware
                 });
 
             // Record client send time and start duration timer
-            clientTrace.RecordStart();
+            clientTrace.Start();
 
             try
             {
@@ -73,16 +73,17 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-                clientTrace.RecordError(ex.Message);
+                clientTrace.Error(ex.Message);
                 throw;
             }
             finally
             {
-                clientTrace.RecordEnd();
+                clientTrace.End();
 
-                // Report completed span to Zipkin
-                _reporter.Report(clientTrace.Span);
-            }
+                if (traceContext.Sample())
+	                // Report completed span to Zipkin
+	                _reporter.Report(clientTrace.Span);
+			}
         }
     }
 }

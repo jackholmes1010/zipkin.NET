@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
@@ -13,7 +14,8 @@ namespace Zipkin.NET.Middleware
             // TODO is this needed?
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ITraceIdentifierGenerator, TraceIdentifierGenerator>();
-            services.AddTransient<IReporter, Reporter>();
+	        services.AddSingleton<ISampler, DebugSampler>();
+			services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
             services.AddTransient<IB3Propagator, B3Propagator>();

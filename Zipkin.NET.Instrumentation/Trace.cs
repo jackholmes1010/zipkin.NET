@@ -37,7 +37,7 @@ namespace Zipkin.NET.Instrumentation
         /// <summary>
         /// Record the start time and start duration timer.
         /// </summary>
-        public void RecordStart()
+        public void Start()
         {
             Span.StartTime = DateTime.Now;
             _timer = new Stopwatch();
@@ -47,7 +47,7 @@ namespace Zipkin.NET.Instrumentation
         /// <summary>
         /// Calculate the duration from the time the  start time was recorded.
         /// </summary>
-        public void RecordEnd()
+        public void End()
         {
             if (_timer == null)
                 return;
@@ -79,7 +79,7 @@ namespace Zipkin.NET.Instrumentation
         /// <param name="message">
         /// The error message.
         /// </param>
-        public void RecordError(string message)
+        public void Error(string message)
         {
             Tag("error", message);
         }

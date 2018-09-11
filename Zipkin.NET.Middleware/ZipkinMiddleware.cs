@@ -51,7 +51,7 @@ namespace Zipkin.NET.Middleware
             // Extract X-B3 headers
             var traceContext = _propagator
                 .Extract(context)
-                .StartNew();
+                .NewChild();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
@@ -66,7 +66,7 @@ namespace Zipkin.NET.Middleware
                 });
 
             // Record server recieve start time and start duration timer
-            serverTrace.RecordStart();
+            serverTrace.Start();
 
             try
             {
@@ -75,16 +75,17 @@ namespace Zipkin.NET.Middleware
             }
             catch (Exception ex)
             {
-                serverTrace.RecordError(ex.Message);
+                serverTrace.Error(ex.Message);
                 throw;
             }
             finally
             {
-                serverTrace.RecordEnd();
+                serverTrace.End();
 
-                // Report completed span to Zipkin
-                _reporter.Report(serverTrace.Span);
-            }
+                if (traceContext.Sample())
+	                // Report completed span to Zipkin
+	                _reporter.Report(serverTrace.Span);
+			}
         }
     }
 }

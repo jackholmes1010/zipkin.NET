@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
@@ -10,7 +11,16 @@ namespace Zipkin.NET.Middleware
     /// </summary>
     public class B3Propagator : IB3Propagator
     {
-        /// <summary>
+	    private readonly ITraceIdentifierGenerator _traceIdGenerator;
+	    private readonly ISampler _sampler;
+
+	    public B3Propagator(ITraceIdentifierGenerator traceIdGenerator, ISampler sampler)
+	    {
+		    _traceIdGenerator = traceIdGenerator;
+		    _sampler = sampler;
+	    }
+
+	    /// <summary>
         /// Extracts the X-B3 trace ID header values from the request.
         /// </summary>
         /// <param name="httpContext">
@@ -20,30 +30,38 @@ namespace Zipkin.NET.Middleware
         /// A <see cref="TraceContext"/> containing the header values.
         /// </returns>
         public TraceContext Extract(HttpContext httpContext)
-        {
-            var traceContext = new TraceContext();
-
-            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
+	    {
+		    string traceId = null;
+			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
             {
-                traceContext.TraceId = value;
+                traceId = value;
             }
 
-            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.SpanId, out value))
+		    string spanId = null;
+			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.SpanId, out value))
             {
-                traceContext.SpanId = value;
+                spanId = value;
             }
 
-            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
+		    bool? sampled = null;
+			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
             {
-                traceContext.Sampled = value == "1";
+                sampled = value == "1";
             }
 
-            if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
+		    bool? debug = null;
+			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
             {
-                traceContext.Debug = value == "1";
+                debug = value == "1";
             }
 
-            return traceContext;
+            return new TraceContext(_traceIdGenerator, _sampler)
+            {
+				TraceId = traceId,
+				SpanId = spanId,
+				Sampled = sampled,
+				Debug = debug
+            };
         }
 
         /// <summary>
@@ -61,8 +79,8 @@ namespace Zipkin.NET.Middleware
             request.Headers.Add(B3HeaderConstants.TraceId, traceContext.TraceId);
             request.Headers.Add(B3HeaderConstants.SpanId, traceContext.SpanId);
             request.Headers.Add(B3HeaderConstants.ParentSpanId, traceContext.ParentSpanId);
-            request.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled ? "1" : "0");
-            request.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug ? "1" : "0");
+            request.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled ==true ? "1" : "0");
+            request.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug == true ? "1" : "0");
             return request;
         }
     }
