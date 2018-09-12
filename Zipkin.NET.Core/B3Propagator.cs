@@ -6,10 +6,10 @@ using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
-	/// <summary>
-	/// Injects trace context into an <see cref="HttpRequestMessage"/>.
-	/// </summary>
-	public class B3Propagator : IPropagator<HttpRequestMessage>
+    /// <summary>
+    /// Injects trace context into an <see cref="HttpRequestMessage"/>.
+    /// </summary>
+    public class B3Propagator : IPropagator<HttpRequestMessage>
     {
         private readonly ISampler _sampler;
 

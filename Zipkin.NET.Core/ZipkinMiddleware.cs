@@ -17,7 +17,7 @@ namespace Zipkin.NET.Core
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
-	    private readonly IExtractor<HttpRequest> _extractor;
+        private readonly IExtractor<HttpRequest> _extractor;
 
         public ZipkinMiddleware(
             string applicationName,
@@ -28,7 +28,7 @@ namespace Zipkin.NET.Core
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;
-	        _extractor = extractor;
+            _extractor = extractor;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Zipkin.NET.Core
         {
             // Extract X-B3 headers
             var traceContext = _extractor
-				.Extract(context.Request)
+                .Extract(context.Request)
                 .NewChild();
 
             // Record the server trace context so we can

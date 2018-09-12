@@ -26,8 +26,8 @@ namespace Zipkin.NET.Core
             string applicationName,
             IReporter reporter, 
             ITraceContextAccessor traceContextAccessor,
-			IPropagator<HttpRequestMessage> propagator)
-		{
+            IPropagator<HttpRequestMessage> propagator)
+        {
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;

@@ -15,12 +15,12 @@ namespace Zipkin.NET.Core
         {
             // TODO is this needed?
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-	        services.AddSingleton<ISampler, DebugSampler>();
-			services.AddTransient<IReporter, Reporter>();
+            services.AddSingleton<ISampler, DebugSampler>();
+            services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
-	        services.AddTransient<IPropagator<HttpRequestMessage>, B3Propagator>();
-	        services.AddTransient<IExtractor<HttpRequest>, B3Extractor>();
+            services.AddTransient<IPropagator<HttpRequestMessage>, B3Propagator>();
+            services.AddTransient<IExtractor<HttpRequest>, B3Extractor>();
 
             // Register middleware
             services.AddTransient(provider =>
