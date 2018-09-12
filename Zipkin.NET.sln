@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Clients.WCF", "Z
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF", "Zipkin.NET.WCF\Zipkin.NET.WCF.csproj", "{090D0A58-04CE-4EE4-9A74-C0569E0B1497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN", "Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj", "{535DB3B4-1C93-4B67-943E-871C00B24705}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.OWIN", "Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj", "{535DB3B4-1C93-4B67-943E-871C00B24705}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
