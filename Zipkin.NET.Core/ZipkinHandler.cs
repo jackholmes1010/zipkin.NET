@@ -57,7 +57,8 @@ namespace Zipkin.NET.Core
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceContextAccessor.Context;
+			// Create a new client trace from the existing server trace
+            var traceContext = _traceContextAccessor.Context.NewChildTrace();
 
             // Add X-B3 headers to the outgoing request
             request = _propagator.Inject(request, traceContext);
@@ -70,8 +71,6 @@ namespace Zipkin.NET.Core
                 {
                     ServiceName = _applicationName
                 });
-
-            clientTrace.NewChild();
 
             // Record client send time and start duration timer
             clientTrace.Start();

@@ -25,7 +25,7 @@ namespace Zipkin.NET.WCF
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
             var reporter = new Reporter(new HttpSender(_zipkinHost));
-            var extractor = new B3Extractor(new DebugSampler());
+            var extractor = new B3Extractor();
 
             dispatchOperation.Invoker = new ZipkinInvoker(
                 _applicationName, dispatchOperation.Invoker, reporter, extractor);

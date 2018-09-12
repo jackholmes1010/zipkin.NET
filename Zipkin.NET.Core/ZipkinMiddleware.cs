@@ -55,7 +55,8 @@ namespace Zipkin.NET.Core
         {
             // Extract X-B3 headers
             var traceContext = _extractor
-                .Extract(context.Request);
+                .Extract(context.Request)
+	            .NewChildTrace();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
@@ -69,8 +70,6 @@ namespace Zipkin.NET.Core
                 {
                     ServiceName = _applicationName
                 });
-
-            serverTrace.NewChild();
 
             // Record server recieve start time and start duration timer
             serverTrace.Start();

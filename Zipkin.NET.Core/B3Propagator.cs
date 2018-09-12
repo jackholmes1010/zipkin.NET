@@ -11,13 +11,6 @@ namespace Zipkin.NET.Core
     /// </summary>
     public class B3Propagator : IPropagator<HttpRequestMessage>
     {
-        private readonly ISampler _sampler;
-
-        public B3Propagator(ISampler sampler)
-        {
-            _sampler = sampler;
-        }
-
         /// <summary>
         /// Adds X-B3 header values to an outgoing HTTP request.
         /// </summary>

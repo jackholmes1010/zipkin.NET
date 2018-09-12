@@ -44,7 +44,7 @@ namespace Zipkin.NET.Clients.WCF
         /// <inheritdoc />
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var traceContext = _traceContextAccessor.Context;
+            var traceContext = _traceContextAccessor.Context.NewChildTrace();
 
             var httpRequest = ExtractHttpRequest(request);
 
@@ -59,8 +59,6 @@ namespace Zipkin.NET.Clients.WCF
                 {
                     ServiceName = _applicationName
                 });
-
-            _trace.NewChild();
 
             _trace.Start();
 

@@ -35,7 +35,8 @@ namespace Zipkin.NET.OWIN
         {
             // Extract X-B3 headers
             var traceContext = _extractor
-                .Extract(context);
+                .Extract(context)
+	            .NewChildTrace();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.

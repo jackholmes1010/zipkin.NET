@@ -2,7 +2,6 @@
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Propagation;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.WCF
 {

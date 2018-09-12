@@ -16,6 +16,7 @@ namespace Zipkin.NET.Instrumentation
 
         private Stopwatch _timer;
         private bool? _sampled;
+	    private Span _span;
 
         protected Trace(
             ISampler sampler,
@@ -52,10 +53,10 @@ namespace Zipkin.NET.Instrumentation
             };
         }
 
-        /// <summary>
-        /// The span associated with this trace.
-        /// </summary>
-        public Span Span { get; }
+	    /// <summary>
+	    /// The span associated with this trace.
+	    /// </summary>
+	    public Span Span { get; }
 
         /// <summary>
         /// Trace ID's associated with the current trace.
@@ -75,46 +76,6 @@ namespace Zipkin.NET.Instrumentation
         {
             get => _sampled ?? (_sampled = _sampler.IsSampled(this));
             set => _sampled = value;
-        }
-
-        /// <summary>
-        /// Refresh the trace ID's when starting a new child trace.
-        /// </summary>
-        /// <returns>
-        /// The same trace with a new span ID and the
-        /// parent span ID is equal to the previous span ID.
-        /// </returns>
-        public Trace NewChild()
-        {
-            TraceContext.TraceId = TraceContext.TraceId ?? GenerateTraceId();
-            TraceContext.ParentSpanId = TraceContext.SpanId ?? GenerateTraceId();
-            TraceContext.SpanId = GenerateTraceId();
-            return this;
-        }
-
-        /// <summary>
-        /// Generate a 64-bit trace ID.
-        /// </summary>
-        /// <returns>
-        /// The trace ID as a string.
-        /// </returns>
-        public virtual string GenerateTraceId()
-        {
-            // TODO this is stupid
-            var random = new Random();
-            var builder = new StringBuilder();
-            for (var i = 0; i < 16; i++)
-            {
-                builder.Append(random.Next(0, 15).ToString("X").ToLower());
-            }
-
-            return builder.ToString();
-
-            //      var bytes = new byte[8];
-            //      var cryptoProvider = new RNGCryptoServiceProvider();
-            //cryptoProvider.GetBytes(bytes);
-            //      var id = BitConverter.ToString(bytes);
-            //      return id.Replace("-", string.Empty);
         }
 
         /// <summary>
