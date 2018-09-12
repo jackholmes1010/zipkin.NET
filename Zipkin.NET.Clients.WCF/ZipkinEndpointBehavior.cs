@@ -43,8 +43,10 @@ namespace Zipkin.NET.Clients.WCF
         /// <inheritdoc />
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
+            var propagator = new B3Propagator();
+
             clientRuntime.ClientMessageInspectors.Add(
-                new ZipkinMessageInspector(_applicationName, _reporter, _traceContextAccessor));
+                new ZipkinMessageInspector(_applicationName, _reporter, _traceContextAccessor, propagator));
         }
     }
 }

@@ -20,17 +20,20 @@ namespace Zipkin.NET.Clients.WCF
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private ClientTrace _trace;
 
         public ZipkinMessageInspector(
             string applicationName,
             IReporter reporter,
-            ITraceContextAccessor traceContextAccessor)
+            ITraceContextAccessor traceContextAccessor,
+            IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;
+            _propagator = propagator;
         }
 
         /// <inheritdoc />
@@ -39,11 +42,9 @@ namespace Zipkin.NET.Clients.WCF
             var traceContext = _traceContextAccessor.Context.NewChild();
 
             var httpRequest = ExtractHttpRequest(request);
-            httpRequest.Headers.Add(B3HeaderConstants.TraceId, traceContext.TraceId);
-            httpRequest.Headers.Add(B3HeaderConstants.SpanId, traceContext.SpanId);
-            httpRequest.Headers.Add(B3HeaderConstants.ParentSpanId, traceContext.ParentSpanId);
-            httpRequest.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled == true ? "1" : "0");
-            httpRequest.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug == true ? "1" : "0");
+
+            // Inject X-B3 headers to the outgoing request
+            _propagator.Inject(httpRequest, traceContext);
 
             _trace = new ClientTrace(
                 traceContext,

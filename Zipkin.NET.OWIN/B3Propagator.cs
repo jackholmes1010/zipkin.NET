@@ -18,7 +18,9 @@ namespace Zipkin.NET.OWIN
         /// <param name="traceContext">
         /// The <see cref="TraceContext"/> which contains trace ID context for the current trace.
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// The OWIN context with trace headers.
+        /// </returns>
         public IOwinContext Inject(IOwinContext context, TraceContext traceContext)
         {
             context.Request.Headers.Add(B3HeaderConstants.TraceId, new []{ traceContext.TraceId });

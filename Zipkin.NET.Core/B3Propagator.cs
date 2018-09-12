@@ -26,7 +26,9 @@ namespace Zipkin.NET.Core
         /// <param name="traceContext">
         /// The <see cref="TraceContext"/> which contains trace ID context for the current trace.
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// The HTTP request with trace headers.
+        /// </returns>
         public HttpRequestMessage Inject(HttpRequestMessage request, TraceContext traceContext)
         {
             request.Headers.Add(B3HeaderConstants.TraceId, traceContext.TraceId);
