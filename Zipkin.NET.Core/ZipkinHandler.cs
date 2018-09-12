@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
@@ -18,13 +19,13 @@ namespace Zipkin.NET.Core
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly IB3Propagator _propagator;
+        private readonly IPropagator<HttpRequest, HttpRequestMessage> _propagator;
 
         public ZipkinHandler(
             string applicationName,
             IReporter reporter, 
-            ITraceContextAccessor traceContextAccessor, 
-            IB3Propagator propagator)
+            ITraceContextAccessor traceContextAccessor,
+            IPropagator<HttpRequest, HttpRequestMessage> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;

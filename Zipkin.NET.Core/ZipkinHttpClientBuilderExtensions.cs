@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
 
@@ -16,7 +18,7 @@ namespace Zipkin.NET.Core
 
                 var reporter = provider.GetService<IReporter>();
                 var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
-                var propagator = provider.GetService<IB3Propagator>();
+                var propagator = provider.GetService<IPropagator<HttpRequest, HttpRequestMessage>>();
                 var zipkinHandler = new ZipkinHandler(
                     applicationName, reporter, traceContextAccessor, propagator);
                 return zipkinHandler;

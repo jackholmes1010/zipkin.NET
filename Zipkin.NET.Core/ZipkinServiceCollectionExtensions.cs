@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
@@ -17,16 +18,16 @@ namespace Zipkin.NET.Core
 			services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
-            services.AddTransient<IB3Propagator, B3Propagator>();
+            services.AddTransient<IPropagator<HttpRequest, HttpRequestMessage>, B3Propagator>();
 
             // Register middleware
             services.AddTransient(provider =>
             {
                 var reporter = provider.GetService<IReporter>();
-                var propagator = provider.GetService<IB3Propagator>();
+                var propagator = provider.GetService<IPropagator<HttpRequest, HttpRequestMessage>>();
                 var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
                 var middleware = new ZipkinMiddleware(
-                    applicationName, reporter, propagator, traceContextAccessor);
+                    applicationName, reporter, traceContextAccessor, propagator);
                 return middleware;
             });
 

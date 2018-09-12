@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
@@ -15,42 +16,42 @@ namespace Zipkin.NET.Core
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
-        private readonly IB3Propagator _propagator;
         private readonly ITraceContextAccessor _traceContextAccessor;
+	    private readonly IPropagator<HttpRequest, HttpRequestMessage> _propagator;
 
-        public ZipkinMiddleware(
+		public ZipkinMiddleware(
             string applicationName,
             IReporter reporter,
-            IB3Propagator propagator, 
-            ITraceContextAccessor traceContextAccessor)
+            ITraceContextAccessor traceContextAccessor,
+			IPropagator<HttpRequest, HttpRequestMessage> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;
-            _propagator = propagator;
             _traceContextAccessor = traceContextAccessor;
-        }
+	        _propagator = propagator;
+		}
 
-        /// <summary>
-        /// Creates a new span before calling the next middleware in the
-        /// pipeline. Records the duration and reports the completed span.
-        /// </summary>
-        /// <remarks>
-        /// Completed spans contain both the server receive and server send times.
-        /// </remarks>
-        /// <param name="context">
-        /// The <see cref="HttpContext"/> for the current request.
-        /// </param>
-        /// <param name="next">
-        /// The delegate representing the remaining middleware in the request pipeline.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> that represents the execution of this middleware.
-        /// </returns>
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+		/// <summary>
+		/// Creates a new span before calling the next middleware in the
+		/// pipeline. Records the duration and reports the completed span.
+		/// </summary>
+		/// <remarks>
+		/// Completed spans contain both the server receive and server send times.
+		/// </remarks>
+		/// <param name="context">
+		/// The <see cref="HttpContext"/> for the current request.
+		/// </param>
+		/// <param name="next">
+		/// The delegate representing the remaining middleware in the request pipeline.
+		/// </param>
+		/// <returns>
+		/// A <see cref="Task"/> that represents the execution of this middleware.
+		/// </returns>
+		public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             // Extract X-B3 headers
             var traceContext = _propagator
-                .Extract(context)
+                .Extract(context.Request)
                 .NewChild();
 
             // Record the server trace context so we can

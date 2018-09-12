@@ -9,7 +9,7 @@ namespace Zipkin.NET.Core
     /// <summary>
     /// Extracts and adds X-B3 header values to HTTP requests.
     /// </summary>
-    public class B3Propagator : IB3Propagator
+    public class B3Propagator : IPropagator<HttpRequest, HttpRequestMessage>
     {
 	    private readonly ISampler _sampler;
 
@@ -21,34 +21,34 @@ namespace Zipkin.NET.Core
 	    /// <summary>
         /// Extracts the X-B3 trace ID header values from the request.
         /// </summary>
-        /// <param name="httpContext">
-        /// The <see cref="HttpContext"/> which contains the request.
-        /// </param>
+		/// <param name="request">
+		/// The request from which to extract the request headers.
+		/// </param>
         /// <returns>
         /// A <see cref="TraceContext"/> containing the header values.
         /// </returns>
-        public TraceContext Extract(HttpContext httpContext)
+        public TraceContext Extract(HttpRequest request)
 	    {
 		    string traceId = null;
-			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
+			if (request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
             {
                 traceId = value;
             }
 
 		    string spanId = null;
-			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.SpanId, out value))
+			if (request.Headers.TryGetValue(B3HeaderConstants.SpanId, out value))
             {
                 spanId = value;
             }
 
 		    bool? sampled = null;
-			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
+			if (request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
             {
                 sampled = value == "1";
             }
 
 		    bool? debug = null;
-			if (httpContext.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
+			if (request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
             {
                 debug = value == "1";
             }

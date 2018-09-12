@@ -11,19 +11,19 @@ namespace Zipkin.NET.OWIN
 	{
 		private readonly string _applicationName;
 		private readonly IReporter _reporter;
-		private readonly IB3Propagator _propagator;
 		private readonly ITraceContextAccessor _traceContextAccessor;
+		private readonly IPropagator<IOwinContext, IOwinContext> _propagator;
 
 		public ZipkinMiddleware(
 			string applicationName,
 			IReporter reporter,
-			IB3Propagator propagator,
-			ITraceContextAccessor traceContextAccessor)
+			ITraceContextAccessor traceContextAccessor,
+			IPropagator<IOwinContext, IOwinContext> propagator)
 		{
 			_applicationName = applicationName;
 			_reporter = reporter;
-			_propagator = propagator;
 			_traceContextAccessor = traceContextAccessor;
+			_propagator = propagator;
 		}
 
 		public async Task Invoke(IOwinContext context, Func<Task> next)

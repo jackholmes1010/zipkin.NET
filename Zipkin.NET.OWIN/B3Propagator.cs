@@ -9,7 +9,7 @@ namespace Zipkin.NET.OWIN
 	/// <summary>
 	/// Extracts and adds X-B3 header values to HTTP requests.
 	/// </summary>
-	public class B3Propagator : IB3Propagator
+	public class B3Propagator : IPropagator<IOwinContext, IOwinContext>
 	{
 		private readonly ISampler _sampler;
 
