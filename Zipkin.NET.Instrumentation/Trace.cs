@@ -37,11 +37,8 @@ namespace Zipkin.NET.Instrumentation
             }
             else
             {
-                if (traceContext.Sampled != null &&
-                    traceContext.Sampled == true)
-                {
-                    Sampled = true;
-                }
+                if (traceContext.Sampled != null)
+                    Sampled = traceContext.Sampled == true;
             }
 
             Span = new Span
