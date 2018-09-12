@@ -25,12 +25,23 @@ namespace Zipkin.NET.Instrumentation
             Endpoint remoteEndpoint = null)
         {
             _sampler = sampler;
+
             TraceContext = traceContext;
 
-            if (TraceContext.Sampled == true ||
-                traceContext.Debug == true)
+            // The sampled value should only be set if the debug flag
+            // is true, or a sampling decision has already been made,
+            // i.e. TraceContext.Sampled is not null.
+            if (traceContext.Debug == true)
             {
                 Sampled = true;
+            }
+            else
+            {
+                if (traceContext.Sampled != null &&
+                    traceContext.Sampled == true)
+                {
+                    Sampled = true;
+                }
             }
 
             Span = new Span
