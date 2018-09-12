@@ -19,14 +19,14 @@ namespace Zipkin.NET.Core
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly IPropagator<HttpRequest, HttpRequestMessage> _propagator;
+        private readonly IPropagator<HttpRequestMessage> _propagator;
 
         public ZipkinHandler(
             string applicationName,
             IReporter reporter, 
             ITraceContextAccessor traceContextAccessor,
-            IPropagator<HttpRequest, HttpRequestMessage> propagator)
-        {
+			IPropagator<HttpRequestMessage> propagator)
+		{
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;

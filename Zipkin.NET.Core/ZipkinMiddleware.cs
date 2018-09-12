@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.Core
@@ -17,18 +17,18 @@ namespace Zipkin.NET.Core
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly IPropagator<HttpRequest, HttpRequestMessage> _propagator;
+	    private readonly IExtractor<HttpRequest> _extractor;
 
         public ZipkinMiddleware(
             string applicationName,
             IReporter reporter,
             ITraceContextAccessor traceContextAccessor,
-            IPropagator<HttpRequest, HttpRequestMessage> propagator)
+            IExtractor<HttpRequest> extractor)
         {
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;
-            _propagator = propagator;
+	        _extractor = extractor;
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace Zipkin.NET.Core
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             // Extract X-B3 headers
-            var traceContext = _propagator
-                .Extract(context.Request)
+            var traceContext = _extractor
+				.Extract(context.Request)
                 .NewChild();
 
             // Record the server trace context so we can

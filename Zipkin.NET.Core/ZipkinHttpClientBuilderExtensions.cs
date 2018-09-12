@@ -18,7 +18,7 @@ namespace Zipkin.NET.Core
 
                 var reporter = provider.GetService<IReporter>();
                 var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
-                var propagator = provider.GetService<IPropagator<HttpRequest, HttpRequestMessage>>();
+                var propagator = provider.GetService<IPropagator<HttpRequestMessage>>();
                 var zipkinHandler = new ZipkinHandler(
                     applicationName, reporter, traceContextAccessor, propagator);
                 return zipkinHandler;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.OWIN
@@ -12,24 +13,24 @@ namespace Zipkin.NET.OWIN
         private readonly string _applicationName;
         private readonly IReporter _reporter;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly IPropagator<IOwinContext, IOwinContext> _propagator;
+        private readonly IExtractor<IOwinContext> _extractor;
 
         public ZipkinMiddleware(
             string applicationName,
             IReporter reporter,
             ITraceContextAccessor traceContextAccessor,
-            IPropagator<IOwinContext, IOwinContext> propagator)
+            IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
             _reporter = reporter;
             _traceContextAccessor = traceContextAccessor;
-            _propagator = propagator;
+            _extractor = extractor;
         }
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
         {
             // Extract X-B3 headers
-            var traceContext = _propagator
+            var traceContext = _extractor
                 .Extract(context)
                 .NewChild();
 
