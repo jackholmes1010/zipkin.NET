@@ -1,4 +1,6 @@
-﻿using Zipkin.NET.Instrumentation.Sampling;
+﻿using System;
+using System.Text;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Instrumentation
 {
@@ -7,7 +9,6 @@ namespace Zipkin.NET.Instrumentation
     /// </summary>
     public class TraceContext
     {
-        private readonly ITraceIdentifierGenerator _traceIdGenerator;
 	    private readonly ISampler _sampler;
 
 	    private bool? _sampled;
@@ -15,15 +16,11 @@ namespace Zipkin.NET.Instrumentation
 	    /// <summary>
 	    /// Initialize with a custom trace ID generator.
 	    /// </summary>
-	    /// <param name="traceIdGenerator">
-	    /// The custom <see cref="ITraceIdentifierGenerator"/>.
-	    /// </param>
 	    /// <param name="sampler">
 	    /// An <see cref="ISampler"/> used to make sampling decisions.
 	    /// </param>
-	    public TraceContext(ITraceIdentifierGenerator traceIdGenerator, ISampler sampler)
+	    public TraceContext(ISampler sampler)
         {
-            _traceIdGenerator = traceIdGenerator;
 	        _sampler = sampler;
         }
 
@@ -89,10 +86,35 @@ namespace Zipkin.NET.Instrumentation
         /// </returns>
         public TraceContext NewChild()
         {
-            TraceId = TraceId ?? _traceIdGenerator.GenerateId();
-            ParentSpanId = SpanId ?? _traceIdGenerator.GenerateId();
-            SpanId = _traceIdGenerator.GenerateId();
+            TraceId = TraceId ?? GenerateTraceId();
+            ParentSpanId = SpanId ?? GenerateTraceId();
+            SpanId = GenerateTraceId();
             return this;
         }
-    }
+
+		/// <summary>
+		/// Generate a 64-bit trace ID.
+		/// </summary>
+		/// <returns>
+		/// The trace ID as a string.
+		/// </returns>
+	    public virtual string GenerateTraceId()
+	    {
+		    // TODO this is stupid
+		    var random = new Random();
+		    var builder = new StringBuilder();
+		    for (var i = 0; i < 16; i++)
+		    {
+			    builder.Append(random.Next(0, 15).ToString("X").ToLower());
+		    }
+
+		    return builder.ToString();
+
+		    //      var bytes = new byte[8];
+		    //      var cryptoProvider = new RNGCryptoServiceProvider();
+		    //cryptoProvider.GetBytes(bytes);
+		    //      var id = BitConverter.ToString(bytes);
+		    //      return id.Replace("-", string.Empty);
+	    }
+	}
 }

@@ -11,12 +11,10 @@ namespace Zipkin.NET.Core
     /// </summary>
     public class B3Propagator : IB3Propagator
     {
-	    private readonly ITraceIdentifierGenerator _traceIdGenerator;
 	    private readonly ISampler _sampler;
 
-	    public B3Propagator(ITraceIdentifierGenerator traceIdGenerator, ISampler sampler)
+	    public B3Propagator(ISampler sampler)
 	    {
-		    _traceIdGenerator = traceIdGenerator;
 		    _sampler = sampler;
 	    }
 
@@ -55,7 +53,7 @@ namespace Zipkin.NET.Core
                 debug = value == "1";
             }
 
-            return new TraceContext(_traceIdGenerator, _sampler)
+            return new TraceContext(_sampler)
             {
 				TraceId = traceId,
 				SpanId = spanId,

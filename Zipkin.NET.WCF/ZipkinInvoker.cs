@@ -14,20 +14,17 @@ namespace Zipkin.NET.WCF
 		private readonly string _applicationName;
 		private readonly IOperationInvoker _originalInvoker;
 		private readonly IReporter _reporter;
-		private readonly ITraceIdentifierGenerator _traceIdGenerator;
 		private readonly ISampler _sampler;
 
 		public ZipkinInvoker(
 			string applicationName,
 			IOperationInvoker originalInvoker,
 			IReporter reporter, 
-			ITraceIdentifierGenerator traceIdGenerator, 
 			ISampler sampler)
 		{
 			_applicationName = applicationName;
 			_originalInvoker = originalInvoker;
 			_reporter = reporter;
-			_traceIdGenerator = traceIdGenerator;
 			_sampler = sampler;
 		}
 
@@ -39,7 +36,7 @@ namespace Zipkin.NET.WCF
 		{
 			var headers = WebOperationContext.Current?.IncomingRequest.Headers;
 
-			var traceContext = new TraceContext(_traceIdGenerator, _sampler)
+			var traceContext = new TraceContext(_sampler)
 			{
 				TraceId = headers?[B3HeaderConstants.TraceId],
 				SpanId = headers?[B3HeaderConstants.SpanId],

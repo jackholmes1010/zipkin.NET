@@ -13,7 +13,6 @@ namespace Zipkin.NET.Core
         {
             // TODO is this needed?
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<ITraceIdentifierGenerator, TraceIdentifierGenerator>();
 	        services.AddSingleton<ISampler, DebugSampler>();
 			services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
