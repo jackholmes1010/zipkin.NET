@@ -7,6 +7,7 @@ using System.Text;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.Clients.WCF

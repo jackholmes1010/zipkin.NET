@@ -19,8 +19,8 @@ namespace Zipkin.NET.Core
 			services.AddTransient<IReporter, Reporter>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
-	        services.AddTransient<IPropagator<HttpRequestMessage>>();
-	        services.AddTransient<IExtractor<HttpRequest>>();
+	        services.AddTransient<IPropagator<HttpRequestMessage>, B3Propagator>();
+	        services.AddTransient<IExtractor<HttpRequest>, B3Extractor>();
 
             // Register middleware
             services.AddTransient(provider =>

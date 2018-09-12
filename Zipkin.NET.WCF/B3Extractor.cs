@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel.Web;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ServiceModel.Web;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Propagation;

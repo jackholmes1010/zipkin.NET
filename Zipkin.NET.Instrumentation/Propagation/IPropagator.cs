@@ -1,4 +1,4 @@
-﻿namespace Zipkin.NET.Instrumentation
+﻿namespace Zipkin.NET.Instrumentation.Propagation
 {
     /// <summary>
     /// Propagators are used to pass trace context between distributed systems.

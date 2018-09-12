@@ -6,7 +6,7 @@
 	/// <typeparam name="TExtract">
 	/// The object type from which to extract a <see cref="TraceContext"/>.
 	/// </typeparam>
-	public interface IExtractor<TExtract>
+	public interface IExtractor<in TExtract>
 	{
 		/// <summary>
 		/// Extract a <see cref="TraceContext"/> from a <see cref="TExtract"/>.

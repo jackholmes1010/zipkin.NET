@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ServiceModel.Channels;
-using System.Text;
+﻿using System.ServiceModel.Channels;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
+using Zipkin.NET.Instrumentation.Propagation;
 
 namespace Zipkin.NET.Clients.WCF
 {
@@ -15,10 +13,10 @@ namespace Zipkin.NET.Clients.WCF
         /// <summary>
         /// Adds X-B3 header values to an outgoing HTTP request.
         /// </summary>
-        /// <param name="request">
+        /// <param name="httpRequest">
         /// The request to add headers to.
         /// </param>
-        /// <param name="traceContext">
+        /// <param name="context">
         /// The <see cref="TraceContext"/> which contains trace ID context for the current trace.
         /// </param>
         /// <returns>
