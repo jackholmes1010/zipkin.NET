@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B3Extractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZipkinBehaviorAttribute.cs" />
     <Compile Include="ZipkinInvoker.cs" />

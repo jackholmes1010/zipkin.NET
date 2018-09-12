@@ -2,10 +2,9 @@
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Instrumentation;
-using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.WCF
 {
@@ -14,18 +13,18 @@ namespace Zipkin.NET.WCF
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
         private readonly IReporter _reporter;
-        private readonly ISampler _sampler;
+        private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public ZipkinInvoker(
             string applicationName,
             IOperationInvoker originalInvoker,
             IReporter reporter, 
-            ISampler sampler)
+            IExtractor<IncomingWebRequestContext> extractor)
         {
             _applicationName = applicationName;
             _originalInvoker = originalInvoker;
             _reporter = reporter;
-            _sampler = sampler;
+            _extractor = extractor;
         }
 
         public bool IsSynchronous => _originalInvoker.IsSynchronous;
@@ -34,23 +33,8 @@ namespace Zipkin.NET.WCF
 
         public object Invoke(object instance, object[] inputs, out object[] outputs)
         {
-            var headers = WebOperationContext.Current?.IncomingRequest.Headers;
-
-            var traceContext = new TraceContext(_sampler)
-            {
-                TraceId = headers?[B3HeaderConstants.TraceId],
-                SpanId = headers?[B3HeaderConstants.SpanId],
-                Debug = headers?[B3HeaderConstants.Flags] == "1"
-            };
-
-            var sampled = headers?[B3HeaderConstants.Sampled];
-
-            // Sampled should not be set if not flag
-            // is provided by the upstream service.
-            if (sampled != null)
-            {
-                traceContext.Sampled = sampled == "1";
-            }
+            var traceContext = _extractor.Extract(
+                WebOperationContext.Current?.IncomingRequest);
 
             var trace = new ServerTrace(
                 traceContext, 
