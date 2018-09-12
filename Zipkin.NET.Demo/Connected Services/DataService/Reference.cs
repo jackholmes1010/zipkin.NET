@@ -7,14 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataService
+using System.Runtime.Serialization;
+
+namespace Zipkin.NET.Demo.Connected_Services.DataService
 {
-    using System.Runtime.Serialization;
-    
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CompositeType", Namespace="http://schemas.datacontract.org/2004/07/Zipkin.NET.WCF.Demo")]
+    [DataContract(Name="CompositeType", Namespace="http://schemas.datacontract.org/2004/07/Zipkin.NET.WCF.Demo")]
     public partial class CompositeType : object
     {
         
@@ -22,7 +21,7 @@ namespace DataService
         
         private string StringValueField;
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [DataMember()]
         public bool BoolValue
         {
             get
@@ -35,7 +34,7 @@ namespace DataService
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [DataMember()]
         public string StringValue
         {
             get

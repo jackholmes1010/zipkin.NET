@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using DataService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Zipkin.NET.Clients.WCF;
+using Zipkin.NET.Demo.Connected_Services.DataService;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
 
