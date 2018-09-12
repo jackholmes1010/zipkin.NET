@@ -7,7 +7,7 @@ using Zipkin.NET.Instrumentation.Models;
 namespace Zipkin.NET.Instrumentation.Reporting
 {
     /// <summary>
-    /// Receives and asyhcronously forwards spans recorded by
+    /// Receives and asynchronously forwards spans recorded by
     /// instrumentation to an <see cref="ISender"/> to be sent to a Zipkin server.
     /// </summary>
     public class Reporter : IReporter, IDisposable
