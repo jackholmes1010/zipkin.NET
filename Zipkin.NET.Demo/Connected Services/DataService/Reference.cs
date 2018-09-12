@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 
 namespace Zipkin.NET.Demo.Connected_Services.DataService
 {
-	[System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [DataContract(Name="CompositeType", Namespace="http://schemas.datacontract.org/2004/07/Zipkin.NET.WCF.Demo")]
     public partial class CompositeType : object

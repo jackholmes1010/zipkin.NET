@@ -82,9 +82,9 @@ namespace Zipkin.NET.Core
                 clientTrace.End();
 
                 if (traceContext.Sample())
-	                // Report completed span to Zipkin
-	                _reporter.Report(clientTrace.Span);
-			}
+                    // Report completed span to Zipkin
+                    _reporter.Report(clientTrace.Span);
+            }
         }
     }
 }

@@ -32,24 +32,24 @@ namespace Zipkin.NET.Demo.Controllers
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("https://jsonplaceholder.typicode.com/todos/1"));
             var httpRequest2 = new HttpRequestMessage(HttpMethod.Get, new Uri("https://jsonplaceholder.typicode.com/todos/2"));
 
-	        var wcfClient = new DataServiceClient();
-			wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-	        wcfClient.Endpoint.EndpointBehaviors.Add(new ZipkinEndpointBehavior("data-service",
-		        new Reporter(new HttpSender("http://localhost:8888")),
-		        new HttpContextTraceContextAccessor(new HttpContextAccessor())));
+            var wcfClient = new DataServiceClient();
+            wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
+            wcfClient.Endpoint.EndpointBehaviors.Add(new ZipkinEndpointBehavior("data-service",
+                new Reporter(new HttpSender("http://localhost:8888")),
+                new HttpContextTraceContextAccessor(new HttpContextAccessor())));
 
-	        var wcfResult = wcfClient.GetDataAsync(1); 
+            var wcfResult = wcfClient.GetDataAsync(1); 
 
-	        var resultTask = httpClient.SendAsync(httpRequest);
-	        var result2Task = httpClient2.SendAsync(httpRequest2);
+            var resultTask = httpClient.SendAsync(httpRequest);
+            var result2Task = httpClient2.SendAsync(httpRequest2);
 
-			var result = await resultTask;
-	        var result2 = await result2Task;
+            var result = await resultTask;
+            var result2 = await result2Task;
 
-			return new string[]
+            return new string[]
             {
-	            "wcfResult", await wcfResult,
-				"result", await result.Content.ReadAsStringAsync(),
+                "wcfResult", await wcfResult,
+                "result", await result.Content.ReadAsStringAsync(),
                 "result2", await result2.Content.ReadAsStringAsync(),
             };
         }

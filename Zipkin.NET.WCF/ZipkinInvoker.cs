@@ -9,81 +9,81 @@ using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.WCF
 {
-	public class ZipkinInvoker : IOperationInvoker
-	{
-		private readonly string _applicationName;
-		private readonly IOperationInvoker _originalInvoker;
-		private readonly IReporter _reporter;
-		private readonly ISampler _sampler;
+    public class ZipkinInvoker : IOperationInvoker
+    {
+        private readonly string _applicationName;
+        private readonly IOperationInvoker _originalInvoker;
+        private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
 
-		public ZipkinInvoker(
-			string applicationName,
-			IOperationInvoker originalInvoker,
-			IReporter reporter, 
-			ISampler sampler)
-		{
-			_applicationName = applicationName;
-			_originalInvoker = originalInvoker;
-			_reporter = reporter;
-			_sampler = sampler;
-		}
+        public ZipkinInvoker(
+            string applicationName,
+            IOperationInvoker originalInvoker,
+            IReporter reporter, 
+            ISampler sampler)
+        {
+            _applicationName = applicationName;
+            _originalInvoker = originalInvoker;
+            _reporter = reporter;
+            _sampler = sampler;
+        }
 
-		public bool IsSynchronous => _originalInvoker.IsSynchronous;
+        public bool IsSynchronous => _originalInvoker.IsSynchronous;
 
-		public object[] AllocateInputs() { return _originalInvoker.AllocateInputs(); }
+        public object[] AllocateInputs() { return _originalInvoker.AllocateInputs(); }
 
-		public object Invoke(object instance, object[] inputs, out object[] outputs)
-		{
-			var headers = WebOperationContext.Current?.IncomingRequest.Headers;
+        public object Invoke(object instance, object[] inputs, out object[] outputs)
+        {
+            var headers = WebOperationContext.Current?.IncomingRequest.Headers;
 
-			var traceContext = new TraceContext(_sampler)
-			{
-				TraceId = headers?[B3HeaderConstants.TraceId],
-				SpanId = headers?[B3HeaderConstants.SpanId],
-				Debug = headers?[B3HeaderConstants.Flags] == "1"
-			};
+            var traceContext = new TraceContext(_sampler)
+            {
+                TraceId = headers?[B3HeaderConstants.TraceId],
+                SpanId = headers?[B3HeaderConstants.SpanId],
+                Debug = headers?[B3HeaderConstants.Flags] == "1"
+            };
 
-			var sampled = headers?[B3HeaderConstants.Sampled];
+            var sampled = headers?[B3HeaderConstants.Sampled];
 
-			// Sampled should not be set if not flag
-			// is provided by the upstream service.
-			if (sampled != null)
-			{
-				traceContext.Sampled = sampled == "1";
-			}
+            // Sampled should not be set if not flag
+            // is provided by the upstream service.
+            if (sampled != null)
+            {
+                traceContext.Sampled = sampled == "1";
+            }
 
-			var trace = new ServerTrace(
-				traceContext, 
-				"soap", 
-				localEndpoint: new Endpoint
-				{
-					ServiceName = _applicationName
-				});
+            var trace = new ServerTrace(
+                traceContext, 
+                "soap", 
+                localEndpoint: new Endpoint
+                {
+                    ServiceName = _applicationName
+                });
 
-			trace.Start();
+            trace.Start();
 
-			// Do stuff before call
-			var res = _originalInvoker.Invoke(instance, inputs, out outputs);
-			trace.End();
-			_reporter.Report(trace.Span);
+            // Do stuff before call
+            var res = _originalInvoker.Invoke(instance, inputs, out outputs);
+            trace.End();
+            _reporter.Report(trace.Span);
 
-			// stuff after call
-			return res;
-		}
+            // stuff after call
+            return res;
+        }
 
-		public IAsyncResult InvokeBegin(object instance, object[] inputs,
-			AsyncCallback callback, object state)
-		{
-			//Do stuff before async call
-			var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
-			return res;
-		}
+        public IAsyncResult InvokeBegin(object instance, object[] inputs,
+            AsyncCallback callback, object state)
+        {
+            //Do stuff before async call
+            var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
+            return res;
+        }
 
-		public object InvokeEnd(object instance, out object[] outputs, IAsyncResult result)
-		{
-			var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
-			// Do stuff after async call
-			return res;
-		}
-	}
+        public object InvokeEnd(object instance, out object[] outputs, IAsyncResult result)
+        {
+            var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
+            // Do stuff after async call
+            return res;
+        }
+    }
 }
