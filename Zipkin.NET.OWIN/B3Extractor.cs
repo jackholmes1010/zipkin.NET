@@ -12,13 +12,6 @@ namespace Zipkin.NET.OWIN
     /// </summary>
     public class B3Extractor : IExtractor<IOwinContext>
     {
-        private readonly ISampler _sampler;
-
-        public B3Extractor(ISampler sampler)
-        {
-            _sampler = sampler;
-        }
-
         /// <summary>
         /// Extracts the X-B3 trace ID header values from the request.
         /// </summary>

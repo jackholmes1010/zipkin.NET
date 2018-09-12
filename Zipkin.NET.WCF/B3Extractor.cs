@@ -8,13 +8,6 @@ namespace Zipkin.NET.WCF
 {
     public class B3Extractor : IExtractor<IncomingWebRequestContext>
     {
-        private readonly ISampler _sampler;
-
-        public B3Extractor(ISampler sampler)
-        {
-            _sampler = sampler;
-        }
-
         public TraceContext Extract(IncomingWebRequestContext context)
         {
             var traceContext = new TraceContext
