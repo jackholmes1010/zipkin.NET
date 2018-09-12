@@ -17,12 +17,15 @@ namespace Zipkin.NET.WCF
 
         public TraceContext Extract(IncomingWebRequestContext context)
         {
-            var traceContext = new TraceContext(_sampler)
+            var traceContext = new TraceContext
             {
                 TraceId = context.Headers[B3HeaderConstants.TraceId],
                 SpanId = context.Headers[B3HeaderConstants.SpanId],
                 Debug = context.Headers[B3HeaderConstants.Flags] == "1"
             };
+
+            if (context.Headers[B3HeaderConstants.Sampled] != null)
+                traceContext.Sampled = true;
 
             return traceContext;
         }

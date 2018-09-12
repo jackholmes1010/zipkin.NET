@@ -2,7 +2,7 @@
 {
     public class DebugSampler : ISampler
     {
-        public bool IsSampled(string traceId)
+        public bool IsSampled(Trace trace)
         {
             return true;
         }

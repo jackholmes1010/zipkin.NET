@@ -5,6 +5,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
@@ -16,17 +17,20 @@ namespace Zipkin.NET.Core
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IExtractor<HttpRequest> _extractor;
 
         public ZipkinMiddleware(
             string applicationName,
             IReporter reporter,
+            ISampler sampler,
             ITraceContextAccessor traceContextAccessor,
             IExtractor<HttpRequest> extractor)
         {
             _applicationName = applicationName;
             _reporter = reporter;
+            _sampler = sampler;
             _traceContextAccessor = traceContextAccessor;
             _extractor = extractor;
         }
@@ -51,20 +55,22 @@ namespace Zipkin.NET.Core
         {
             // Extract X-B3 headers
             var traceContext = _extractor
-                .Extract(context.Request)
-                .NewChild();
+                .Extract(context.Request);
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
             _traceContextAccessor.Context = traceContext;
 
             var serverTrace = new ServerTrace(
+                _sampler,
                 traceContext, 
                 context.Request.Method, 
                 localEndpoint: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
+
+            serverTrace.NewChild();
 
             // Record server recieve start time and start duration timer
             serverTrace.Start();
@@ -83,9 +89,8 @@ namespace Zipkin.NET.Core
             {
                 serverTrace.End();
 
-                if (traceContext.Sample())
-                    // Report completed span to Zipkin
-                    _reporter.Report(serverTrace.Span);
+                // Report completed span to Zipkin
+                _reporter.Report(serverTrace);
             }
         }
     }

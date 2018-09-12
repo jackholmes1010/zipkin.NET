@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Instrumentation
 {
@@ -10,14 +12,27 @@ namespace Zipkin.NET.Instrumentation
     /// </summary>
     public abstract class Trace
     {
+        private readonly ISampler _sampler;
+
         private Stopwatch _timer;
+        private bool? _sampled;
 
         protected Trace(
+            ISampler sampler,
             TraceContext traceContext, 
             string name,
             Endpoint localEndpoint = null, 
             Endpoint remoteEndpoint = null)
         {
+            _sampler = sampler;
+            TraceContext = traceContext;
+
+            if (TraceContext.Sampled == true ||
+                traceContext.Debug == true)
+            {
+                Sampled = true;
+            }
+
             Span = new Span
             {
                 Name = name,
@@ -33,6 +48,66 @@ namespace Zipkin.NET.Instrumentation
         /// The span associated with this trace.
         /// </summary>
         public Span Span { get; }
+
+        /// <summary>
+        /// Trace ID's associated with the current trace.
+        /// </summary>
+        public TraceContext TraceContext { get; }
+
+        /// <summary>
+        /// The sampled value associated with the current trace.
+        /// This SHOULD NOT be set unless a sampling decision has
+        /// already been made by an upstream service.
+        /// </summary>
+        /// <remarks>
+        /// If this is not set explicitly, a sampling
+        /// decision will be made by the <see cref="ISampler"/>.
+        /// </remarks>
+        public bool? Sampled
+        {
+            get => _sampled ?? (_sampled = _sampler.IsSampled(this));
+            set => _sampled = value;
+        }
+
+        /// <summary>
+        /// Refresh the trace ID's when starting a new child trace.
+        /// </summary>
+        /// <returns>
+        /// The same trace with a new span ID and the
+        /// parent span ID is equal to the previous span ID.
+        /// </returns>
+        public Trace NewChild()
+        {
+            TraceContext.TraceId = TraceContext.TraceId ?? GenerateTraceId();
+            TraceContext.ParentSpanId = TraceContext.SpanId ?? GenerateTraceId();
+            TraceContext.SpanId = GenerateTraceId();
+            return this;
+        }
+
+        /// <summary>
+        /// Generate a 64-bit trace ID.
+        /// </summary>
+        /// <returns>
+        /// The trace ID as a string.
+        /// </returns>
+        public virtual string GenerateTraceId()
+        {
+            // TODO this is stupid
+            var random = new Random();
+            var builder = new StringBuilder();
+            for (var i = 0; i < 16; i++)
+            {
+                builder.Append(random.Next(0, 15).ToString("X").ToLower());
+            }
+
+            return builder.ToString();
+
+            //      var bytes = new byte[8];
+            //      var cryptoProvider = new RNGCryptoServiceProvider();
+            //cryptoProvider.GetBytes(bytes);
+            //      var id = BitConverter.ToString(bytes);
+            //      return id.Replace("-", string.Empty);
+        }
 
         /// <summary>
         /// Record the start time and start duration timer.

@@ -3,6 +3,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
+
 namespace Zipkin.NET.Clients.WCF
 {
     /// <summary>
@@ -44,9 +46,10 @@ namespace Zipkin.NET.Clients.WCF
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             var propagator = new B3Propagator();
+            var sampler = new DebugSampler();
 
             clientRuntime.ClientMessageInspectors.Add(
-                new ZipkinMessageInspector(_applicationName, _reporter, _traceContextAccessor, propagator));
+                new ZipkinMessageInspector(_applicationName, _reporter, sampler, _traceContextAccessor, propagator));
         }
     }
 }

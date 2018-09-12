@@ -17,6 +17,7 @@ namespace Zipkin.NET.Core
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ISampler, DebugSampler>();
             services.AddTransient<IReporter, Reporter>();
+            services.AddTransient<ISampler, DebugSampler>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
             services.AddTransient<IPropagator<HttpRequestMessage>, B3Propagator>();
@@ -26,10 +27,11 @@ namespace Zipkin.NET.Core
             services.AddTransient(provider =>
             {
                 var reporter = provider.GetService<IReporter>();
+                var sampler = provider.GetService<ISampler>();
                 var extractor = provider.GetService<IExtractor<HttpRequest>>();
                 var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
                 var middleware = new ZipkinMiddleware(
-                    applicationName, reporter, traceContextAccessor, extractor);
+                    applicationName, reporter, sampler, traceContextAccessor, extractor);
                 return middleware;
             });
 

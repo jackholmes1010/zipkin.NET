@@ -9,6 +9,7 @@ using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
@@ -20,6 +21,7 @@ namespace Zipkin.NET.Clients.WCF
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
@@ -28,11 +30,13 @@ namespace Zipkin.NET.Clients.WCF
         public ZipkinMessageInspector(
             string applicationName,
             IReporter reporter,
+            ISampler sampler,
             ITraceContextAccessor traceContextAccessor,
             IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;
+            _sampler = sampler;
             _traceContextAccessor = traceContextAccessor;
             _propagator = propagator;
         }
@@ -40,7 +44,7 @@ namespace Zipkin.NET.Clients.WCF
         /// <inheritdoc />
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var traceContext = _traceContextAccessor.Context.NewChild();
+            var traceContext = _traceContextAccessor.Context;
 
             var httpRequest = ExtractHttpRequest(request);
 
@@ -48,12 +52,15 @@ namespace Zipkin.NET.Clients.WCF
             _propagator.Inject(httpRequest, traceContext);
 
             _trace = new ClientTrace(
+                _sampler,
                 traceContext,
                 request.Headers.Action,
                 remoteEndpoint: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
+
+            _trace.NewChild();
 
             _trace.Start();
 
@@ -64,7 +71,7 @@ namespace Zipkin.NET.Clients.WCF
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             _trace.End();
-            _reporter.Report(_trace.Span);
+            _reporter.Report(_trace);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

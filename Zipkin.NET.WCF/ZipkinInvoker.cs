@@ -5,6 +5,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.WCF
 {
@@ -37,6 +38,7 @@ namespace Zipkin.NET.WCF
                 WebOperationContext.Current?.IncomingRequest);
 
             var trace = new ServerTrace(
+                new DebugSampler(),
                 traceContext, 
                 "soap", 
                 localEndpoint: new Endpoint
@@ -49,7 +51,7 @@ namespace Zipkin.NET.WCF
             // Do stuff before call
             var res = _originalInvoker.Invoke(instance, inputs, out outputs);
             trace.End();
-            _reporter.Report(trace.Span);
+            _reporter.Report(trace);
 
             // stuff after call
             return res;

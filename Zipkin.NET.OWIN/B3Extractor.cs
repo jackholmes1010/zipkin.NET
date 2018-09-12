@@ -54,7 +54,7 @@ namespace Zipkin.NET.OWIN
                 debug = value.FirstOrDefault() == "1";
             }
 
-            return new TraceContext(_sampler)
+            return new TraceContext
             {
                 TraceId = traceId,
                 SpanId = spanId,

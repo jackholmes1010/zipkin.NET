@@ -53,7 +53,7 @@ namespace Zipkin.NET.Core
                 debug = value == "1";
             }
 
-            return new TraceContext(_sampler)
+            return new TraceContext
             {
                 TraceId = traceId,
                 SpanId = spanId,

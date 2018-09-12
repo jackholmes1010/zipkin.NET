@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Instrumentation.Reporting
 {
@@ -27,12 +28,13 @@ namespace Zipkin.NET.Instrumentation.Reporting
         /// <remarks>
         /// The send is performed asynchronously using a <see cref="ActionBlock{TInput}"/>.
         /// </remarks>
-        /// <param name="span">
-        /// The span to be reported.
+        /// <param name="trace">
+        /// The trace to be reported.
         /// </param>
-        public void Report(Span span)
+        public void Report(Trace trace)
         {
-            _processor.Post(span);
+            if (trace.Sampled == true)
+                _processor.Post(trace.Span);
         }
 
         /// <summary>

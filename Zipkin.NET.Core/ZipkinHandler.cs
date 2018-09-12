@@ -7,6 +7,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
@@ -19,17 +20,20 @@ namespace Zipkin.NET.Core
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
         public ZipkinHandler(
             string applicationName,
-            IReporter reporter, 
+            IReporter reporter,
+            ISampler sampler,
             ITraceContextAccessor traceContextAccessor,
             IPropagator<HttpRequestMessage> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter;
+            _sampler = sampler;
             _traceContextAccessor = traceContextAccessor;
             _propagator = propagator;
         }
@@ -53,18 +57,21 @@ namespace Zipkin.NET.Core
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceContextAccessor.Context.NewChild();
+            var traceContext = _traceContextAccessor.Context;
 
             // Add X-B3 headers to the outgoing request
             request = _propagator.Inject(request, traceContext);
 
             var clientTrace = new ClientTrace(
+                _sampler,
                 traceContext, 
                 request.Method.ToString(), 
                 remoteEndpoint: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
+
+            clientTrace.NewChild();
 
             // Record client send time and start duration timer
             clientTrace.Start();
@@ -82,9 +89,8 @@ namespace Zipkin.NET.Core
             {
                 clientTrace.End();
 
-                if (traceContext.Sample())
-                    // Report completed span to Zipkin
-                    _reporter.Report(clientTrace.Span);
+                // Report completed span to Zipkin
+                _reporter.Report(clientTrace);
             }
         }
     }

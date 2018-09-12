@@ -10,9 +10,9 @@ namespace Zipkin.NET.Instrumentation.Reporting
         /// <summary>
         /// Schedules the span to be sent onto the transport.
         /// </summary>
-        /// <param name="span">
-        /// The span to be reported.
+        /// <param name="trace">
+        /// The trace to be reported.
         /// </param>
-        void Report(Span span);
+        void Report(Trace trace);
     }
 }

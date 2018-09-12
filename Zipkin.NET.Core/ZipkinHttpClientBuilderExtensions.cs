@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
@@ -18,10 +19,11 @@ namespace Zipkin.NET.Core
                     applicationName = builder.Name;
 
                 var reporter = provider.GetService<IReporter>();
+                var sampler = provider.GetService<ISampler>();
                 var traceContextAccessor = provider.GetService<ITraceContextAccessor>();
                 var propagator = provider.GetService<IPropagator<HttpRequestMessage>>();
                 var zipkinHandler = new ZipkinHandler(
-                    applicationName, reporter, traceContextAccessor, propagator);
+                    applicationName, reporter, sampler, traceContextAccessor, propagator);
                 return zipkinHandler;
             });
 
