@@ -2,7 +2,7 @@
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     public static class ZipkinHttpClientBuilderExtensions
     {

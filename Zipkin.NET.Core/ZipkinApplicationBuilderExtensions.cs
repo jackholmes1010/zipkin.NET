@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     public static class ZipkinApplicationBuilderExtensions
     {

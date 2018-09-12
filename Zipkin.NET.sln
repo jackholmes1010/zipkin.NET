@@ -5,11 +5,17 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Instrumentation", "Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj", "{5263FC21-E655-4493-BB9E-375F74DD0340}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Middleware", "Zipkin.NET.Middleware\Zipkin.NET.Middleware.csproj", "{F8E8D2F8-491F-4F63-86C4-B0445EC4BCF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Core", "Zipkin.NET.Core\Zipkin.NET.Core.csproj", "{F8E8D2F8-491F-4F63-86C4-B0445EC4BCF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Demo", "Zipkin.NET.Demo\Zipkin.NET.Demo.csproj", "{3A19DEFE-B983-4403-B7F9-45ACE7426ECE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF.Demo", "Zipkin.NET.WCF.Demo\Zipkin.NET.WCF.Demo.csproj", "{74650B3B-C656-41D0-B634-1F466FA95988}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Clients.WCF", "Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj", "{458119F2-766C-489B-871A-471AFD2B6222}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF", "Zipkin.NET.WCF\Zipkin.NET.WCF.csproj", "{090D0A58-04CE-4EE4-9A74-C0569E0B1497}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN", "Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj", "{535DB3B4-1C93-4B67-943E-871C00B24705}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{74650B3B-C656-41D0-B634-1F466FA95988}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74650B3B-C656-41D0-B634-1F466FA95988}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74650B3B-C656-41D0-B634-1F466FA95988}.Release|Any CPU.Build.0 = Release|Any CPU
+		{458119F2-766C-489B-871A-471AFD2B6222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{458119F2-766C-489B-871A-471AFD2B6222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{458119F2-766C-489B-871A-471AFD2B6222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{458119F2-766C-489B-871A-471AFD2B6222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{090D0A58-04CE-4EE4-9A74-C0569E0B1497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{090D0A58-04CE-4EE4-9A74-C0569E0B1497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{090D0A58-04CE-4EE4-9A74-C0569E0B1497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{090D0A58-04CE-4EE4-9A74-C0569E0B1497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{535DB3B4-1C93-4B67-943E-871C00B24705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{535DB3B4-1C93-4B67-943E-871C00B24705}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{535DB3B4-1C93-4B67-943E-871C00B24705}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{535DB3B4-1C93-4B67-943E-871C00B24705}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

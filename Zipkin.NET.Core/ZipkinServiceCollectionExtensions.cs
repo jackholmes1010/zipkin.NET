@@ -4,7 +4,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Reporting;
 using Zipkin.NET.Instrumentation.Sampling;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     public static class ZipkinServiceCollectionExtensions
     {

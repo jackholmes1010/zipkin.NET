@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     /// <summary>
     /// Extracts and injects X-B3 headers from/to HTTP requests.

@@ -6,7 +6,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     /// <summary>
     /// A <see cref="DelegatingHandler"/> responsible for propagating

@@ -1,20 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Instrumentation;
+using Zipkin.NET.Instrumentation.Reporting;
+using Zipkin.NET.Instrumentation.Sampling;
 
-namespace Zipkin.NET.WCF.Demo
+namespace Zipkin.NET.WCF
 {
 	public class ZipkinBehaviorAttribute : Attribute, IServiceBehavior, IOperationBehavior
 	{
+		private readonly string _applicationName;
+		private readonly string _zipkinHost;
+
+		public ZipkinBehaviorAttribute(string applicationName, string zipkinHost)
+		{
+			_applicationName = applicationName;
+			_zipkinHost = zipkinHost;
+		}
+
 		// IOperationBehavior
 		public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
 		{
-			dispatchOperation.Invoker = new ZipkinInvoker(dispatchOperation.Invoker);
+			var reporter = new Reporter(new HttpSender(_zipkinHost));
+			var traceIdGenerator = new TraceIdentifierGenerator();
+			var sampler = new DebugSampler();
+
+			dispatchOperation.Invoker = new ZipkinInvoker(
+				_applicationName, dispatchOperation.Invoker, reporter, traceIdGenerator, sampler);
 		}
 
 		public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)

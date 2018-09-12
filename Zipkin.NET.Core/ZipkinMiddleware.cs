@@ -5,7 +5,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     /// <summary>
     /// Middleware responsible for extracting trace ID's from X-B3

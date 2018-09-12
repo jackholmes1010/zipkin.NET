@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.Threading.Tasks;
 using DataService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Zipkin.NET.Clients.WCF;
 using Zipkin.NET.Instrumentation;
-using Zipkin.NET.Instrumentation.WCF;
+using Zipkin.NET.Instrumentation.Reporting;
 
 namespace Zipkin.NET.Demo.Controllers
 {
@@ -34,8 +34,11 @@ namespace Zipkin.NET.Demo.Controllers
 
 	        var wcfClient = new DataServiceClient();
 			wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-			wcfClient.Endpoint.EndpointBehaviors.Add(new ZipkinEndpointBehavior());
-	        var wcfResult = wcfClient.GetDataAsync(1);
+	        wcfClient.Endpoint.EndpointBehaviors.Add(new ZipkinEndpointBehavior("data-service",
+		        new Reporter(new HttpSender("http://localhost:8888")),
+		        new HttpContextTraceContextAccessor(new HttpContextAccessor())));
+
+	        var wcfResult = wcfClient.GetDataAsync(1); 
 
 	        var resultTask = httpClient.SendAsync(httpRequest);
 	        var result2Task = httpClient2.SendAsync(httpRequest2);

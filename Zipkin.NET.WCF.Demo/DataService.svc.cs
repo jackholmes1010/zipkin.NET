@@ -11,12 +11,12 @@ namespace Zipkin.NET.WCF.Demo
 {
 	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "DataService" in code, svc and config file together.
 	// NOTE: In order to launch WCF Test Client for testing this service, please select DataService.svc or DataService.svc.cs at the Solution Explorer and start debugging.
-	[ZipkinBehavior]
+	[ZipkinBehavior("data-service", "http://localhost:8888")]
 	public class DataService : IDataService
 	{
 		public string GetData(int value)
 		{
-			Thread.Sleep(500);
+			Thread.Sleep(200);
 			return string.Format("You entered: {0}", value);
 		}
 

@@ -4,7 +4,7 @@ using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Sampling;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     /// <summary>
     /// Extracts and adds X-B3 header values to HTTP requests.

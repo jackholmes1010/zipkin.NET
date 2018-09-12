@@ -1,11 +1,15 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Text;
+using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Reporting;
 
-namespace Zipkin.NET.Instrumentation.WCF
+namespace Zipkin.NET.Clients.WCF
 {
 	/// <summary>
 	/// Message inspector responsible for adding Zipkin X-B3 HTTP headers to outgoing WCF requests.
@@ -13,17 +17,20 @@ namespace Zipkin.NET.Instrumentation.WCF
 	/// <inheritdoc />
 	public class ZipkinMessageInspector : IClientMessageInspector
 	{
-		private readonly ITraceContextAccessor _traceContextAccessor;
+		private readonly string _applicationName;
 		private readonly IReporter _reporter;
+		private readonly ITraceContextAccessor _traceContextAccessor;
 
 		private ClientTrace _trace;
 
 		public ZipkinMessageInspector(
-			ITraceContextAccessor traceContextAccessor, 
-			IReporter reporter)
+			string applicationName,
+			IReporter reporter,
+			ITraceContextAccessor traceContextAccessor)
 		{
-			_traceContextAccessor = traceContextAccessor;
+			_applicationName = applicationName;
 			_reporter = reporter;
+			_traceContextAccessor = traceContextAccessor;
 		}
 
 		/// <inheritdoc />
@@ -38,10 +45,13 @@ namespace Zipkin.NET.Instrumentation.WCF
 			httpRequest.Headers.Add(B3HeaderConstants.Sampled, traceContext.Sampled == true ? "1" : "0");
 			httpRequest.Headers.Add(B3HeaderConstants.Flags, traceContext.Debug == true ? "1" : "0");
 
-			_trace = new ClientTrace(traceContext, "soap", remoteEndpoint: new Endpoint
-			{
-				ServiceName = "wcf-service"
-			});
+			_trace = new ClientTrace(
+				traceContext,
+				request.Headers.Action,
+				remoteEndpoint: new Endpoint
+				{
+					ServiceName = _applicationName
+				});
 
 			_trace.Start();
 

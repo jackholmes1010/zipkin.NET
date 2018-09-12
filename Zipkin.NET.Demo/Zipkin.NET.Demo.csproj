@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj" />
+    <ProjectReference Include="..\Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj" />
     <ProjectReference Include="..\Zipkin.NET.Middleware\Zipkin.NET.Middleware.csproj" />
   </ItemGroup>
 
