@@ -6,8 +6,8 @@ namespace Zipkin.NET.Instrumentation
     /// <inheritdoc />
     public class ClientTrace : Trace
     {
-        public ClientTrace(ISampler sampler, TraceContext traceContext, string name, Endpoint localEndpoint = null, Endpoint remoteEndpoint = null)
-            : base(sampler, traceContext, name, localEndpoint, remoteEndpoint)
+        public ClientTrace(TraceContext traceContext, string name, Endpoint localEndpoint = null, Endpoint remoteEndpoint = null)
+            : base(traceContext, name, localEndpoint, remoteEndpoint)
         {
             Span.Kind = SpanKind.Client;
         }

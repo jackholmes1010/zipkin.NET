@@ -34,11 +34,11 @@ namespace Zipkin.NET.WCF
 
         public object Invoke(object instance, object[] inputs, out object[] outputs)
         {
-            var traceContext = _extractor.Extract(
-                WebOperationContext.Current?.IncomingRequest);
+            var traceContext = _extractor
+                .Extract(WebOperationContext.Current?.IncomingRequest)
+                .Sample(new DebugSampler());
 
             var trace = new ServerTrace(
-                new DebugSampler(),
                 traceContext, 
                 "soap", 
                 localEndpoint: new Endpoint

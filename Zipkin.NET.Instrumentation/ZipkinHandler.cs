@@ -9,12 +9,12 @@ using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Instrumentation
 {
-	/// <summary>
-	/// A <see cref="DelegatingHandler"/> responsible for propagating
-	/// X-B3 trace ID headers to downstream services and reporting
-	/// completed client spans to a Zipkin server.
-	/// </summary>
-	public class ZipkinHandler : DelegatingHandler
+    /// <summary>
+    /// A <see cref="DelegatingHandler"/> responsible for propagating
+    /// X-B3 trace ID headers to downstream services and reporting
+    /// completed client spans to a Zipkin server.
+    /// </summary>
+    public class ZipkinHandler : DelegatingHandler
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
@@ -22,22 +22,22 @@ namespace Zipkin.NET.Instrumentation
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
-		public ZipkinHandler(
-			HttpMessageHandler innerHandler,
-			string applicationName,
-			IReporter reporter,
-			ISampler sampler,
-			ITraceContextAccessor traceContextAccessor,
-			IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
-		{
-			_applicationName = applicationName;
-			_reporter = reporter;
-			_sampler = sampler;
-			_traceContextAccessor = traceContextAccessor;
-			_propagator = propagator;
-		}
+        public ZipkinHandler(
+            HttpMessageHandler innerHandler,
+            string applicationName,
+            IReporter reporter,
+            ISampler sampler,
+            ITraceContextAccessor traceContextAccessor,
+            IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
+        {
+            _applicationName = applicationName;
+            _reporter = reporter;
+            _sampler = sampler;
+            _traceContextAccessor = traceContextAccessor;
+            _propagator = propagator;
+        }
 
-		public ZipkinHandler(
+        public ZipkinHandler(
             string applicationName,
             IReporter reporter,
             ISampler sampler,
@@ -71,13 +71,14 @@ namespace Zipkin.NET.Instrumentation
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Create a new client trace from the existing server trace
-            var traceContext = _traceContextAccessor.Context.NewChildTrace();
+            var traceContext = _traceContextAccessor.Context
+                .NewChildTrace()
+                .Sample(_sampler);
 
             // Add X-B3 headers to the outgoing request
             request = _propagator.Inject(request, traceContext);
 
             var clientTrace = new ClientTrace(
-                _sampler,
                 traceContext, 
                 request.Method.ToString(), 
                 remoteEndpoint: new Endpoint

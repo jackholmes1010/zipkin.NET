@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Zipkin.NET.Instrumentation.Models;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Instrumentation
 {
@@ -12,35 +10,15 @@ namespace Zipkin.NET.Instrumentation
     /// </summary>
     public abstract class Trace
     {
-        private readonly ISampler _sampler;
-
         private Stopwatch _timer;
-        private bool? _sampled;
-        private Span _span;
 
         protected Trace(
-            ISampler sampler,
             TraceContext traceContext, 
             string name,
             Endpoint localEndpoint = null, 
             Endpoint remoteEndpoint = null)
         {
-            _sampler = sampler;
-
             TraceContext = traceContext;
-
-            // The sampled value should only be set if the debug flag
-            // is true, or a sampling decision has already been made,
-            // i.e. TraceContext.Sampled is not null.
-            if (traceContext.Debug == true)
-            {
-                Sampled = true;
-            }
-            else
-            {
-                if (traceContext.Sampled != null)
-                    Sampled = traceContext.Sampled == true;
-            }
 
             Span = new Span
             {
@@ -62,21 +40,6 @@ namespace Zipkin.NET.Instrumentation
         /// Trace ID's associated with the current trace.
         /// </summary>
         public TraceContext TraceContext { get; }
-
-        /// <summary>
-        /// The sampled value associated with the current trace.
-        /// This SHOULD NOT be set unless a sampling decision has
-        /// already been made by an upstream service.
-        /// </summary>
-        /// <remarks>
-        /// If this is not set explicitly, a sampling
-        /// decision will be made by the <see cref="ISampler"/>.
-        /// </remarks>
-        public bool? Sampled
-        {
-            get => _sampled ?? (_sampled = _sampler.IsSampled(this));
-            set => _sampled = value;
-        }
 
         /// <summary>
         /// Record the start time and start duration timer.
@@ -140,6 +103,20 @@ namespace Zipkin.NET.Instrumentation
                 Span.Annotations = new List<Annotation>();
 
             Span.Annotations.Add(annotation);
+        }
+
+        /// <summary>
+        /// Check if the current trace should be sampled.
+        /// <remarks>
+        /// Simple pass through to <see cref="TraceContext.Sampled"/>.
+        /// </remarks>
+        /// </summary>
+        /// <returns>
+        /// True if the trace should be sampled.
+        /// </returns>
+        public bool Sampled()
+        {
+            return TraceContext.Sampled == true;
         }
     }
 }

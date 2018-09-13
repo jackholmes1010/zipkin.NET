@@ -2,6 +2,6 @@
 {
     public interface ISampler
     {
-        bool IsSampled(Trace trace);
+        bool IsSampled(TraceContext traceContext);
     }
 }

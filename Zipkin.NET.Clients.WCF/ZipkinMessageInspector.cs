@@ -40,7 +40,9 @@ namespace Zipkin.NET.Clients.WCF
         /// <inheritdoc />
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var traceContext = _traceContextAccessor.Context.NewChildTrace();
+            var traceContext = _traceContextAccessor.Context
+                .NewChildTrace()
+                .Sample(_sampler);
 
             var httpRequest = ExtractHttpRequest(request);
 
@@ -48,7 +50,6 @@ namespace Zipkin.NET.Clients.WCF
             _propagator.Inject(httpRequest, traceContext);
 
             _trace = new ClientTrace(
-                _sampler,
                 traceContext,
                 "soap",
                 remoteEndpoint: new Endpoint
