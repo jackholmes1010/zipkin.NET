@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Zipkin.NET.Instrumentation.Models;
 
-namespace Zipkin.NET.Instrumentation
+namespace Zipkin.NET.Instrumentation.Traces
 {
     /// <summary>
     /// Base trace class acting as a convenience wrapper around a <see cref="Models.Span"/>.

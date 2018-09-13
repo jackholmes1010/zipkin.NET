@@ -1,6 +1,6 @@
 ﻿using Zipkin.NET.Instrumentation.Models;
 
-namespace Zipkin.NET.Instrumentation
+namespace Zipkin.NET.Instrumentation.Traces
 {
     /// <summary>
     /// Convenience wrapper used to manage a <see cref="SpanKind.Server"/> <see cref="Span"/>.

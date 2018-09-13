@@ -1,4 +1,5 @@
 ﻿using Zipkin.NET.Instrumentation.Models;
+using Zipkin.NET.Instrumentation.Traces;
 
 namespace Zipkin.NET.Instrumentation.Reporting
 {

@@ -6,6 +6,7 @@ using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
 using Zipkin.NET.Instrumentation.Sampling;
+using Zipkin.NET.Instrumentation.Traces;
 
 namespace Zipkin.NET.OWIN
 {

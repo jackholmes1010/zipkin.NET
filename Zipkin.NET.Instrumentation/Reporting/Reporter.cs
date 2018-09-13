@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Sampling;
+using Zipkin.NET.Instrumentation.Traces;
 
 namespace Zipkin.NET.Instrumentation.Reporting
 {
