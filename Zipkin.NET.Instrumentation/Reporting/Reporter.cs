@@ -33,12 +33,8 @@ namespace Zipkin.NET.Instrumentation.Reporting
         /// </param>
         public void Report(Trace trace)
         {
-            if (trace.Sampled())
+            if (trace.IsSampled())
                 _processor.Post(trace.Span);
-            else
-            {
-                throw new Exception();
-            }
         }
 
         /// <summary>

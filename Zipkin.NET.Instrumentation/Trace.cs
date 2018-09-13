@@ -12,22 +12,33 @@ namespace Zipkin.NET.Instrumentation
     {
         private Stopwatch _timer;
 
-        protected Trace(
-            TraceContext traceContext, 
-            string name,
-            Endpoint localEndpoint = null, 
-            Endpoint remoteEndpoint = null)
+		/// <summary>
+		/// Create a new trace using the <see cref="TraceContext"/> of the parent trace.
+		/// </summary>
+		/// <param name="context">
+		/// The parent's <see cref="TraceContext"/>.
+		/// </param>
+		/// <param name="name">
+		/// The logical name of this operation.
+		/// </param>
+		/// <param name="local">
+		/// The local network context.
+		/// </param>
+		/// <param name="remote">
+		/// The remote network context.
+		/// </param>
+        protected Trace(TraceContext context, string name, Endpoint local = null, Endpoint remote = null)
         {
-            TraceContext = traceContext;
+            TraceContext = context;
 
             Span = new Span
             {
                 Name = name,
-                Id = traceContext.SpanId,
-                TraceId = traceContext.TraceId,
-                ParentId = traceContext.ParentSpanId,
-                LocalEndpoint = localEndpoint,
-                RemoteEndpoint = remoteEndpoint
+                Id = context.SpanId,
+                TraceId = context.TraceId,
+                ParentId = context.ParentSpanId,
+                LocalEndpoint = local,
+                RemoteEndpoint = remote
             };
         }
 
@@ -37,7 +48,7 @@ namespace Zipkin.NET.Instrumentation
         public Span Span { get; }
 
         /// <summary>
-        /// Trace ID's associated with the current trace.
+        /// The context of the parent trace.
         /// </summary>
         public TraceContext TraceContext { get; }
 
@@ -114,7 +125,7 @@ namespace Zipkin.NET.Instrumentation
         /// <returns>
         /// True if the trace should be sampled.
         /// </returns>
-        public bool Sampled()
+        public bool IsSampled()
         {
             return TraceContext.Sampled == true;
         }

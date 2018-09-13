@@ -33,18 +33,17 @@ namespace Zipkin.NET.OWIN
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
         {
-            // Extract X-B3 headers
-            var traceContext = _extractor
+            var clientTrace = _extractor
                 .Extract(context)
                 .NewChildTrace()
                 .Sample(_sampler);
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
-            _traceContextAccessor.Context = traceContext;
+            _traceContextAccessor.Context = clientTrace;
 
             var serverTrace = new ServerTrace(
-                traceContext,
+                clientTrace,
                 context.Request.Method,
                 localEndpoint: new Endpoint
                 {

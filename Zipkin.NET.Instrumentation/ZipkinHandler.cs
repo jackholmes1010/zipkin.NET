@@ -71,21 +71,21 @@ namespace Zipkin.NET.Instrumentation
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Create a new client trace from the existing server trace
-            var traceContext = _traceContextAccessor.Context
+            var serverContext = _traceContextAccessor.Context
                 .NewChildTrace()
                 .Sample(_sampler);
 
             // Add X-B3 headers to the outgoing request
-            request = _propagator.Inject(request, traceContext);
+            request = _propagator.Inject(request, serverContext);
 
             var clientTrace = new ClientTrace(
-                traceContext, 
+                serverContext, 
                 request.Method.ToString(), 
                 remoteEndpoint: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
-
+			
             clientTrace.Tag("uri", request.RequestUri.OriginalString);
             clientTrace.Tag("method", request.Method.Method);
 
