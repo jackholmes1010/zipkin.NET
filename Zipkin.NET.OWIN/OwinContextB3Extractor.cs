@@ -9,7 +9,7 @@ namespace Zipkin.NET.OWIN
     /// <summary>
     /// Extracts a <see cref="TraceContext"/> from a <see cref="OwinContext"/>.
     /// </summary>
-    public class B3Extractor : IExtractor<IOwinContext>
+    public class OwinContextB3Extractor : IExtractor<IOwinContext>
     {
         /// <summary>
         /// Extracts the X-B3 trace ID header values from the request.

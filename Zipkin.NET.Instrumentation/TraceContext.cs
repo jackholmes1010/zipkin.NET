@@ -8,6 +8,13 @@ namespace Zipkin.NET.Instrumentation
     /// </summary>
     public class TraceContext
     {
+		private readonly Random _random;
+
+		public TraceContext()
+		{
+			_random = new Random();
+		}
+
         /// <summary>
         /// The trace ID value associated with the current trace.
         /// </summary>
@@ -42,13 +49,11 @@ namespace Zipkin.NET.Instrumentation
         /// </returns>
         public TraceContext NewChildTrace()
         {
-            var random = new Random();
-
             return new TraceContext
             {
-                TraceId = TraceId ?? GenerateTraceId(random),
-                ParentSpanId = SpanId ?? GenerateTraceId(random),
-                SpanId = GenerateTraceId(random),
+                TraceId = TraceId ?? GenerateTraceId(_random),
+                ParentSpanId = SpanId ?? GenerateTraceId(_random),
+                SpanId = GenerateTraceId(_random),
                 Debug = Debug,
                 Sampled = Sampled
             };

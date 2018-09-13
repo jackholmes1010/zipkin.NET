@@ -4,7 +4,7 @@ using TraceContext = Zipkin.NET.Instrumentation.TraceContext;
 
 namespace Zipkin.NET.OWIN
 {
-    public class TraceContextAccessor : ITraceContextAccessor
+    public class SystemWebTraceContextAccessor : ITraceContextAccessor
     {
         public TraceContext Context
         {

@@ -2,20 +2,19 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
 using Zipkin.NET.Instrumentation.Sampling;
 
-namespace Zipkin.NET.Core
+namespace Zipkin.NET.Instrumentation
 {
-    /// <summary>
-    /// A <see cref="DelegatingHandler"/> responsible for propagating
-    /// X-B3 trace ID headers to downstream services and reporting
-    /// completed client spans to a Zipkin server.
-    /// </summary>
-    public class ZipkinHandler : DelegatingHandler
+	/// <summary>
+	/// A <see cref="DelegatingHandler"/> responsible for propagating
+	/// X-B3 trace ID headers to downstream services and reporting
+	/// completed client spans to a Zipkin server.
+	/// </summary>
+	public class ZipkinHandler : DelegatingHandler
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
@@ -23,7 +22,22 @@ namespace Zipkin.NET.Core
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
-        public ZipkinHandler(
+		public ZipkinHandler(
+			HttpMessageHandler innerHandler,
+			string applicationName,
+			IReporter reporter,
+			ISampler sampler,
+			ITraceContextAccessor traceContextAccessor,
+			IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
+		{
+			_applicationName = applicationName;
+			_reporter = reporter;
+			_sampler = sampler;
+			_traceContextAccessor = traceContextAccessor;
+			_propagator = propagator;
+		}
+
+		public ZipkinHandler(
             string applicationName,
             IReporter reporter,
             ISampler sampler,

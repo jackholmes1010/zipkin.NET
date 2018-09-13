@@ -8,7 +8,7 @@ namespace Zipkin.NET.OWIN
     /// <summary>
     /// Injects trace context into an <see cref="IOwinContext"/>.
     /// </summary>
-    public class B3Propagator : IPropagator<IOwinContext>
+    public class OwinContextB3Propagator : IPropagator<IOwinContext>
     {
         /// <summary>
         /// Adds X-B3 header values to an outgoing HTTP request.
