@@ -6,7 +6,7 @@ namespace Zipkin.NET.Instrumentation.Converters
     /// <summary>
     /// Converts a <see cref="TimeSpan"/> to a JSON string representing the value in microseconds.
     /// </summary>
-    public class TimeSpanConverter : JsonConverter
+    public class TimeSpanToMicroSecondConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {

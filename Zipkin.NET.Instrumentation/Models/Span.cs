@@ -82,7 +82,7 @@ namespace Zipkin.NET.Instrumentation.Models
         /// <example>
         /// 150 milliseconds is 150000 microseconds.
         /// </example>
-        [JsonConverter(typeof(TimeSpanConverter))]
+        [JsonConverter(typeof(TimeSpanToMicroSecondConverter))]
         [JsonProperty("duration")]
         public TimeSpan Duration { get; set; }
 
