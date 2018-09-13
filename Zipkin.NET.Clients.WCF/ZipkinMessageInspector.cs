@@ -56,7 +56,7 @@ namespace Zipkin.NET.Clients.WCF
                     ServiceName = _applicationName
                 });
 
-	        _trace.Tag("action", request.Headers.Action);
+            _trace.Tag("action", request.Headers.Action);
             _trace.Start();
 
             return null;

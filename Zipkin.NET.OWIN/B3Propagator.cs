@@ -24,11 +24,11 @@ namespace Zipkin.NET.OWIN
         /// </returns>
         public IOwinContext Inject(IOwinContext context, TraceContext traceContext)
         {
-            context.Request.Headers.Add(B3HeaderConstants.TraceId, new []{ traceContext.TraceId });
-            context.Request.Headers.Add(B3HeaderConstants.SpanId, new []{ traceContext.SpanId });
-            context.Request.Headers.Add(B3HeaderConstants.ParentSpanId, new []{ traceContext.ParentSpanId });
-            context.Request.Headers.Add(B3HeaderConstants.Sampled, new []{ traceContext.Sampled == true ? "1" : "0" });
-            context.Request.Headers.Add(B3HeaderConstants.Flags, new []{ traceContext.Debug == true ? "1" : "0" });
+            context.Request.Headers.Add(B3HeaderConstants.TraceId, new[] { traceContext.TraceId });
+            context.Request.Headers.Add(B3HeaderConstants.SpanId, new[] { traceContext.SpanId });
+            context.Request.Headers.Add(B3HeaderConstants.ParentSpanId, new[] { traceContext.ParentSpanId });
+            context.Request.Headers.Add(B3HeaderConstants.Sampled, new[] { traceContext.Sampled == true ? "1" : "0" });
+            context.Request.Headers.Add(B3HeaderConstants.Flags, new[] { traceContext.Debug == true ? "1" : "0" });
             return context;
         }
     }

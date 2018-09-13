@@ -16,7 +16,7 @@ namespace Zipkin.NET.Instrumentation
 
         private Stopwatch _timer;
         private bool? _sampled;
-	    private Span _span;
+        private Span _span;
 
         protected Trace(
             ISampler sampler,
@@ -53,10 +53,10 @@ namespace Zipkin.NET.Instrumentation
             };
         }
 
-	    /// <summary>
-	    /// The span associated with this trace.
-	    /// </summary>
-	    public Span Span { get; }
+        /// <summary>
+        /// The span associated with this trace.
+        /// </summary>
+        public Span Span { get; }
 
         /// <summary>
         /// Trace ID's associated with the current trace.

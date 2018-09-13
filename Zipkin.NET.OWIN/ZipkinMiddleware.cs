@@ -36,7 +36,7 @@ namespace Zipkin.NET.OWIN
             // Extract X-B3 headers
             var traceContext = _extractor
                 .Extract(context)
-	            .NewChildTrace();
+                .NewChildTrace();
 
             // Record the server trace context so we can
             // later retrieve the values for the client trace.
@@ -51,16 +51,15 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _applicationName
                 });
 
-			serverTrace.Tag("uri", context.Request.Path.Value);
-			serverTrace.Tag("method", context.Request.Method);
+            serverTrace.Tag("uri", context.Request.Path.Value);
+            serverTrace.Tag("method", context.Request.Method);
 
-			// Record server recieve start time and start duration timer
-			serverTrace.Start();
+            // Record server recieve start time and start duration timer
+            serverTrace.Start();
 
             try
             {
                 await next();
-
             }
             catch (Exception ex)
             {
