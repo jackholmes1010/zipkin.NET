@@ -91,7 +91,7 @@ namespace Zipkin.NET.Instrumentation
         /// </returns>
         public virtual string GenerateTraceId(Random random = null)
         {
-			return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
-		}
+            return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
+        }
     }
 }

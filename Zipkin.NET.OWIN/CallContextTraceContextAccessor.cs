@@ -15,9 +15,9 @@ namespace Zipkin.NET.OWIN
     {
         private const string ContextKey = "server-trace";
 
-		/// <summary>
-		/// Get the <see cref="TraceContext"/> from the <see cref="CallContext"/>.
-		/// </summary>
+        /// <summary>
+        /// Get the <see cref="TraceContext"/> from the <see cref="CallContext"/>.
+        /// </summary>
         public TraceContext Context
         {
             get

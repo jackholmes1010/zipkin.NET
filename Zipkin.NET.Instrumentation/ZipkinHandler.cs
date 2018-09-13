@@ -85,7 +85,7 @@ namespace Zipkin.NET.Instrumentation
                 {
                     ServiceName = _applicationName
                 });
-			
+            
             clientTrace.Tag("uri", request.RequestUri.OriginalString);
             clientTrace.Tag("method", request.Method.Method);
 

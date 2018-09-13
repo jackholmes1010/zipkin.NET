@@ -34,9 +34,9 @@ namespace Zipkin.NET.WCF
 
         public object Invoke(object instance, object[] inputs, out object[] outputs)
         {
-			var traceContext = _extractor
-				.Extract(WebOperationContext.Current?.IncomingRequest)
-				.NewChildTrace()
+            var traceContext = _extractor
+                .Extract(WebOperationContext.Current?.IncomingRequest)
+                .NewChildTrace()
                 .Sample(new DebugSampler());
 
             var trace = new ServerTrace(

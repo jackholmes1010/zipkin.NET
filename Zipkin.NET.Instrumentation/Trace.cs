@@ -12,21 +12,21 @@ namespace Zipkin.NET.Instrumentation
     {
         private Stopwatch _timer;
 
-		/// <summary>
-		/// Create a new trace using the <see cref="TraceContext"/> of the parent trace.
-		/// </summary>
-		/// <param name="context">
-		/// The parent's <see cref="TraceContext"/>.
-		/// </param>
-		/// <param name="name">
-		/// The logical name of this operation.
-		/// </param>
-		/// <param name="local">
-		/// The local network context.
-		/// </param>
-		/// <param name="remote">
-		/// The remote network context.
-		/// </param>
+        /// <summary>
+        /// Create a new trace using the <see cref="TraceContext"/> of the parent trace.
+        /// </summary>
+        /// <param name="context">
+        /// The parent's <see cref="TraceContext"/>.
+        /// </param>
+        /// <param name="name">
+        /// The logical name of this operation.
+        /// </param>
+        /// <param name="local">
+        /// The local network context.
+        /// </param>
+        /// <param name="remote">
+        /// The remote network context.
+        /// </param>
         protected Trace(TraceContext context, string name, Endpoint local = null, Endpoint remote = null)
         {
             TraceContext = context;
