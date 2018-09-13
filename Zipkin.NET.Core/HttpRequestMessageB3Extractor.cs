@@ -2,14 +2,13 @@
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Propagation;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
     /// <summary>
     /// Injects trace context into an <see cref="HttpRequestMessage"/>.
     /// </summary>
-    public class B3Propagator : IPropagator<HttpRequestMessage>
+    public class HttpRequestMessageB3Extractor : IPropagator<HttpRequestMessage>
     {
         /// <summary>
         /// Adds X-B3 header values to an outgoing HTTP request.

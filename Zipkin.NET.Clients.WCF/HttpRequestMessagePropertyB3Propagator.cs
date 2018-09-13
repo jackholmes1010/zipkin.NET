@@ -8,7 +8,7 @@ namespace Zipkin.NET.Clients.WCF
     /// <summary>
     /// Injects trace context into an <see cref="HttpRequestMessageProperty"/>.
     /// </summary>
-    public class B3Propagator : IPropagator<HttpRequestMessageProperty>
+    public class HttpRequestMessagePropertyB3Propagator : IPropagator<HttpRequestMessageProperty>
     {
         /// <summary>
         /// Adds X-B3 header values to an outgoing HTTP request.

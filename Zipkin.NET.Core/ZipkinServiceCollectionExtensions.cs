@@ -20,8 +20,8 @@ namespace Zipkin.NET.Core
             services.AddTransient<ISampler, DebugSampler>();
             services.AddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.AddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
-            services.AddTransient<IPropagator<HttpRequestMessage>, B3Propagator>();
-            services.AddTransient<IExtractor<HttpRequest>, B3Extractor>();
+            services.AddTransient<IPropagator<HttpRequestMessage>, HttpRequestMessageB3Extractor>();
+            services.AddTransient<IExtractor<HttpRequest>, HttpRequestB3Propagator>();
 
             // Register middleware
             services.AddTransient(provider =>

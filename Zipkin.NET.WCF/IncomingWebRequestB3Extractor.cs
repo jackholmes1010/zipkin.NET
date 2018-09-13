@@ -5,7 +5,7 @@ using Zipkin.NET.Instrumentation.Propagation;
 
 namespace Zipkin.NET.WCF
 {
-    public class B3Extractor : IExtractor<IncomingWebRequestContext>
+    public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
     {
         public TraceContext Extract(IncomingWebRequestContext context)
         {

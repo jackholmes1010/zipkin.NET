@@ -45,7 +45,7 @@ namespace Zipkin.NET.Clients.WCF
         /// <inheritdoc />
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            var propagator = new B3Propagator();
+            var propagator = new HttpRequestMessagePropertyB3Propagator();
             var sampler = new DebugSampler();
 
             clientRuntime.ClientMessageInspectors.Add(

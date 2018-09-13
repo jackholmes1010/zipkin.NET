@@ -2,14 +2,13 @@
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Propagation;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.Core
 {
     /// <summary>
     /// Extracts a <see cref="TraceContext"/> from a <see cref="HttpRequest"/>.
     /// </summary>
-    public class B3Extractor : IExtractor<HttpRequest>
+    public class HttpRequestB3Propagator : IExtractor<HttpRequest>
     {
         /// <summary>
         /// Extracts the X-B3 trace ID header values from the request.
