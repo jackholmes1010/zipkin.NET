@@ -51,8 +51,11 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _applicationName
                 });
 
-            // Record server recieve start time and start duration timer
-            serverTrace.Start();
+			serverTrace.Tag("uri", context.Request.Path.Value);
+			serverTrace.Tag("method", context.Request.Method);
+
+			// Record server recieve start time and start duration timer
+			serverTrace.Start();
 
             try
             {

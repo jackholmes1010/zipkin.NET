@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Instrumentation;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
@@ -71,6 +70,9 @@ namespace Zipkin.NET.Core
                 {
                     ServiceName = _applicationName
                 });
+
+			clientTrace.Tag("uri", request.RequestUri.OriginalString);
+			clientTrace.Tag("method", request.Method.Method);
 
             // Record client send time and start duration timer
             clientTrace.Start();

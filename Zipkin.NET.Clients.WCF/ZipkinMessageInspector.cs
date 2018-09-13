@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using System.Text;
 using Zipkin.NET.Instrumentation;
-using Zipkin.NET.Instrumentation.Constants;
 using Zipkin.NET.Instrumentation.Models;
 using Zipkin.NET.Instrumentation.Propagation;
 using Zipkin.NET.Instrumentation.Reporting;
@@ -54,12 +50,13 @@ namespace Zipkin.NET.Clients.WCF
             _trace = new ClientTrace(
                 _sampler,
                 traceContext,
-                request.Headers.Action,
+                "soap",
                 remoteEndpoint: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
 
+	        _trace.Tag("action", request.Headers.Action);
             _trace.Start();
 
             return null;

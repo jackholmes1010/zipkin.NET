@@ -50,7 +50,8 @@ namespace Zipkin.NET.WCF
 
             // Do stuff before call
             var res = _originalInvoker.Invoke(instance, inputs, out outputs);
-            trace.End();
+
+	        trace.End();
             _reporter.Report(trace);
 
             // stuff after call

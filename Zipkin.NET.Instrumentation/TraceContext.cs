@@ -42,11 +42,13 @@ namespace Zipkin.NET.Instrumentation
 	    /// </returns>
 	    public TraceContext NewChildTrace()
 	    {
+		    var random = new Random();
+
 		    return new TraceContext
 		    {
-			    TraceId = TraceId ?? GenerateTraceId(),
-			    ParentSpanId = SpanId ?? GenerateTraceId(),
-			    SpanId = GenerateTraceId(),
+			    TraceId = TraceId ?? GenerateTraceId(random),
+			    ParentSpanId = SpanId ?? GenerateTraceId(random),
+			    SpanId = GenerateTraceId(random),
 				Debug = Debug,
 				Sampled = Sampled
 			};
@@ -58,10 +60,12 @@ namespace Zipkin.NET.Instrumentation
 	    /// <returns>
 	    /// The trace ID as a string.
 	    /// </returns>
-	    public virtual string GenerateTraceId()
+	    public virtual string GenerateTraceId(Random random = null)
 	    {
 		    // TODO this is stupid
-		    var random = new Random();
+		    if (random == null)
+				random = new Random();
+
 		    var builder = new StringBuilder();
 		    for (var i = 0; i < 16; i++)
 		    {

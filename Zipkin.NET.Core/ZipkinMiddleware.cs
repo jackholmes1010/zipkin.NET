@@ -71,13 +71,16 @@ namespace Zipkin.NET.Core
                     ServiceName = _applicationName
                 });
 
+			serverTrace.Tag("host", context.Request.Host.Value);
+			serverTrace.Tag("resource", context.Request.Path.Value);
+			serverTrace.Tag("method", context.Request.Method);
+
             // Record server recieve start time and start duration timer
             serverTrace.Start();
 
             try
             {
                 await next(context);
-
             }
             catch (Exception ex)
             {
