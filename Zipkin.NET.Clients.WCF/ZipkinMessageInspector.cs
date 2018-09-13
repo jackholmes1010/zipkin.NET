@@ -52,7 +52,7 @@ namespace Zipkin.NET.Clients.WCF
             _trace = new ClientTrace(
                 traceContext,
                 "soap",
-                remoteEndpoint: new Endpoint
+                remote: new Endpoint
                 {
                     ServiceName = _applicationName
                 });

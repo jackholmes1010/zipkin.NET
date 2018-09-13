@@ -22,8 +22,8 @@ namespace Zipkin.NET.Instrumentation
         /// <param name="remote">
         /// The remote network context.
         /// </param>
-        public ServerTrace(TraceContext traceContext, string name, Endpoint localEndpoint = null, Endpoint remoteEndpoint = null)
-            : base(traceContext, name, localEndpoint, remoteEndpoint)
+        public ServerTrace(TraceContext context, string name, Endpoint local = null, Endpoint remote = null)
+            : base(context, name, local, remote)
         {
             Span.Kind = SpanKind.Server;
         }

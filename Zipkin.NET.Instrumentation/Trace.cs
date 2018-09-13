@@ -119,7 +119,7 @@ namespace Zipkin.NET.Instrumentation
         /// <summary>
         /// Check if the current trace should be sampled.
         /// <remarks>
-        /// Simple pass through to <see cref="TraceContext.Sampled"/>.
+        /// Simple pass through to <see cref="TraceContext"/> Sampled property.
         /// </remarks>
         /// </summary>
         /// <returns>

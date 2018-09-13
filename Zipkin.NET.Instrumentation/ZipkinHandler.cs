@@ -81,7 +81,7 @@ namespace Zipkin.NET.Instrumentation
             var clientTrace = new ClientTrace(
                 serverContext, 
                 request.Method.ToString(), 
-                remoteEndpoint: new Endpoint
+                remote: new Endpoint
                 {
                     ServiceName = _applicationName
                 });

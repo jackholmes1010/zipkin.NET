@@ -42,7 +42,7 @@ namespace Zipkin.NET.WCF
             var trace = new ServerTrace(
                 traceContext, 
                 "soap", 
-                localEndpoint: new Endpoint
+                local: new Endpoint
                 {
                     ServiceName = _applicationName
                 });

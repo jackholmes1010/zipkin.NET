@@ -45,7 +45,7 @@ namespace Zipkin.NET.OWIN
             var serverTrace = new ServerTrace(
                 clientTrace,
                 context.Request.Method,
-                localEndpoint: new Endpoint
+                local: new Endpoint
                 {
                     ServiceName = _applicationName
                 });
