@@ -4,6 +4,7 @@ using System.Web.Http;
 using System.Web.SessionState;
 using Microsoft.Owin.Extensions;
 using Owin;
+using Zipkin.NET.Framework;
 using Zipkin.NET.Instrumentation.Reporting;
 using Zipkin.NET.Instrumentation.Sampling;
 

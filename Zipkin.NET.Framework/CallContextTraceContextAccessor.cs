@@ -2,7 +2,7 @@
 using System.Runtime.Remoting.Messaging;
 using Zipkin.NET.Instrumentation;
 
-namespace Zipkin.NET.OWIN
+namespace Zipkin.NET.Framework
 {
     /// <summary>
     /// Stores the current <see cref="TraceContext"/> in the logical <see cref="CallContext"/>.

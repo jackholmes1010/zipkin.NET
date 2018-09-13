@@ -3,7 +3,7 @@ using System.Web;
 using Zipkin.NET.Instrumentation;
 using TraceContext = Zipkin.NET.Instrumentation.TraceContext;
 
-namespace Zipkin.NET.OWIN
+namespace Zipkin.NET.Framework
 {
     /// <summary>
     /// Stores the <see cref="TraceContext"/> in the <see cref="HttpContext.Current"/>.

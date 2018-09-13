@@ -33,6 +33,8 @@ namespace Zipkin.NET.Instrumentation
 
         /// <summary>
         /// The sampled value associated with the current trace.
+        /// This SHOULD NOT be set if a sampling decision has not
+        /// already been made by an upstream system.
         /// </summary>
         public bool? Sampled { get; set; }
 
@@ -43,6 +45,7 @@ namespace Zipkin.NET.Instrumentation
 
         /// <summary>
         /// Refresh the trace ID's when starting a new child trace.
+        /// Returns a new <see cref="TraceContext" /> instance.
         /// </summary>
         /// <returns>
         /// A new <see cref="TraceContext"/> instance with a new
@@ -64,7 +67,7 @@ namespace Zipkin.NET.Instrumentation
         /// Make a sampling decision based on the value of the parent's
         /// sampling decision and the debug flag. If the debug flag is 
         /// not set and no sampling decision has been made by an upstream 
-        /// service, make a sampling decisision using the <see cref="ISampler"/>.
+        /// service, make a sampling decision using the <see cref="ISampler"/>.
         /// </summary>
         /// <param name="sampler">
         /// An <see cref="ISampler"/> used to make sampling decisions.

@@ -50,29 +50,28 @@ namespace Zipkin.NET.WCF
 
             trace.Start();
 
-            // Do stuff before call
-            var res = _originalInvoker.Invoke(instance, inputs, out outputs);
+            var response = _originalInvoker.Invoke(instance, inputs, out outputs);
 
             trace.End();
+
             _reporter.Report(trace);
 
-            // stuff after call
-            return res;
+            return response;
         }
 
         public IAsyncResult InvokeBegin(object instance, object[] inputs,
             AsyncCallback callback, object state)
         {
-            //Do stuff before async call
-            var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
-            return res;
+            throw new NotImplementedException();
+            //var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
+            //return res;
         }
 
         public object InvokeEnd(object instance, out object[] outputs, IAsyncResult result)
         {
-            var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
-            // Do stuff after async call
-            return res;
+            throw new NotImplementedException();
+            //var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
+            //return res;
         }
     }
 }

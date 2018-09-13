@@ -5,8 +5,20 @@ using Zipkin.NET.Instrumentation.Propagation;
 
 namespace Zipkin.NET.WCF
 {
+    /// <summary>
+    /// Extracts a <see cref="TraceContext"/> from a <see cref="IncomingWebRequestContext"/>.
+    /// </summary>
     public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
     {
+        /// <summary>
+        /// Extracts the X-B3 trace ID header values from the request.
+        /// </summary>
+        /// <param name="context">
+        /// The incoming request.
+        /// </param>
+        /// <returns>
+        /// A <see cref="TraceContext"/> containing the header values.
+        /// </returns>
         public TraceContext Extract(IncomingWebRequestContext context)
         {
             var traceContext = new TraceContext
