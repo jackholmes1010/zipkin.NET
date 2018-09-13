@@ -25,10 +25,11 @@ namespace Zipkin.NET.WCF
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
             var reporter = new Reporter(new HttpSender(_zipkinHost));
+            var sampler = new DebugSampler();
             var extractor = new IncomingWebRequestB3Extractor();
 
             dispatchOperation.Invoker = new ZipkinInvoker(
-                _applicationName, dispatchOperation.Invoker, reporter, extractor);
+                _applicationName, dispatchOperation.Invoker, reporter, sampler, extractor);
         }
 
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)

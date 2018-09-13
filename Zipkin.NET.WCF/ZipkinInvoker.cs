@@ -15,17 +15,20 @@ namespace Zipkin.NET.WCF
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public ZipkinInvoker(
             string applicationName,
             IOperationInvoker originalInvoker,
             IReporter reporter, 
+            ISampler sampler,
             IExtractor<IncomingWebRequestContext> extractor)
         {
             _applicationName = applicationName;
             _originalInvoker = originalInvoker;
             _reporter = reporter;
+            _sampler = sampler;
             _extractor = extractor;
         }
 
@@ -38,7 +41,7 @@ namespace Zipkin.NET.WCF
             var traceContext = _extractor
                 .Extract(WebOperationContext.Current?.IncomingRequest)
                 .NewChildTrace()
-                .Sample(new DebugSampler());
+                .Sample(_sampler);
 
             var trace = new ServerTrace(
                 traceContext, 
