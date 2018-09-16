@@ -8,9 +8,10 @@ namespace Zipkin.NET.Core
     /// </summary>
     public class HttpContextTraceContextAccessor : ITraceContextAccessor
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+	    private const string ContextKey = "server-trace";
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpContextTraceContextAccessor(IHttpContextAccessor httpContextAccessor)
+		public HttpContextTraceContextAccessor(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
@@ -20,8 +21,13 @@ namespace Zipkin.NET.Core
         /// </summary>
         public TraceContext Context
         {
-            get => _httpContextAccessor.HttpContext.Items["server-trace"] as TraceContext;
-            set => _httpContextAccessor.HttpContext.Items["server-trace"] = value;
+            get => _httpContextAccessor.HttpContext.Items[ContextKey] as TraceContext;
+            set => _httpContextAccessor.HttpContext.Items[ContextKey] = value;
         }
+
+	    public bool HasContext()
+	    {
+		   return _httpContextAccessor.HttpContext?.Items[ContextKey] is TraceContext;
+	    }
     }
 }

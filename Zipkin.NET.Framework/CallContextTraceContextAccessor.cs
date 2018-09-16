@@ -23,17 +23,16 @@ namespace Zipkin.NET.Framework
             get
             {
                 var context = CallContext.LogicalGetData(ContextKey);
-
-                if (context == null)
-                    throw new Exception("Unable to retrieve trace context from the CallContext.");
-
                 var traceContext = context as TraceContext;
                 return traceContext;
             }
-            set
-            {
-                CallContext.LogicalSetData(ContextKey, value);
-            }
+            set => CallContext.LogicalSetData(ContextKey, value);
         }
+
+	    public bool HasContext()
+	    {
+			var context = CallContext.LogicalGetData(ContextKey);
+		    return context != null;
+	    }
     }
 }

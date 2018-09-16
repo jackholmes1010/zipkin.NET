@@ -17,25 +17,19 @@ namespace Zipkin.NET.Framework
         /// </summary>
         public TraceContext Context
         {
-            get
-            {
-                if (HttpContext.Current == null)
-                    throw new Exception("Unable to retrieve trace context, HttpContext.Current is null.");
-
-                var traceContext = HttpContext.Current.Items[ContextKey];
-
-                if (traceContext == null)
-                    throw new Exception("Unable to retrieve trace context from HttpContext.Current.Items.");
-
-                return traceContext as TraceContext;
-            }
-            set
-            {
-                if (HttpContext.Current == null)
-                    throw new Exception("Unable to store trace context on the HttpContext. HttpContext.Current is null.");
+            get => HttpContext.Current?.Items[ContextKey] as TraceContext;
+	        set
+	        {
+		        if (HttpContext.Current == null)
+			        return;
 
                 HttpContext.Current.Items[ContextKey] = value;
             }
         }
+
+	    public bool HasContext()
+	    {
+		    return HttpContext.Current?.Items[ContextKey] is TraceContext;
+	    }
     }
 }
