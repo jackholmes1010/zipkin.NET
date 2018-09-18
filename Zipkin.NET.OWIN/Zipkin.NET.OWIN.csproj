@@ -55,12 +55,6 @@
     <Compile Include="ZipkinMiddleware.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj">
-      <Project>{5263fc21-e655-4493-bb9e-375f74dd0340}</Project>
-      <Name>Zipkin.NET.Instrumentation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

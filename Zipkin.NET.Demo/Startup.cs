@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Zipkin.NET.Core;
+using Zipkin.NET.Middleware;
 
 namespace Zipkin.NET.Demo
 {

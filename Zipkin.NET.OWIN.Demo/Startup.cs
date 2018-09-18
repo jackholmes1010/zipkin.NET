@@ -4,9 +4,6 @@ using System.Web.Http;
 using System.Web.SessionState;
 using Microsoft.Owin.Extensions;
 using Owin;
-using Zipkin.NET.Framework;
-using Zipkin.NET.Instrumentation.Reporting;
-using Zipkin.NET.Instrumentation.Sampling;
 
 namespace Zipkin.NET.OWIN.Demo
 {
@@ -28,17 +25,17 @@ namespace Zipkin.NET.OWIN.Demo
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            app.Use(async (ctx, next) =>
-            {
-                var sender = new HttpSender("http://localhost:9411");
-                var reporter = new Reporter(sender);
-                var sampler = new DebugSampler();
-                var propagator = new OwinContextB3Extractor();
-                var traceContextAccessor = new CallContextTraceContextAccessor();
-                var middleware = new ZipkinMiddleware(
-                    "owin-demo", reporter, sampler, traceContextAccessor, propagator);
-                await middleware.Invoke(ctx, next);
-            });
+            //app.Use(async (ctx, next) =>
+            //{
+            //    var sender = new HttpSender("http://localhost:9411");
+            //    var reporter = new Reporter(sender);
+            //    var sampler = new DebugSampler();
+            //    var propagator = new OwinContextB3Extractor();
+            //    var traceContextAccessor = new CallContextTraceContextAccessor();
+            //    var middleware = new ZipkinMiddleware(
+            //        "owin-demo", reporter, sampler, traceContextAccessor, propagator);
+            //    await middleware.Invoke(ctx, next);
+            //});
 
             app.UseWebApi(config);
         }

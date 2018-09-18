@@ -92,10 +92,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj">
-      <Project>{5263fc21-e655-4493-bb9e-375f74dd0340}</Project>
-      <Name>Zipkin.NET.Instrumentation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Zipkin.NET.WCF\Zipkin.NET.WCF.csproj">
       <Project>{090D0A58-04CE-4EE4-9A74-C0569E0B1497}</Project>
       <Name>Zipkin.NET.WCF</Name>

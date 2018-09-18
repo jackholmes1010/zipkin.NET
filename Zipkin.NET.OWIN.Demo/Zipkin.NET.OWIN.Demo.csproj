@@ -86,10 +86,6 @@
       <Project>{7CE205C2-0E81-4710-8296-02F10DDA1971}</Project>
       <Name>Zipkin.NET.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj">
-      <Project>{5263fc21-e655-4493-bb9e-375f74dd0340}</Project>
-      <Name>Zipkin.NET.Instrumentation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj">
       <Project>{F1275248-66CF-45BC-B5B5-1836F24A3BD6}</Project>
       <Name>Zipkin.NET.OWIN</Name>

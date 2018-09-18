@@ -48,11 +48,5 @@
     <Compile Include="ZipkinBehaviorAttribute.cs" />
     <Compile Include="ZipkinInvoker.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Instrumentation\Zipkin.NET.Instrumentation.csproj">
-      <Project>{5263FC21-E655-4493-BB9E-375F74DD0340}</Project>
-      <Name>Zipkin.NET.Instrumentation</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
