@@ -7,12 +7,12 @@ namespace Zipkin.NET.Reporters
     /// </summary>
     public interface IReporter
     {
-		/// <summary>
-		/// Schedules the span to be sent onto the transport.
-		/// </summary>
-		/// <param name="span">
-		/// The trace to be reported.
-		/// </param>
-		void Report(Span span);
+        /// <summary>
+        /// Schedules the span to be sent onto the transport.
+        /// </summary>
+        /// <param name="span">
+        /// The trace to be reported.
+        /// </param>
+        void Report(Span span);
     }
 }

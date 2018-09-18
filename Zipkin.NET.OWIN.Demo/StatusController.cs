@@ -23,7 +23,7 @@ namespace Zipkin.NET.OWIN.Demo
             //var result = await httpClient.GetAsync(new Uri("https://www.google.com"));
             //return Ok(await result.Content.ReadAsStringAsync());
 
-	        return Ok();
+            return Ok();
         }
     }
 }

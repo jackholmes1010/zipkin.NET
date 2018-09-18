@@ -22,19 +22,19 @@ namespace Zipkin.NET.Reporters
             _processor = new ActionBlock<Span>(async span => await SendSpan(span));
         }
 
-		/// <summary>
-		/// Schedules a span to be sent to a transport.
-		/// </summary>
-		/// <remarks>
-		/// The send is performed asynchronously using a <see cref="ActionBlock{TInput}"/>.
-		/// </remarks>
-		/// <param name="span">
-		/// The trace to be reported.
-		/// </param>
-		public void Report(Span span)
+        /// <summary>
+        /// Schedules a span to be sent to a transport.
+        /// </summary>
+        /// <remarks>
+        /// The send is performed asynchronously using a <see cref="ActionBlock{TInput}"/>.
+        /// </remarks>
+        /// <param name="span">
+        /// The trace to be reported.
+        /// </param>
+        public void Report(Span span)
         {
-			_processor.Post(span);
-		}
+            _processor.Post(span);
+        }
 
         /// <summary>
         /// Complete reporting of spans.

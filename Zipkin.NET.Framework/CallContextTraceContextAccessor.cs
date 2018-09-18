@@ -29,10 +29,10 @@
 //            set => CallContext.LogicalSetData(ContextKey, value);
 //        }
 
-//	    public bool HasContext()
-//	    {
-//			var context = CallContext.LogicalGetData(ContextKey);
-//		    return context != null;
-//	    }
+//        public bool HasContext()
+//        {
+//            var context = CallContext.LogicalGetData(ContextKey);
+//            return context != null;
+//        }
 //    }
 //}

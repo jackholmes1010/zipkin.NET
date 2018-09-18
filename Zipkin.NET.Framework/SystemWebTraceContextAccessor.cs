@@ -18,18 +18,18 @@
 //        public TraceContext Context
 //        {
 //            get => HttpContext.Current?.Items[ContextKey] as TraceContext;
-//	        set
-//	        {
-//		        if (HttpContext.Current == null)
-//			        return;
+//            set
+//            {
+//                if (HttpContext.Current == null)
+//                    return;
 
 //                HttpContext.Current.Items[ContextKey] = value;
 //            }
 //        }
 
-//	    public bool HasContext()
-//	    {
-//		    return HttpContext.Current?.Items[ContextKey] is TraceContext;
-//	    }
+//        public bool HasContext()
+//        {
+//            return HttpContext.Current?.Items[ContextKey] is TraceContext;
+//        }
 //    }
 //}
