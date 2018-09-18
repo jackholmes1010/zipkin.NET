@@ -39,7 +39,7 @@ namespace Zipkin.NET
             _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(
+        protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var trace = _traceAccessor.HasTrace()
@@ -47,7 +47,7 @@ namespace Zipkin.NET
                 : new Trace();
 
             var spanBuilder = trace
-                .GetSpanBuilder()
+                .GetSpanBuilder(true)
                 .Tag("uri", request.RequestUri.OriginalString)
                 .Tag("method", request.Method.Method)
                 .WithRemoteEndpoint(new Endpoint
@@ -62,7 +62,7 @@ namespace Zipkin.NET
 
             try
             {
-                return base.SendAsync(request, cancellationToken);
+                return await base.SendAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {

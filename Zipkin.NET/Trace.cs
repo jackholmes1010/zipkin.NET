@@ -4,34 +4,48 @@ namespace Zipkin.NET
 {
     public class Trace
     {
-        /// <summary>
-        /// The overall ID of the current trace.
-        /// </summary>
         private readonly string _traceId;
-
-        /// <summary>
-        /// The ID of the previous span.
-        /// <remarks>
-        /// This will become the parent ID of built spans.
-        /// </remarks>
-        /// </summary>
         private readonly string _spanId;
+        private readonly string _parentSpanId;
 
         public Trace()
         {
             _traceId = GenerateTraceId();
+            _spanId = GenerateTraceId();
         }
 
         public Trace(string traceId, string spanId)
         {
             _traceId = traceId ?? GenerateTraceId();
-            _spanId = spanId;
+            _spanId = GenerateTraceId();
+            _parentSpanId = spanId;
         }
 
-        public SpanBuilder GetSpanBuilder()
+        public Trace(string traceId, string spanId, string parentSpanId)
         {
-            var id = GenerateTraceId();
-            return new SpanBuilder(_traceId, id, _spanId);
+            _traceId = traceId;
+            _spanId = spanId;
+            _parentSpanId = parentSpanId;
+        }
+
+        public SpanBuilder GetSpanBuilder(bool refresh = false)
+        {
+            return refresh 
+                ? Refresh().GetSpanBuilder(false)
+                : new SpanBuilder(_traceId, _spanId, _parentSpanId);
+        }
+
+        /// <summary>
+        /// Refresh the trace ID's by setting the parent span ID
+        /// to the current span ID and generating a new span ID.
+        /// </summary>
+        /// <returns>
+        /// A new <see cref="Trace"/>.
+        /// </returns>
+        public Trace Refresh()
+        {
+            var traceId = _traceId ?? GenerateTraceId();
+            return new Trace(traceId, GenerateTraceId(), _spanId);
         }
 
         /// <summary>
