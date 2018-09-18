@@ -24,11 +24,12 @@ namespace Zipkin.NET.Middleware
             services.TryAddTransient<ISender>(provider => new HttpSender(zipkinHost));
             services.TryAddTransient<ITraceAccessor, HttpContextTraceAccessor>();
             services.TryAddTransient<IExtractor<HttpRequest>, HttpRequestExtractor>();
+            services.TryAddTransient<IPropagator<HttpRequestMessage>, HttpRequestMessagePropagator>();
 
             services.AddTransient(provider =>
             {
                 var extractor = provider.GetService<IExtractor<HttpRequest>>();
-                var traceAccessor = provider.GetService<HttpContextTraceAccessor>();
+                var traceAccessor = provider.GetService<ITraceAccessor>();
                 var reporter = provider.GetService<IReporter>();
                 return new TracingMiddleware(applicationName, extractor, traceAccessor, reporter);
             });
