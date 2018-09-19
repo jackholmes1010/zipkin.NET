@@ -42,9 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CallContextTraceContextAccessor.cs" />
+    <Compile Include="CallContextTraceAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemWebTraceContextAccessor.cs" />
+    <Compile Include="SystemWebHttpContextTraceAccessor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj">
+      <Project>{39e0b793-95ee-4c55-bb40-90dbd723a8ad}</Project>
+      <Name>Zipkin.NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

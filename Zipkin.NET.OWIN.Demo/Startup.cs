@@ -31,7 +31,7 @@ namespace Zipkin.NET.OWIN.Demo
             //    var reporter = new Reporter(sender);
             //    var sampler = new DebugSampler();
             //    var propagator = new OwinContextB3Extractor();
-            //    var traceContextAccessor = new CallContextTraceContextAccessor();
+            //    var traceContextAccessor = new CallContextTraceAccessor();
             //    var middleware = new ZipkinMiddleware(
             //        "owin-demo", reporter, sampler, traceContextAccessor, propagator);
             //    await middleware.Invoke(ctx, next);
