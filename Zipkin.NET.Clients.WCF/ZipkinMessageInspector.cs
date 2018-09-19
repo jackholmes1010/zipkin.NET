@@ -46,7 +46,7 @@ namespace Zipkin.NET.Clients.WCF
                 .Start();
 
             // Inject X-B3 headers to the outgoing request
-            _propagator.Inject(httpRequest, _spanBuilder.Build());
+            _propagator.Inject(httpRequest, _spanBuilder.Build(), trace.Sampled == true);
 
             return null;
         }

@@ -1,36 +1,43 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Constants;
-using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
 namespace Zipkin.NET.Middleware.Propagation
 {
     public class HttpRequestExtractor : IExtractor<HttpRequest>
     {
-        public Span Extract(HttpRequest extract)
+        public Trace Extract(HttpRequest extract)
         {
-            var span = new Span();
-
+            string traceId = null;
             if (extract.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
             {
-                span.TraceId = value;
+                traceId = value;
             }
 
+            string spanId = null;
             if (extract.Headers.TryGetValue(B3HeaderConstants.SpanId, out value))
             {
-                span.ParentId = value;
+                spanId = value;
             }
 
+            var debug = false;
             if (extract.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
             {
-                span.Debug = value == "1";
-            }
-            else
-            {
-                span.Debug = false;
+                debug = value == "1";
             }
 
-            return span;
+            bool? sampled = null;
+            if (extract.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
+            {
+                sampled = value == "1";
+            }
+            
+
+            return new Trace(traceId, spanId)
+            {
+                Debug = debug,
+                Sampled = sampled
+            };
         }
     }
 }

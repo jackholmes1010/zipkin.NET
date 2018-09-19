@@ -9,6 +9,7 @@ using Zipkin.NET.Middleware.Propagation;
 using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Middleware
@@ -25,13 +26,15 @@ namespace Zipkin.NET.Middleware
             services.TryAddTransient<ITraceAccessor, HttpContextTraceAccessor>();
             services.TryAddTransient<IExtractor<HttpRequest>, HttpRequestExtractor>();
             services.TryAddTransient<IPropagator<HttpRequestMessage>, HttpRequestMessagePropagator>();
+            services.TryAddTransient<ISampler, DebugSampler>();
 
             services.AddTransient(provider =>
             {
                 var extractor = provider.GetService<IExtractor<HttpRequest>>();
                 var traceAccessor = provider.GetService<ITraceAccessor>();
                 var reporter = provider.GetService<IReporter>();
-                return new TracingMiddleware(applicationName, extractor, traceAccessor, reporter);
+                var sampler = provider.GetService<ISampler>();
+                return new TracingMiddleware(applicationName, extractor, traceAccessor, reporter, sampler);
             });
 
             return services;

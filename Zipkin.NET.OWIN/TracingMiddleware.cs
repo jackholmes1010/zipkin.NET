@@ -4,6 +4,7 @@ using Microsoft.Owin;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN
 {
@@ -11,25 +12,30 @@ namespace Zipkin.NET.OWIN
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IOwinContext> _extractor;
 
         public TracingMiddleware(
             string applicationName,
             IReporter reporter,
+            ISampler sampler,
             ITraceAccessor traceAccessor,
             IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
             _reporter = reporter;
+            _sampler = sampler;
             _traceAccessor = traceAccessor;
             _extractor = extractor;
         }
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
         {
-            var parentSpan = _extractor.Extract(context);
-            var trace = new Trace(parentSpan.TraceId, parentSpan.Id);
+            var trace = _extractor
+                .Extract(context)
+                .Sample(_sampler);
+
             var spanBuilder = trace.GetSpanBuilder();
 
             spanBuilder
@@ -55,7 +61,9 @@ namespace Zipkin.NET.OWIN
             finally
             {
                 spanBuilder.End();
-                _reporter.Report(spanBuilder.Build());
+                
+                if (trace.Sampled == true)
+                    _reporter.Report(spanBuilder.Build());
             }
         }
     }

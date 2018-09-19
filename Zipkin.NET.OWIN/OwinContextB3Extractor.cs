@@ -1,14 +1,13 @@
 ﻿using System.Linq;
 using Microsoft.Owin;
 using Zipkin.NET.Constants;
-using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
 namespace Zipkin.NET.OWIN
 {
     public class OwinContextB3Extractor : IExtractor<IOwinContext>
     {
-        public Span Extract(IOwinContext extract)
+        public Trace Extract(IOwinContext extract)
         {
             string traceId = null;
             if (extract.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
@@ -22,23 +21,22 @@ namespace Zipkin.NET.OWIN
                 spanId = value.FirstOrDefault();
             }
 
-            //bool? sampled = null;
-            //if (extract.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
-            //{
-            //    sampled = value.FirstOrDefault() == "1";
-            //}
-
-            bool? debug = null;
+            var debug = false;
             if (extract.Request.Headers.TryGetValue(B3HeaderConstants.Flags, out value))
             {
                 debug = value.FirstOrDefault() == "1";
             }
 
-            return new Span
+            bool? sampled = null;
+            if (extract.Request.Headers.TryGetValue(B3HeaderConstants.Sampled, out value))
             {
-                TraceId = traceId,
-                Id = spanId,
-                Debug = debug == true
+                sampled = value.FirstOrDefault() == "1";
+            }
+
+            return new Trace(traceId, spanId)
+            {
+                Debug = debug,
+                Sampled = sampled
             };
         }
     }

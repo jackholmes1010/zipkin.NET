@@ -7,19 +7,21 @@ namespace Zipkin.NET.WCF
 {
     public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
     {
-        public Span Extract(IncomingWebRequestContext extract)
+        public Trace Extract(IncomingWebRequestContext extract)
         {
-            var span = new Span
+            var traceId = extract.Headers[B3HeaderConstants.TraceId];
+            var spanId = extract.Headers[B3HeaderConstants.SpanId];
+            var debug = extract.Headers[B3HeaderConstants.Flags] == "1";
+
+            bool? sampled = null;
+            if (extract.Headers[B3HeaderConstants.Sampled] != null)
+                sampled = true;
+
+            return new Trace(traceId, spanId)
             {
-                TraceId = extract.Headers[B3HeaderConstants.TraceId],
-                Id = extract.Headers[B3HeaderConstants.SpanId],
-                Debug = extract.Headers[B3HeaderConstants.Flags] == "1"
+                Debug = debug,
+                Sampled = sampled
             };
-
-            //if (context.Headers[B3HeaderConstants.Sampled] != null)
-            //    traceContext.Sampled = true;
-
-            return span;
         }
     }
 }

@@ -19,9 +19,12 @@ namespace Zipkin.NET.Propagation
         /// <param name="span">
         /// The <see cref="Span"/>.
         /// </param>
+        /// <param name="sampled">
+        /// The sampled boolean for the current trace.
+        /// </param>
         /// <returns>
         /// The <see cref="TInject"/> object with span details.
         /// </returns>
-        TInject Inject(TInject inject, Span span);
+        TInject Inject(TInject inject, Span span, bool sampled);
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
@@ -12,17 +13,20 @@ namespace Zipkin.NET
     {
         private readonly string _applicationName;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
         public TracingHandler(HttpMessageHandler innerHandler,
             string applicationName,
-            IReporter reporter, 
+            IReporter reporter,
+            ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
         {
             _applicationName = applicationName;
             _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
         }
@@ -42,9 +46,10 @@ namespace Zipkin.NET
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var trace = _traceAccessor.HasTrace() 
-                ? _traceAccessor.GetTrace().Refresh() 
-                : new Trace();
+            var trace = (_traceAccessor.HasTrace()
+                ? _traceAccessor.GetTrace().Refresh()
+                : new Trace())
+                .Sample(_sampler);
 
             var spanBuilder = trace
                 .GetSpanBuilder()
@@ -56,7 +61,7 @@ namespace Zipkin.NET
                 });
 
             // Add X-B3 headers to the request
-            request = _propagator.Inject(request, spanBuilder.Build());
+            request = _propagator.Inject(request, spanBuilder.Build(), trace.Sampled == true);
 
             spanBuilder.Start();
 
@@ -72,7 +77,9 @@ namespace Zipkin.NET
             finally
             {
                 spanBuilder.End();
-                _reporter.Report(spanBuilder.Build());
+
+                if (trace.Sampled == true)
+                    _reporter.Report(spanBuilder.Build());
             }
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
@@ -13,23 +14,28 @@ namespace Zipkin.NET.Middleware
         private readonly IExtractor<HttpRequest> _extractor;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IReporter _reporter;
+        private readonly ISampler _sampler;
 
         public TracingMiddleware(
             string applicationName,
             IExtractor<HttpRequest> extractor,
             ITraceAccessor traceAccessor,
-            IReporter reporter)
+            IReporter reporter,
+            ISampler sampler)
         {
             _applicationName = applicationName;
             _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var parentSpan = _extractor.Extract(context.Request);
-            var trace = new Trace(parentSpan.TraceId, parentSpan.Id);
+            var trace = _extractor
+                .Extract(context.Request)
+                .Sample(_sampler);
+
             var spanBuilder = trace.GetSpanBuilder();
 
             spanBuilder
@@ -55,7 +61,9 @@ namespace Zipkin.NET.Middleware
             finally
             {
                 spanBuilder.End();
-                _reporter.Report(spanBuilder.Build());
+                
+                if (trace.Sampled == true)
+                    _reporter.Report(spanBuilder.Build());
             }
         }
     }
