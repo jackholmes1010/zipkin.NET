@@ -2,6 +2,7 @@
 using Owin;
 using Zipkin.NET.Framework;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.OWIN.Demo
@@ -30,8 +31,9 @@ namespace Zipkin.NET.OWIN.Demo
                 var reporter = new Reporter(sender);
                 var propagator = new OwinContextB3Extractor();
                 var traceContextAccessor = new CallContextTraceAccessor();
+                var sampler = new DebugSampler();
                 var middleware = new TracingMiddleware(
-                    "owin-api", reporter, traceContextAccessor, propagator);
+                    "owin-api", reporter, sampler, traceContextAccessor, propagator);
                 await middleware.Invoke(ctx, next);
             });
 

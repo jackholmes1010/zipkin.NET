@@ -34,11 +34,13 @@ namespace Zipkin.NET
         public TracingHandler(
             string applicationName,
             IReporter reporter,
+            ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessage> propagator)
         {
             _applicationName = applicationName;
             _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
         }

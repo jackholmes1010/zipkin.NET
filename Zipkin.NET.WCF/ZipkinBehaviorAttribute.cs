@@ -6,6 +6,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Framework;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.WCF
@@ -27,9 +28,10 @@ namespace Zipkin.NET.WCF
             var reporter = new Reporter(new HttpSender(_zipkinHost));
             var traceAccessor = new SystemWebHttpContextTraceAccessor();
             var extractor = new IncomingWebRequestB3Extractor();
+            var sampler = new DebugSampler();
 
             dispatchOperation.Invoker = new ZipkinInvoker(
-                _applicationName, dispatchOperation.Invoker, reporter, traceAccessor, extractor);
+                _applicationName, dispatchOperation.Invoker, reporter, sampler, traceAccessor, extractor);
         }
 
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)

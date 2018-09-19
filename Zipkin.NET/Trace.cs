@@ -28,10 +28,22 @@ namespace Zipkin.NET
             _parentSpanId = parentSpanId;
         }
 
+        /// <summary>
+        /// The overall trace ID of the current trace.
+        /// </summary>
         public string TraceId { get; set; }
 
+        /// <summary>
+        /// Has the debug flag been set?
+        /// </summary>
         public bool Debug { get; set; }
 
+        /// <summary>
+        /// Should this trace be sampled.
+        /// <remarks>
+        /// The Sample() method should be used to make a sampling decision.
+        /// </remarks>
+        /// </summary>
         public bool? Sampled { get; set; }
 
         public SpanBuilder GetSpanBuilder(bool refresh = false)
@@ -41,6 +53,20 @@ namespace Zipkin.NET
                 : new SpanBuilder(TraceId, _spanId, _parentSpanId);
         }
 
+        /// <summary>
+        /// Make a sampling decision.
+        /// <remarks>
+        /// The sampling decision is based on the presence of the
+        /// sampling and debug flags. If no sampling flag exists
+        /// and the debug flag has not been set, make a sampling decision.
+        /// </remarks>
+        /// </summary>
+        /// <param name="sampler">
+        /// An <see cref="ISampler"/> used to make sampling decisions.
+        /// </param>
+        /// <returns>
+        /// The current <see cref="Trace"/>.
+        /// </returns>
         public Trace Sample(ISampler sampler)
         {
             Sampled =  Debug || sampler.IsSampled(this);

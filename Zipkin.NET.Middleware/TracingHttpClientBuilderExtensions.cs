@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
@@ -18,10 +19,11 @@ namespace Zipkin.NET.Middleware
                 var reporter = provider.GetService<IReporter>();
                 var traceAccessor = provider.GetService<ITraceAccessor>();
                 var propagator = provider.GetService<IPropagator<HttpRequestMessage>>();
+                var sampler = provider.GetService<ISampler>();
 
                 var handler = innerHandler != null
-                    ? new TracingHandler(innerHandler, applicationName, reporter, traceAccessor, propagator)
-                    : new TracingHandler(applicationName, reporter, traceAccessor, propagator);
+                    ? new TracingHandler(innerHandler, applicationName, reporter, sampler, traceAccessor, propagator)
+                    : new TracingHandler(applicationName, reporter, sampler, traceAccessor, propagator);
 
                 return handler;
             });
