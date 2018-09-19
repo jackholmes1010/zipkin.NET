@@ -1,80 +1,75 @@
-﻿//using System;
-//using System.ServiceModel.Dispatcher;
-//using System.ServiceModel.Web;
-//using Zipkin.NET.Instrumentation;
-//using Zipkin.NET.Instrumentation.Models;
-//using Zipkin.NET.Instrumentation.Propagation;
-//using Zipkin.NET.Instrumentation.Reporting;
-//using Zipkin.NET.Instrumentation.Sampling;
-//using Zipkin.NET.Instrumentation.Traces;
+﻿using System;
+using System.ServiceModel.Dispatcher;
+using System.ServiceModel.Web;
+using Zipkin.NET.Models;
+using Zipkin.NET.Propagation;
+using Zipkin.NET.Reporters;
 
-//namespace Zipkin.NET.WCF
-//{
-//    public class ZipkinInvoker : IOperationInvoker
-//    {
-//        private readonly string _applicationName;
-//        private readonly IOperationInvoker _originalInvoker;
-//        private readonly IReporter _reporter;
-//        private readonly ISampler _sampler;
-//        private readonly IExtractor<IncomingWebRequestContext> _extractor;
+namespace Zipkin.NET.WCF
+{
+    public class ZipkinInvoker : IOperationInvoker
+    {
+        private readonly string _applicationName;
+        private readonly IOperationInvoker _originalInvoker;
+        private readonly IReporter _reporter;
+        private readonly ITraceAccessor _traceAccecssor;
+        private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
-//        public ZipkinInvoker(
-//            string applicationName,
-//            IOperationInvoker originalInvoker,
-//            IReporter reporter, 
-//            ISampler sampler,
-//            IExtractor<IncomingWebRequestContext> extractor)
-//        {
-//            _applicationName = applicationName;
-//            _originalInvoker = originalInvoker;
-//            _reporter = reporter;
-//            _sampler = sampler;
-//            _extractor = extractor;
-//        }
+        public ZipkinInvoker(
+            string applicationName,
+            IOperationInvoker originalInvoker,
+            IReporter reporter,
+            ITraceAccessor traceAccessor,
+            IExtractor<IncomingWebRequestContext> extractor)
+        {
+            _applicationName = applicationName;
+            _originalInvoker = originalInvoker;
+            _reporter = reporter;
+            _traceAccecssor = traceAccessor;
+            _extractor = extractor;
+        }
 
-//        public bool IsSynchronous => _originalInvoker.IsSynchronous;
+        public bool IsSynchronous => _originalInvoker.IsSynchronous;
 
-//        public object[] AllocateInputs() { return _originalInvoker.AllocateInputs(); }
+        public object[] AllocateInputs() { return _originalInvoker.AllocateInputs(); }
 
-//        public object Invoke(object instance, object[] inputs, out object[] outputs)
-//        {
-//            var traceContext = _extractor
-//                .Extract(WebOperationContext.Current?.IncomingRequest)
-//                .NewChildTrace()
-//                .Sample(_sampler);
+        public object Invoke(object instance, object[] inputs, out object[] outputs)
+        {
+            var parentSpan = _extractor.Extract(WebOperationContext.Current?.IncomingRequest);
+            var trace = new Trace(parentSpan.TraceId, parentSpan.Id);
 
-//            var trace = new ServerTrace(
-//                traceContext, 
-//                "soap", 
-//                local: new Endpoint
-//                {
-//                    ServiceName = _applicationName
-//                });
+            var spanBuilder = trace
+                .GetSpanBuilder()
+                .WithLocalEndpoint(new Endpoint
+                {
+                    ServiceName = _applicationName
+                })
+                .Start();
+                
+            _traceAccecssor.SaveTrace(trace);
 
-//            trace.Start();
+            var response = _originalInvoker.Invoke(instance, inputs, out outputs);
 
-//            var response = _originalInvoker.Invoke(instance, inputs, out outputs);
+            spanBuilder.End();
 
-//            trace.End();
+            _reporter.Report(spanBuilder.Build());
 
-//            _reporter.Report(trace);
+            return response;
+        }
 
-//            return response;
-//        }
+        public IAsyncResult InvokeBegin(object instance, object[] inputs,
+            AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+            //var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
+            //return res;
+        }
 
-//        public IAsyncResult InvokeBegin(object instance, object[] inputs,
-//            AsyncCallback callback, object state)
-//        {
-//            throw new NotImplementedException();
-//            //var res = _originalInvoker.InvokeBegin(instance, inputs, callback, state);
-//            //return res;
-//        }
-
-//        public object InvokeEnd(object instance, out object[] outputs, IAsyncResult result)
-//        {
-//            throw new NotImplementedException();
-//            //var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
-//            //return res;
-//        }
-//    }
-//}
+        public object InvokeEnd(object instance, out object[] outputs, IAsyncResult result)
+        {
+            throw new NotImplementedException();
+            //var res = _originalInvoker.InvokeEnd(instance, out outputs, result);
+            //return res;
+        }
+    }
+}
