@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.ServiceModel">
       <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.ServiceModel.dll</HintPath>
     </Reference>
