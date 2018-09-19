@@ -3,7 +3,7 @@ using Zipkin.NET.Constants;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
-namespace Zipkin.NET.Middleware.Propagation
+namespace Zipkin.NET
 {
     public class HttpRequestMessagePropagator : IPropagator<HttpRequestMessage>
     {

@@ -51,18 +51,18 @@ namespace Zipkin.NET.Demo.Controllers
 
             var resultTask = httpClient.SendAsync(httpRequest);
             var result2Task = httpClient2.SendAsync(httpRequest2);
-            //var owinTask = owinClient.SendAsync(owinHttpRequest);
+            var owinTask = owinClient.SendAsync(owinHttpRequest);
 
             var result = await resultTask;
             var result2 = await result2Task;
-            //var owinResult = await owinTask;
+            var owinResult = await owinTask;
 
             return new string[]
             {
                 "wcfResult", await wcfResult,
                 "result", await result.Content.ReadAsStringAsync(),
                 "result2", await result2.Content.ReadAsStringAsync(),
-                //"owinResult", await owinResult.Content.ReadAsStringAsync()
+                "owinResult", await owinResult.Content.ReadAsStringAsync()
             };
         }
     }
