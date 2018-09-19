@@ -42,12 +42,12 @@ namespace Zipkin.NET
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var trace = _traceAccessor.HasTrace()
-                ? _traceAccessor.GetTrace()
+            var trace = _traceAccessor.HasTrace() 
+                ? _traceAccessor.GetTrace().Refresh() 
                 : new Trace();
 
             var spanBuilder = trace
-                .GetSpanBuilder(true)
+                .GetSpanBuilder()
                 .Tag("uri", request.RequestUri.OriginalString)
                 .Tag("method", request.Method.Method)
                 .WithRemoteEndpoint(new Endpoint
