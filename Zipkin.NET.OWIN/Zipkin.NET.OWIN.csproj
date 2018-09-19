@@ -57,5 +57,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj">
+      <Project>{39E0B793-95EE-4C55-BB40-90DBD723A8AD}</Project>
+      <Name>Zipkin.NET</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
