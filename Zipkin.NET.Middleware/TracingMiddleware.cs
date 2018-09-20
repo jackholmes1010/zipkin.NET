@@ -35,6 +35,7 @@ namespace Zipkin.NET.Middleware
             var spanBuilder = trace.GetSpanBuilder();
 
             spanBuilder
+                .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
                 .Tag("resource", context.Request.Path.Value)
                 .Tag("method", context.Request.Method)

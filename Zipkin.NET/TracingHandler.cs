@@ -49,6 +49,7 @@ namespace Zipkin.NET
 
             var spanBuilder = trace
                 .GetSpanBuilder()
+                .Kind(SpanKind.Client)
                 .Tag("uri", request.RequestUri.OriginalString)
                 .Tag("method", request.Method.Method)
                 .WithRemoteEndpoint(new Endpoint

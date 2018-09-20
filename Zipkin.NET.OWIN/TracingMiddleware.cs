@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN
@@ -36,6 +35,7 @@ namespace Zipkin.NET.OWIN
             var spanBuilder = trace.GetSpanBuilder();
 
             spanBuilder
+                .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
                 .Tag("resource", context.Request.Path.Value)
                 .Tag("method", context.Request.Method)

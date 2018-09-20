@@ -101,6 +101,12 @@ namespace Zipkin.NET
             return this;
         }
 
+        public SpanBuilder Kind(SpanKind kind)
+        {
+            _span.Kind = kind;
+
+        }
+
         /// <summary>
         /// Build the span.
         /// </summary>
