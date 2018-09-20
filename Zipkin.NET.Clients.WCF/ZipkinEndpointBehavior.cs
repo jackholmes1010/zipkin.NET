@@ -12,16 +12,13 @@ namespace Zipkin.NET.Clients.WCF
     public class ZipkinEndpointBehavior : IEndpointBehavior
     {
         private readonly string _applicationName;
-        private readonly IReporter _reporter;
         private readonly ITraceAccessor _traceAccessor;
 
         public ZipkinEndpointBehavior(
             string applicationName,
-            IReporter reporter,
             ITraceAccessor traceAccessor)
         {
             _applicationName = applicationName;
-            _reporter = reporter;
             _traceAccessor = traceAccessor;
         }
 
@@ -46,7 +43,7 @@ namespace Zipkin.NET.Clients.WCF
             var propagator = new HttpRequestMessagePropertyB3Propagator();
 
             clientRuntime.ClientMessageInspectors.Add(
-                new ZipkinMessageInspector(_applicationName, _reporter, _traceAccessor, propagator));
+                new ZipkinMessageInspector(_applicationName, _traceAccessor, propagator));
         }
     }
 }

@@ -27,13 +27,11 @@ namespace Zipkin.NET.OWIN.Demo
 
             app.Use(async (ctx, next) =>
             {
-                var sender = new HttpSender("http://localhost:9411");
-                var reporter = new Reporter(sender);
                 var propagator = new OwinContextB3Extractor();
                 var traceContextAccessor = new CallContextTraceAccessor();
                 var sampler = new DebugSampler();
                 var middleware = new TracingMiddleware(
-                    "owin-api", reporter, sampler, traceContextAccessor, propagator);
+                    "owin-api", sampler, traceContextAccessor, propagator);
                 await middleware.Invoke(ctx, next);
             });
 

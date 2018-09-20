@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
@@ -12,20 +11,17 @@ namespace Zipkin.NET
     public class TracingHandler : DelegatingHandler
     {
         private readonly string _applicationName;
-        private readonly IReporter _reporter;
         private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
         public TracingHandler(HttpMessageHandler innerHandler,
             string applicationName,
-            IReporter reporter,
             ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
         {
             _applicationName = applicationName;
-            _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
@@ -33,13 +29,11 @@ namespace Zipkin.NET
 
         public TracingHandler(
             string applicationName,
-            IReporter reporter,
             ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessage> propagator)
         {
             _applicationName = applicationName;
-            _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
@@ -81,7 +75,7 @@ namespace Zipkin.NET
                 spanBuilder.End();
 
                 if (trace.Sampled == true)
-                    _reporter.Report(spanBuilder.Build());
+                    TraceManager.Report(spanBuilder.Build());
             }
         }
     }

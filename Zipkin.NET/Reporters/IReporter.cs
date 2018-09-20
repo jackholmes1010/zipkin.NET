@@ -1,4 +1,5 @@
-﻿using Zipkin.NET.Models;
+﻿using System.Threading.Tasks;
+using Zipkin.NET.Models;
 
 namespace Zipkin.NET.Reporters
 {
@@ -13,6 +14,6 @@ namespace Zipkin.NET.Reporters
         /// <param name="span">
         /// The trace to be reported.
         /// </param>
-        void Report(Span span);
+        Task ReportAsync(Span span);
     }
 }

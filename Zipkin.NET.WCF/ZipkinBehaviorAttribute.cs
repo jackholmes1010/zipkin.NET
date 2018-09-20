@@ -5,33 +5,28 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Framework;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
-using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.WCF
 {
     public class ZipkinBehaviorAttribute : Attribute, IServiceBehavior, IOperationBehavior
     {
         private readonly string _applicationName;
-        private readonly string _zipkinHost;
 
-        public ZipkinBehaviorAttribute(string applicationName, string zipkinHost)
+        public ZipkinBehaviorAttribute(string applicationName)
         {
             _applicationName = applicationName;
-            _zipkinHost = zipkinHost;
         }
 
         // IOperationBehavior
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            var reporter = new Reporter(new HttpSender(_zipkinHost));
             var traceAccessor = new SystemWebHttpContextTraceAccessor();
             var extractor = new IncomingWebRequestB3Extractor();
             var sampler = new DebugSampler();
 
             dispatchOperation.Invoker = new ZipkinInvoker(
-                _applicationName, dispatchOperation.Invoker, reporter, sampler, traceAccessor, extractor);
+                _applicationName, dispatchOperation.Invoker, sampler, traceAccessor, extractor);
         }
 
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)

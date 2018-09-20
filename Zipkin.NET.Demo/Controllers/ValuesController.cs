@@ -41,9 +41,7 @@ namespace Zipkin.NET.Demo.Controllers
 
             var wcfClient = new DataServiceClient();
             wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-            var endpoint = new ZipkinEndpointBehavior("data-service",
-                new Reporter(new HttpSender("http://localhost:9411")),
-                new HttpContextTraceAccessor(_httpContextAccessor));
+            var endpoint = new ZipkinEndpointBehavior("data-service", new HttpContextTraceAccessor(_httpContextAccessor));
 
             wcfClient.Endpoint.EndpointBehaviors.Add(endpoint);
 

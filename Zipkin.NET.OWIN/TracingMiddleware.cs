@@ -11,20 +11,17 @@ namespace Zipkin.NET.OWIN
     public class TracingMiddleware
     {
         private readonly string _applicationName;
-        private readonly IReporter _reporter;
         private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IOwinContext> _extractor;
 
         public TracingMiddleware(
             string applicationName,
-            IReporter reporter,
             ISampler sampler,
             ITraceAccessor traceAccessor,
             IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
-            _reporter = reporter;
             _sampler = sampler;
             _traceAccessor = traceAccessor;
             _extractor = extractor;
@@ -63,7 +60,7 @@ namespace Zipkin.NET.OWIN
                 spanBuilder.End();
                 
                 if (trace.Sampled == true)
-                    _reporter.Report(spanBuilder.Build());
+                    TraceManager.Report(spanBuilder.Build());
             }
         }
     }

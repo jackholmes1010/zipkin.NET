@@ -10,20 +10,18 @@ namespace Zipkin.NET.Clients.WCF
     public class ZipkinMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
-        private readonly IReporter _reporter;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
+        private bool _sampled;
 
         public ZipkinMessageInspector(
             string applicationName,
-            IReporter reporter,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
-            _reporter = reporter;
             _traceAccessor = traceAccessor;
             _propagator = propagator;
         }
@@ -34,8 +32,10 @@ namespace Zipkin.NET.Clients.WCF
                 ? _traceAccessor.GetTrace().Refresh()
                 : new TraceContext();
 
-            var httpRequest = ExtractHttpRequest(request);
+            _sampled = trace.Sampled == true;
 
+            var httpRequest = ExtractHttpRequest(request);
+            
             _spanBuilder = trace
                 .GetSpanBuilder()
                 .Tag("action", request.Headers.Action)
@@ -46,7 +46,7 @@ namespace Zipkin.NET.Clients.WCF
                 .Start();
 
             // Inject X-B3 headers to the outgoing request
-            _propagator.Inject(httpRequest, _spanBuilder.Build(), trace.Sampled == true);
+            _propagator.Inject(httpRequest, _spanBuilder.Build(), _sampled);
 
             return null;
         }
@@ -54,7 +54,9 @@ namespace Zipkin.NET.Clients.WCF
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             _spanBuilder.End();
-            _reporter.Report(_spanBuilder.Build());
+
+            if (_sampled)
+                TraceManager.Report(_spanBuilder.Build());
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

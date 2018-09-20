@@ -16,14 +16,13 @@ namespace Zipkin.NET.Middleware
                 if (applicationName == null)
                     applicationName = builder.Name;
 
-                var reporter = provider.GetService<IReporter>();
                 var traceAccessor = provider.GetService<ITraceAccessor>();
                 var propagator = provider.GetService<IPropagator<HttpRequestMessage>>();
                 var sampler = provider.GetService<ISampler>();
 
                 var handler = innerHandler != null
-                    ? new TracingHandler(innerHandler, applicationName, reporter, sampler, traceAccessor, propagator)
-                    : new TracingHandler(applicationName, reporter, sampler, traceAccessor, propagator);
+                    ? new TracingHandler(innerHandler, applicationName, sampler, traceAccessor, propagator)
+                    : new TracingHandler(applicationName, sampler, traceAccessor, propagator);
 
                 return handler;
             });

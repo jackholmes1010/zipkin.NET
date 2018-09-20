@@ -3,7 +3,6 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.WCF
@@ -12,7 +11,6 @@ namespace Zipkin.NET.WCF
     {
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
-        private readonly IReporter _reporter;
         private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccecssor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
@@ -20,17 +18,15 @@ namespace Zipkin.NET.WCF
         public ZipkinInvoker(
             string applicationName,
             IOperationInvoker originalInvoker,
-            IReporter reporter,
             ISampler sampler,
             ITraceAccessor traceAccessor,
             IExtractor<IncomingWebRequestContext> extractor)
         {
             _applicationName = applicationName;
-            _originalInvoker = originalInvoker;
-            _reporter = reporter;
-            _sampler = sampler;
-            _traceAccecssor = traceAccessor;
-            _extractor = extractor;
+            _originalInvoker = originalInvoker ?? throw new ArgumentNullException(nameof(originalInvoker));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
+            _traceAccecssor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
         }
 
         public bool IsSynchronous => _originalInvoker.IsSynchronous;
@@ -58,7 +54,7 @@ namespace Zipkin.NET.WCF
             spanBuilder.End();
 
             if (trace.Sampled == true)
-                _reporter.Report(spanBuilder.Build());
+                TraceManager.Report(spanBuilder.Build());
 
             return response;
         }
