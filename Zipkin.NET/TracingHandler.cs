@@ -50,7 +50,7 @@ namespace Zipkin.NET
         {
             var trace = (_traceAccessor.HasTrace()
                 ? _traceAccessor.GetTrace().Refresh()
-                : new Trace())
+                : new TraceContext())
                 .Sample(_sampler);
 
             var spanBuilder = trace

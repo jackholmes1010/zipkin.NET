@@ -2,7 +2,7 @@
 {
     public class DebugSampler : ISampler
     {
-        public bool IsSampled(Trace trace)
+        public bool IsSampled(TraceContext traceContext)
         {
             return true;
         }

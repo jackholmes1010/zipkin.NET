@@ -6,7 +6,7 @@ namespace Zipkin.NET.Middleware.Propagation
 {
     public class HttpRequestExtractor : IExtractor<HttpRequest>
     {
-        public Trace Extract(HttpRequest extract)
+        public TraceContext Extract(HttpRequest extract)
         {
             string traceId = null;
             if (extract.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
@@ -33,7 +33,7 @@ namespace Zipkin.NET.Middleware.Propagation
             }
             
 
-            return new Trace(traceId, spanId)
+            return new TraceContext(traceId, spanId)
             {
                 Debug = debug,
                 Sampled = sampled

@@ -18,19 +18,19 @@ namespace Zipkin.NET.Middleware.TraceAccessors
                 ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public void SaveTrace(Trace trace)
+        public void SaveTrace(TraceContext traceContext)
         {
-            _httpContextAccessor.HttpContext.Items[ContextKey] = trace;
+            _httpContextAccessor.HttpContext.Items[ContextKey] = traceContext;
         }
 
-        public Trace GetTrace()
+        public TraceContext GetTrace()
         {
-            return _httpContextAccessor.HttpContext.Items[ContextKey] as Trace;
+            return _httpContextAccessor.HttpContext.Items[ContextKey] as TraceContext;
         }
 
         public bool HasTrace()
         {
-            return _httpContextAccessor.HttpContext?.Items[ContextKey] is Trace;
+            return _httpContextAccessor.HttpContext?.Items[ContextKey] is TraceContext;
         }
     }
 }

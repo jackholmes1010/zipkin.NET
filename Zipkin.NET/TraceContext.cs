@@ -3,25 +3,25 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
-    public class Trace
+    public class TraceContext
     {
         private readonly string _spanId;
         private readonly string _parentSpanId;
 
-        public Trace()
+        public TraceContext()
         {
             TraceId = GenerateTraceId();
             _spanId = GenerateTraceId();
         }
 
-        public Trace(string traceId, string spanId)
+        public TraceContext(string traceId, string spanId)
         {
             TraceId = traceId ?? GenerateTraceId();
             _spanId = GenerateTraceId();
             _parentSpanId = spanId;
         }
 
-        public Trace(string traceId, string spanId, string parentSpanId)
+        public TraceContext(string traceId, string spanId, string parentSpanId)
         {
             TraceId = traceId;
             _spanId = spanId;
@@ -65,9 +65,9 @@ namespace Zipkin.NET
         /// An <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <returns>
-        /// The current <see cref="Trace"/>.
+        /// The current <see cref="TraceContext"/>.
         /// </returns>
-        public Trace Sample(ISampler sampler)
+        public TraceContext Sample(ISampler sampler)
         {
             Sampled =  Debug || sampler.IsSampled(this);
             return this;
@@ -78,12 +78,12 @@ namespace Zipkin.NET
         /// to the current span ID and generating a new span ID.
         /// </summary>
         /// <returns>
-        /// A new <see cref="Trace"/>.
+        /// A new <see cref="TraceContext"/>.
         /// </returns>
-        public Trace Refresh()
+        public TraceContext Refresh()
         {
             var traceId = TraceId ?? GenerateTraceId();
-            return new Trace(traceId, GenerateTraceId(), _spanId);
+            return new TraceContext(traceId, GenerateTraceId(), _spanId);
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace Zipkin.NET.OWIN
 {
     public class OwinContextB3Extractor : IExtractor<IOwinContext>
     {
-        public Trace Extract(IOwinContext extract)
+        public TraceContext Extract(IOwinContext extract)
         {
             string traceId = null;
             if (extract.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
@@ -33,7 +33,7 @@ namespace Zipkin.NET.OWIN
                 sampled = value.FirstOrDefault() == "1";
             }
 
-            return new Trace(traceId, spanId)
+            return new TraceContext(traceId, spanId)
             {
                 Debug = debug,
                 Sampled = sampled

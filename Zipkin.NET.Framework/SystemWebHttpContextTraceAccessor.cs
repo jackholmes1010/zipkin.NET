@@ -3,26 +3,26 @@
 namespace Zipkin.NET.Framework
 {
     /// <summary>
-    /// Stores the <see cref="Trace"/> in the <see cref="HttpContext.Current"/>.
+    /// Stores the <see cref="TraceContext"/> in the <see cref="HttpContext.Current"/>.
     /// </summary>
     public class SystemWebHttpContextTraceAccessor : ITraceAccessor
     {
         private const string ContextKey = "server-trace";
 
-        public void SaveTrace(Trace trace)
+        public void SaveTrace(TraceContext traceContext)
         {
             if (HttpContext.Current != null)
-                HttpContext.Current.Items[ContextKey] = trace;
+                HttpContext.Current.Items[ContextKey] = traceContext;
         }
 
-        public Trace GetTrace()
+        public TraceContext GetTrace()
         {
-            return HttpContext.Current?.Items[ContextKey] as Trace;
+            return HttpContext.Current?.Items[ContextKey] as TraceContext;
         }
 
         public bool HasTrace()
         {
-            return HttpContext.Current?.Items[ContextKey] is Trace;
+            return HttpContext.Current?.Items[ContextKey] is TraceContext;
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace Zipkin.NET.Propagation
 {
     /// <summary>
-    /// Propagators are used to pass span context between distributed systems.
+    /// Propagators are used to pass trace context between applications.
     /// </summary>
     /// <typeparam name="TInject">
     /// The type on which to inject a <see cref="Span"/>.

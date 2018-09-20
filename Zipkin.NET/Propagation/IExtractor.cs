@@ -1,22 +1,22 @@
 ﻿namespace Zipkin.NET.Propagation
 {
     /// <summary>
-    /// Extractors are used to trace context from incoming requests.
+    /// Extractors are used extract trace context from incoming requests.
     /// </summary>
     /// <typeparam name="TExtract">
-    /// The object type from which to extract a <see cref="Trace"/>.
+    /// The object type from which to extract a <see cref="TraceContext"/>.
     /// </typeparam>
     public interface IExtractor<in TExtract>
     {
         /// <summary>
-        /// Extract a <see cref="Trace"/> from a <see cref="TExtract"/>.
+        /// Extract a <see cref="TraceContext"/> from a <see cref="TExtract"/>.
         /// </summary>
         /// <param name="extract">
-        /// The object to extract the trace from.
+        /// The object to extract the trace context from.
         /// </param>
         /// <returns>
-        /// The <see cref="Trace"/>.
+        /// The <see cref="TraceContext"/>.
         /// </returns>
-        Trace Extract(TExtract extract);
+        TraceContext Extract(TExtract extract);
     }
 }
