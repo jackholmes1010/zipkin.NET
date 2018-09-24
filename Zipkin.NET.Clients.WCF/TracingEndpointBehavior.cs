@@ -1,25 +1,30 @@
-﻿using System.ServiceModel.Channels;
+﻿using System;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
     /// <summary>
-    /// Endpoint behavior responsible for applying the <see cref="ZipkinMessageInspector"/> to the client runtime.
+    /// Endpoint behavior responsible for applying the <see cref="TracingMessageInspector"/> to the client runtime.
     /// </summary>
     /// <inheritdoc />
-    public class ZipkinEndpointBehavior : IEndpointBehavior
+    public class TracingEndpointBehavior : IEndpointBehavior
     {
         private readonly string _applicationName;
+        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
 
-        public ZipkinEndpointBehavior(
+        public TracingEndpointBehavior(
             string applicationName,
+            ISampler sampler,
             ITraceAccessor traceAccessor)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor;
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
+            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
         }
 
         /// <inheritdoc />
@@ -43,7 +48,7 @@ namespace Zipkin.NET.Clients.WCF
             var propagator = new HttpRequestMessagePropertyB3Propagator();
 
             clientRuntime.ClientMessageInspectors.Add(
-                new ZipkinMessageInspector(_applicationName, _traceAccessor, propagator));
+                new TracingMessageInspector(_applicationName, _sampler, _traceAccessor, propagator));
         }
     }
 }

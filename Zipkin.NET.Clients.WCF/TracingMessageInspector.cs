@@ -1,36 +1,41 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
-    public class ZipkinMessageInspector : IClientMessageInspector
+    public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
+        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
         private bool _sampled;
 
-        public ZipkinMessageInspector(
+        public TracingMessageInspector(
             string applicationName,
+            ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor;
-            _propagator = propagator;
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
+            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _propagator = propagator ?? throw new ArgumentNullException(nameof(traceAccessor));
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var trace = _traceAccessor.HasTrace()
-                ? _traceAccessor.GetTrace().Refresh()
-                : new TraceContext();
+            var trace = (_traceAccessor.HasTrace()
+                    ? _traceAccessor.GetTrace().Refresh()
+                    : new TraceContext())
+                .Sample(_sampler);
 
             _sampled = trace.Sampled == true;
 

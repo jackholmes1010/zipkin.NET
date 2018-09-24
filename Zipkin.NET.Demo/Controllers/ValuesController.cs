@@ -9,6 +9,7 @@ using Zipkin.NET.Clients.WCF;
 using Zipkin.NET.Demo.Connected_Services.DataService;
 using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo.Controllers
@@ -41,7 +42,7 @@ namespace Zipkin.NET.Demo.Controllers
 
             var wcfClient = new DataServiceClient();
             wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-            var endpoint = new ZipkinEndpointBehavior("data-service", new HttpContextTraceAccessor(_httpContextAccessor));
+            var endpoint = new TracingEndpointBehavior("data-service", new DebugSampler(), new HttpContextTraceAccessor(_httpContextAccessor));
 
             wcfClient.Endpoint.EndpointBehaviors.Add(endpoint);
 
