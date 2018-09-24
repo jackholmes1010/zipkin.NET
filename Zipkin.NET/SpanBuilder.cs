@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using Zipkin.NET.Models;
 using Zipkin.NET.Timing;
 
@@ -25,7 +23,6 @@ namespace Zipkin.NET
         /// </summary>
         public SpanBuilder Start()
         {
-            //_timer = Stopwatch.StartNew();
             _span.StartTime = TimeUtils.UtcNow;
             return this;
         }
@@ -35,8 +32,6 @@ namespace Zipkin.NET
         /// </summary>
         public SpanBuilder End()
         {
-            //var timespan = TimeSpan.FromTicks(_timer.ElapsedTicks);
-            //_timer.Stop();
             _span.Duration = TimeUtils.UtcNow.Subtract(_span.StartTime);
             return this;
         }
