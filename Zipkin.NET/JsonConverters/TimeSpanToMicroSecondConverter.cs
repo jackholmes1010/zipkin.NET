@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json;
 
 namespace Zipkin.NET.JsonConverters
@@ -10,7 +11,10 @@ namespace Zipkin.NET.JsonConverters
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteRawValue((((TimeSpan)value).Milliseconds * 1000).ToString());
+            var ticks = ((TimeSpan)value).Ticks / TimeSpan.TicksPerMillisecond;
+            var toLong = ticks * 1000;
+
+            writer.WriteRawValue(toLong.ToString());
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

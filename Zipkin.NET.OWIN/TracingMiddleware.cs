@@ -35,6 +35,7 @@ namespace Zipkin.NET.OWIN
             var spanBuilder = trace.GetSpanBuilder();
 
             spanBuilder
+                .Start()
                 .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
                 .Tag("resource", context.Request.Path.Value)
@@ -42,8 +43,7 @@ namespace Zipkin.NET.OWIN
                 .WithLocalEndpoint(new Endpoint
                 {
                     ServiceName = _applicationName
-                })
-                .Start();
+                });
 
             _traceAccessor.SaveTrace(trace);
 

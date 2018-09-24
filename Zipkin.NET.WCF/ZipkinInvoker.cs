@@ -41,11 +41,12 @@ namespace Zipkin.NET.WCF
 
             var spanBuilder = trace
                 .GetSpanBuilder()
+                .Start()
+                .Kind(SpanKind.Server)
                 .WithLocalEndpoint(new Endpoint
                 {
                     ServiceName = _applicationName
-                })
-                .Start();
+                });
                 
             _traceAccecssor.SaveTrace(trace);
 

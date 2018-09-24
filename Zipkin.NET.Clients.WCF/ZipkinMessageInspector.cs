@@ -35,15 +35,16 @@ namespace Zipkin.NET.Clients.WCF
             _sampled = trace.Sampled == true;
 
             var httpRequest = ExtractHttpRequest(request);
-            
+
             _spanBuilder = trace
                 .GetSpanBuilder()
+                .Start()
+                .Kind(SpanKind.Client)
                 .Tag("action", request.Headers.Action)
                 .WithRemoteEndpoint(new Endpoint
                 {
                     ServiceName = _applicationName
-                })
-                .Start();
+                });
 
             // Inject X-B3 headers to the outgoing request
             _propagator.Inject(httpRequest, _spanBuilder.Build(), _sampled);

@@ -43,12 +43,13 @@ namespace Zipkin.NET
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var trace = (_traceAccessor.HasTrace()
-                ? _traceAccessor.GetTrace().Refresh()
-                : new TraceContext())
+                    ? _traceAccessor.GetTrace().Refresh()
+                    : new TraceContext())
                 .Sample(_sampler);
 
             var spanBuilder = trace
                 .GetSpanBuilder()
+                .Start()
                 .Kind(SpanKind.Client)
                 .Tag("uri", request.RequestUri.OriginalString)
                 .Tag("method", request.Method.Method)
@@ -59,8 +60,6 @@ namespace Zipkin.NET
 
             // Add X-B3 headers to the request
             request = _propagator.Inject(request, spanBuilder.Build(), trace.Sampled == true);
-
-            spanBuilder.Start();
 
             try
             {

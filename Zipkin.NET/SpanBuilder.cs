@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Zipkin.NET.Models;
+using Zipkin.NET.Timing;
 
 namespace Zipkin.NET
 {
     public class SpanBuilder
     {
         private readonly Span _span;
-        private Stopwatch _timer;
 
         public SpanBuilder(string traceId, string id, string parentId)
         {
@@ -25,9 +25,8 @@ namespace Zipkin.NET
         /// </summary>
         public SpanBuilder Start()
         {
-            _span.StartTime = DateTime.Now;
-            _timer = new Stopwatch();
-            _timer.Start();
+            //_timer = Stopwatch.StartNew();
+            _span.StartTime = TimeUtils.UtcNow;
             return this;
         }
 
@@ -36,11 +35,9 @@ namespace Zipkin.NET
         /// </summary>
         public SpanBuilder End()
         {
-            if (_timer == null)
-                throw new Exception("Timer not started. Call Start() before End().");
-
-            _timer.Stop();
-            _span.Duration = _timer.Elapsed;
+            //var timespan = TimeSpan.FromTicks(_timer.ElapsedTicks);
+            //_timer.Stop();
+            _span.Duration = TimeUtils.UtcNow.Subtract(_span.StartTime);
             return this;
         }
 
