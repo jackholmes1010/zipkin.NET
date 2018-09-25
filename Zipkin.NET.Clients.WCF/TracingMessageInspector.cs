@@ -15,37 +15,33 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
-        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
-        private bool _sampled;
+        private TraceContext _traceContext;
 
         public TracingMessageInspector(
             string applicationName,
-            ISampler sampler,
             ITraceAccessor traceAccessor,
             IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
-            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _propagator = propagator ?? throw new ArgumentNullException(nameof(traceAccessor));
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var trace = (_traceAccessor.HasTrace()
-                    ? _traceAccessor.GetTrace().Refresh()
-                    : new TraceContext())
-                .Sample(_sampler);
-
-            _sampled = trace.Sampled == true;
+            _traceContext = _traceAccessor.HasTrace()
+                ? _traceAccessor.GetTrace().Refresh()
+                : new TraceContext();
+            
+            TraceManager.Sample(ref _traceContext);
 
             var httpRequest = ExtractHttpRequest(request);
 
-            _spanBuilder = trace
+            _spanBuilder = _traceContext
                 .GetSpanBuilder()
                 .Start()
                 .Kind(SpanKind.Client)
@@ -56,7 +52,8 @@ namespace Zipkin.NET.Clients.WCF
                 });
 
             // Inject X-B3 headers to the outgoing request
-            _propagator.Inject(httpRequest, _spanBuilder.Build(), _sampled);
+            _propagator.Inject(
+                httpRequest, _spanBuilder.Build(), _traceContext.Sampled == true);
 
             return null;
         }
@@ -64,9 +61,7 @@ namespace Zipkin.NET.Clients.WCF
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             _spanBuilder.End();
-
-            if (_sampled)
-                TraceManager.Report(_spanBuilder.Build());
+            TraceManager.Report(_traceContext, _spanBuilder.Build());
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

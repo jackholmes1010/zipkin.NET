@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
@@ -15,29 +14,25 @@ namespace Zipkin.NET.Middleware
         private readonly string _applicationName;
         private readonly IExtractor<HttpRequest> _extractor;
         private readonly ITraceAccessor _traceAccessor;
-        private readonly ISampler _sampler;
 
         public TracingMiddleware(
             string applicationName,
             IExtractor<HttpRequest> extractor,
-            ITraceAccessor traceAccessor,
-            ISampler sampler)
+            ITraceAccessor traceAccessor)
         {
             _applicationName = applicationName;
             _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
-            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var trace = _extractor
-                .Extract(context.Request)
-                .Sample(_sampler);
+            var traceContext = _extractor.Extract(context.Request);
 
-            var spanBuilder = trace.GetSpanBuilder();
+            TraceManager.Sample(ref traceContext);
 
-            spanBuilder
+            var spanBuilder = traceContext
+                .GetSpanBuilder()
                 .Start()
                 .Name(context.Request.Method)
                 .Kind(SpanKind.Server)
@@ -49,7 +44,7 @@ namespace Zipkin.NET.Middleware
                     ServiceName = _applicationName
                 });
 
-            _traceAccessor.SaveTrace(trace);
+            _traceAccessor.SaveTrace(traceContext);
 
             try
             {
@@ -62,9 +57,7 @@ namespace Zipkin.NET.Middleware
             finally
             {
                 spanBuilder.End();
-                
-                if (trace.Sampled == true)
-                    TraceManager.Report(spanBuilder.Build());
+                TraceManager.Report(traceContext, spanBuilder.Build());
             }
         }
     }

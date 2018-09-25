@@ -8,6 +8,7 @@ using Zipkin.NET.Middleware;
 using Zipkin.NET.Middleware.Logging;
 using Zipkin.NET.Middleware.Reporters;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo
@@ -66,6 +67,9 @@ namespace Zipkin.NET.Demo
             {
                 TraceManager.RegisterLogger(logger);
             }
+
+            // Register sampler
+            TraceManager.RegisterSampler(new DebugSampler());
 
             if (env.IsDevelopment())
             {

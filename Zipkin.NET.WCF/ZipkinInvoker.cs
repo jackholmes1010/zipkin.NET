@@ -11,14 +11,14 @@ namespace Zipkin.NET.WCF
     {
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
-        private readonly ISampler _sampler;
+        private readonly Sampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public ZipkinInvoker(
             string applicationName,
             IOperationInvoker originalInvoker,
-            ISampler sampler,
+            Sampler sampler,
             ITraceAccessor traceAccessor,
             IExtractor<IncomingWebRequestContext> extractor)
         {
@@ -35,11 +35,12 @@ namespace Zipkin.NET.WCF
 
         public object Invoke(object instance, object[] inputs, out object[] outputs)
         {
-            var trace = _extractor
-                .Extract(WebOperationContext.Current?.IncomingRequest)
-                .Sample(_sampler);
+            var traceContext = _extractor
+                .Extract(WebOperationContext.Current?.IncomingRequest);
 
-            var spanBuilder = trace
+            TraceManager.Sample(ref traceContext);
+
+            var spanBuilder = traceContext
                 .GetSpanBuilder()
                 .Start()
                 .Kind(SpanKind.Server)
@@ -48,14 +49,13 @@ namespace Zipkin.NET.WCF
                     ServiceName = _applicationName
                 });
                 
-            _traceAccessor.SaveTrace(trace);
+            _traceAccessor.SaveTrace(traceContext);
 
             var response = _originalInvoker.Invoke(instance, inputs, out outputs);
 
             spanBuilder.End();
 
-            if (trace.Sampled == true)
-                TraceManager.Report(spanBuilder.Build());
+            TraceManager.Report(traceContext, spanBuilder.Build());
 
             return response;
         }

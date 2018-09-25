@@ -18,14 +18,12 @@ namespace Zipkin.NET.Middleware
             services.TryAddTransient<ITraceAccessor, HttpContextTraceAccessor>();
             services.TryAddTransient<IExtractor<HttpRequest>, HttpRequestExtractor>();
             services.TryAddTransient<IPropagator<HttpRequestMessage>, HttpRequestMessagePropagator>();
-            services.TryAddTransient<ISampler, DebugSampler>();
 
             services.AddTransient(provider =>
             {
                 var extractor = provider.GetService<IExtractor<HttpRequest>>();
                 var traceAccessor = provider.GetService<ITraceAccessor>();
-                var sampler = provider.GetService<ISampler>();
-                return new TracingMiddleware(applicationName, extractor, traceAccessor, sampler);
+                return new TracingMiddleware(applicationName, extractor, traceAccessor);
             });
 
             return services;

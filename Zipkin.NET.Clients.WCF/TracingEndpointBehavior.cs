@@ -14,16 +14,13 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingEndpointBehavior : IEndpointBehavior
     {
         private readonly string _applicationName;
-        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
 
         public TracingEndpointBehavior(
             string applicationName,
-            ISampler sampler,
             ITraceAccessor traceAccessor)
         {
             _applicationName = applicationName;
-            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
         }
 
@@ -48,7 +45,7 @@ namespace Zipkin.NET.Clients.WCF
             var propagator = new HttpRequestMessagePropertyB3Propagator();
 
             clientRuntime.ClientMessageInspectors.Add(
-                new TracingMessageInspector(_applicationName, _sampler, _traceAccessor, propagator));
+                new TracingMessageInspector(_applicationName, _traceAccessor, propagator));
         }
     }
 }

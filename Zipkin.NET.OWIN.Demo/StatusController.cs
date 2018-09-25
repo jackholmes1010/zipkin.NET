@@ -15,9 +15,8 @@ namespace Zipkin.NET.OWIN.Demo
         {
             var traceContextAccessor = new CallContextTraceAccessor();
             var propagator = new HttpRequestMessagePropagator();
-            var sampler = new DebugSampler();
             var httpClient = new HttpClient(new TracingHandler(
-                new HttpClientHandler(), "reqres-api", sampler, traceContextAccessor, propagator));
+                new HttpClientHandler(), "reqres-api", traceContextAccessor, propagator));
             var result = await httpClient.GetAsync(new Uri("https://www.google.com"));
             return Ok(await result.Content.ReadAsStringAsync());
        }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Owin.Hosting;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.OWIN.Demo
@@ -14,6 +15,7 @@ namespace Zipkin.NET.OWIN.Demo
             var reporter = new Reporter(sender);
             TraceManager.Register(reporter);
             TraceManager.Register(new ConsoleReporter());
+            TraceManager.RegisterSampler(new DebugSampler());
 
             const string baseAddress = "http://localhost:9055/";
 

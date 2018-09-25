@@ -1,8 +1,20 @@
 ﻿namespace Zipkin.NET.Sampling
 {
-    public class DebugSampler : ISampler
+    /// <summary>
+    /// A <see cref="Sampler"/> that always samples.
+    /// </summary>
+    public class DebugSampler : Sampler
     {
-        public bool IsSampled(TraceContext traceContext)
+        /// <summary>
+        /// Always sample.
+        /// </summary>
+        /// <param name="traceContext">
+        /// The <see cref="TraceContext"/>.
+        /// </param>
+        /// <returns>
+        /// True.
+        /// </returns>
+        protected override bool MakeSamplingDecision(TraceContext traceContext)
         {
             return true;
         }

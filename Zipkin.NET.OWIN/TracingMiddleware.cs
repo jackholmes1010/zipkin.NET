@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN
 {
@@ -13,29 +12,26 @@ namespace Zipkin.NET.OWIN
     public class TracingMiddleware
     {
         private readonly string _applicationName;
-        private readonly ISampler _sampler;
         private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IOwinContext> _extractor;
 
         public TracingMiddleware(
             string applicationName,
-            ISampler sampler,
             ITraceAccessor traceAccessor,
             IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
-            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
         }
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
         {
-            var trace = _extractor
-                .Extract(context)
-                .Sample(_sampler);
+            var traceContext = _extractor.Extract(context);
 
-            var spanBuilder = trace.GetSpanBuilder();
+            TraceManager.Sample(ref traceContext);
+
+            var spanBuilder = traceContext.GetSpanBuilder();
 
             spanBuilder
                 .Start()
@@ -49,7 +45,7 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _applicationName
                 });
 
-            _traceAccessor.SaveTrace(trace);
+            _traceAccessor.SaveTrace(traceContext);
 
             try
             {
@@ -62,9 +58,7 @@ namespace Zipkin.NET.OWIN
             finally
             {
                 spanBuilder.End();
-                
-                if (trace.Sampled == true)
-                    TraceManager.Report(spanBuilder.Build());
+                TraceManager.Report(traceContext, spanBuilder.Build());
             }
         }
     }
