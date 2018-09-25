@@ -12,7 +12,7 @@ namespace Zipkin.NET.WCF
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
         private readonly ISampler _sampler;
-        private readonly ITraceAccessor _traceAccecssor;
+        private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public ZipkinInvoker(
@@ -25,7 +25,7 @@ namespace Zipkin.NET.WCF
             _applicationName = applicationName;
             _originalInvoker = originalInvoker ?? throw new ArgumentNullException(nameof(originalInvoker));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _traceAccecssor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
             _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
         }
 
@@ -48,7 +48,7 @@ namespace Zipkin.NET.WCF
                     ServiceName = _applicationName
                 });
                 
-            _traceAccecssor.SaveTrace(trace);
+            _traceAccessor.SaveTrace(trace);
 
             var response = _originalInvoker.Invoke(instance, inputs, out outputs);
 
