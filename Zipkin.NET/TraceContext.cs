@@ -3,17 +3,39 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
+    /// <summary>
+    /// Represents trace context which has come into the application with a request.
+    /// </summary>
     public class TraceContext
     {
         private readonly string _spanId;
         private readonly string _parentSpanId;
 
+        /// <summary>
+        /// Create a new trace context.
+        /// <remarks>
+        /// Generates a new trace ID and span builder.
+        /// </remarks>
+        /// </summary>
         public TraceContext()
         {
             TraceId = GenerateTraceId();
             _spanId = GenerateTraceId();
         }
 
+        /// <summary>
+        /// Create a trace context from a trace and span ID extracted from an upstream request.
+        /// <remarks>
+        /// Sets the parent span ID to the <see cref="spanId"/>
+        /// and generates a new span ID for the current trace context.
+        /// </remarks>
+        /// </summary>
+        /// <param name="traceId">
+        /// An existing trace ID.
+        /// </param>
+        /// <param name="spanId">
+        /// The upstream span ID.
+        /// </param>
         public TraceContext(string traceId, string spanId)
         {
             TraceId = traceId ?? GenerateTraceId();
@@ -21,6 +43,18 @@ namespace Zipkin.NET
             _parentSpanId = spanId;
         }
 
+        /// <summary>
+        /// Create a trace context from specified trace ID's.
+        /// </summary>
+        /// <param name="traceId">
+        /// An existing trace ID.
+        /// </param>
+        /// <param name="spanId">
+        /// The span ID.
+        /// </param>
+        /// <param name="parentSpanId">
+        /// The parent span ID.
+        /// </param>
         public TraceContext(string traceId, string spanId, string parentSpanId)
         {
             TraceId = traceId;
@@ -39,13 +73,22 @@ namespace Zipkin.NET
         public bool Debug { get; set; }
 
         /// <summary>
-        /// Should this trace be sampled.
+        /// Should this trace be sampled.]?
         /// <remarks>
         /// The Sample() method should be used to make a sampling decision.
         /// </remarks>
         /// </summary>
         public bool? Sampled { get; set; }
 
+        /// <summary>
+        /// Gets a <see cref="SpanBuilder"/> used to build spans.
+        /// </summary>
+        /// <param name="refresh">
+        /// True if the trace ID's need to be updated (when starting a new child trace).
+        /// </param>
+        /// <returns>
+        /// The a new <see cref="SpanBuilder"/>.
+        /// </returns>
         public SpanBuilder GetSpanBuilder(bool refresh = false)
         {
             return refresh 

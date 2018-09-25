@@ -43,7 +43,7 @@ namespace Zipkin.NET
         }
 
         /// <summary>
-        /// Calculate the duration from the time the  start time was recorded.
+        /// Calculate the duration from the time span was started.
         /// </summary>
         public SpanBuilder End()
         {

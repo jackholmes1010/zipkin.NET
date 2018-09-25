@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zipkin.NET.Logging;
 using Zipkin.NET.Middleware;
+using Zipkin.NET.Middleware.Logging;
 using Zipkin.NET.Middleware.Reporters;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo
 {
@@ -28,22 +31,40 @@ namespace Zipkin.NET.Demo
             services.AddZipkin("test-api");
 
             // Register ZipkinHandler for HttpClients
-            services.AddHttpClient("tracingClient").AddZipkinMessageHandler("google");
-            services.AddHttpClient("tracingClient2").AddZipkinMessageHandler("google-2");
+            services.AddHttpClient("tracingClient").AddZipkinMessageHandler("reqres.in-1");
+            services.AddHttpClient("tracingClient2").AddZipkinMessageHandler("reqres.in-2");
             services.AddHttpClient("owinClient").AddZipkinMessageHandler("owin-demo");
 
             // Register .NET Core ILogger span reporter
             services.AddTransient<IReporter, LoggerReporter>();
+
+            // Register Zipkin server reporter
+            services.AddTransient<IReporter>(provider =>
+            {
+                var sender = new HttpSender("http://localhost:9411");
+                var reporter = new Reporter(sender);
+                return reporter;
+            });
+
+            // Register .NET Core ILogger tracing logger (used for exception logging)
+            services.AddTransient<ITracingLogger, CoreTracingLogger>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        {           
             // Register zipkin reporters
             var reporters = app.ApplicationServices.GetServices<IReporter>();
             foreach (var reporter in reporters)
             {
                 TraceManager.Register(reporter);
+            }
+
+            // Register custom exception loggers
+            var loggers = app.ApplicationServices.GetServices<ITracingLogger>();
+            foreach (var logger in loggers)
+            {
+                TraceManager.RegisterLogger(logger);
             }
 
             if (env.IsDevelopment())

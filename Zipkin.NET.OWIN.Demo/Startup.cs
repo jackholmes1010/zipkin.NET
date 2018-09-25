@@ -1,9 +1,7 @@
 ﻿using System.Web.Http;
 using Owin;
 using Zipkin.NET.Framework;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
-using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.OWIN.Demo
 {

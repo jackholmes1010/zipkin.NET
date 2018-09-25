@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Zipkin.NET.Logging;
 using Zipkin.NET.Models;
 using Zipkin.NET.Reporters;
 
@@ -13,12 +15,32 @@ namespace Zipkin.NET
     public static class TraceManager
     {
         private static readonly List<IReporter> Reporters;
+        private static readonly List<ITracingLogger> Loggers;
         private static readonly ActionBlock<Span> Processor;
 
         static TraceManager()
         {
             Reporters = new List<IReporter>();
+            Loggers = new List<ITracingLogger>();
             Processor = new ActionBlock<Span>(async span => await ReportSpan(span));
+        }
+
+        /// <summary>
+        /// Register a custom <see cref="ITracingLogger"/>.
+        /// <remarks>
+        /// By default, a <see cref="ConsoleTracingLogger"/> is used.
+        /// </remarks>
+        /// </summary>
+        /// <param name="logger">
+        /// The <see cref="ITracingLogger"/>.
+        /// </param>
+        public static void RegisterLogger(ITracingLogger logger)
+        {
+            var exists = Loggers.Any(l => l.GetType() == logger.GetType());
+            if (!exists)
+            {
+                Loggers.Add(logger);
+            }
         }
 
         /// <summary>
@@ -53,7 +75,10 @@ namespace Zipkin.NET
                 }
                 catch (Exception ex)
                 {
-                    // TODO log exception
+                    foreach (var logger in Loggers)
+                    {
+                        logger.WriteError(ex.ToString());
+                    }
                 }
             }
         }
