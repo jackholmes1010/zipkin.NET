@@ -4,7 +4,8 @@ using Zipkin.NET.Logging;
 namespace Zipkin.NET.Middleware.Logging
 {
     /// <summary>
-    /// .NET Core logger used to log instrumentation errors using a <see cref="ILogger{T}"/>.
+    /// .NET Core <see cref="IInstrumentationLogger"/> used to log
+    /// instrumentation errors using a <see cref="ILogger{T}"/>.
     /// </summary>
     public class CoreInstrumentationLogger : IInstrumentationLogger
     {
