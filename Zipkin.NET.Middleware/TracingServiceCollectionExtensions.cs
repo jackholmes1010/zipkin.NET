@@ -16,6 +16,7 @@ namespace Zipkin.NET.Middleware
             // Register default services
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddTransient<IPropagator<HttpRequestMessage>, HttpRequestMessagePropagator>();
+            services.TryAddTransient<ITraceAccessor, HttpContextTraceAccessor>();
 
             services.AddTransient(provider =>
             {

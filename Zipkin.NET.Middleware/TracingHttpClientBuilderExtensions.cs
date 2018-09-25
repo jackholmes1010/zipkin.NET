@@ -1,8 +1,6 @@
 ﻿using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
