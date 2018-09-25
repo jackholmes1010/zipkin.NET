@@ -13,8 +13,9 @@ namespace Zipkin.NET.OWIN.Demo
             var sender = new HttpSender("http://localhost:9411");
             var reporter = new Reporter(sender);
             TraceManager.Register(reporter);
+            TraceManager.Register(new ConsoleReporter());
 
-            string baseAddress = "http://localhost:9055/";
+            const string baseAddress = "http://localhost:9055/";
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))
