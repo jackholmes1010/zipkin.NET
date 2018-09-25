@@ -50,6 +50,7 @@ namespace Zipkin.NET
             var spanBuilder = trace
                 .GetSpanBuilder()
                 .Start()
+                .Name(request.Method.Method)
                 .Kind(SpanKind.Client)
                 .Tag("uri", request.RequestUri.OriginalString)
                 .Tag("method", request.Method.Method)

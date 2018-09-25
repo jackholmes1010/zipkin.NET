@@ -36,6 +36,7 @@ namespace Zipkin.NET.Middleware
 
             spanBuilder
                 .Start()
+                .Name(context.Request.Method)
                 .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
                 .Tag("resource", context.Request.Path.Value)

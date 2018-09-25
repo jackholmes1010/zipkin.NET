@@ -37,6 +37,18 @@ namespace Zipkin.NET
         }
 
         /// <summary>
+        /// Set the name of the logical operation the span represents.
+        /// </summary>
+        /// <param name="name">
+        /// The name of the operation.
+        /// </param>
+        public SpanBuilder Name(string name)
+        {
+            _span.Name = name;
+            return this;
+        }
+
+        /// <summary>
         /// Add additional context information to a trace.
         /// </summary>
         /// <param name="name">
