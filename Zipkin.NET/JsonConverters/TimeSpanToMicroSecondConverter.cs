@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Zipkin.NET.Extensions;
 
 namespace Zipkin.NET.JsonConverters
 {
@@ -10,8 +11,7 @@ namespace Zipkin.NET.JsonConverters
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var milliseconds = ((TimeSpan)value).Ticks / TimeSpan.TicksPerMillisecond;
-            var microseconds = milliseconds * 1000;
+            var microseconds = ((TimeSpan) value).ToMicroseconds();
             writer.WriteRawValue(microseconds.ToString());
         }
 
