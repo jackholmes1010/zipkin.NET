@@ -3,7 +3,7 @@
     /// <summary>
     /// Used by tracing instrumentation to log errors.
     /// </summary>
-    public interface ITracingLogger
+    public interface IInstrumentationLogger
     {
         /// <summary>
         /// Write a standard debug log.

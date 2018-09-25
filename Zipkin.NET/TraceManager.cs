@@ -15,26 +15,26 @@ namespace Zipkin.NET
     public static class TraceManager
     {
         private static readonly List<IReporter> Reporters;
-        private static readonly List<ITracingLogger> Loggers;
+        private static readonly List<IInstrumentationLogger> Loggers;
         private static readonly ActionBlock<Span> Processor;
 
         static TraceManager()
         {
             Reporters = new List<IReporter>();
-            Loggers = new List<ITracingLogger>();
+            Loggers = new List<IInstrumentationLogger>();
             Processor = new ActionBlock<Span>(async span => await ReportSpan(span));
         }
 
         /// <summary>
-        /// Register a custom <see cref="ITracingLogger"/>.
+        /// Register a custom <see cref="IInstrumentationLogger"/>.
         /// <remarks>
-        /// By default, a <see cref="ConsoleTracingLogger"/> is used.
+        /// By default, a <see cref="ConsoleInstrumentationLogger"/> is used.
         /// </remarks>
         /// </summary>
         /// <param name="logger">
-        /// The <see cref="ITracingLogger"/>.
+        /// The <see cref="IInstrumentationLogger"/>.
         /// </param>
-        public static void RegisterLogger(ITracingLogger logger)
+        public static void RegisterLogger(IInstrumentationLogger logger)
         {
             var exists = Loggers.Any(l => l.GetType() == logger.GetType());
             if (!exists)

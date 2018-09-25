@@ -47,7 +47,7 @@ namespace Zipkin.NET.Demo
             });
 
             // Register .NET Core ILogger tracing logger (used for exception logging)
-            services.AddTransient<ITracingLogger, CoreTracingLogger>();
+            services.AddTransient<IInstrumentationLogger, CoreInstrumentationLogger>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +61,7 @@ namespace Zipkin.NET.Demo
             }
 
             // Register custom exception loggers
-            var loggers = app.ApplicationServices.GetServices<ITracingLogger>();
+            var loggers = app.ApplicationServices.GetServices<IInstrumentationLogger>();
             foreach (var logger in loggers)
             {
                 TraceManager.RegisterLogger(logger);

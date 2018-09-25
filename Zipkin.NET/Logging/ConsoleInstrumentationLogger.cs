@@ -2,7 +2,10 @@
 
 namespace Zipkin.NET.Logging
 {
-    public class ConsoleTracingLogger : ITracingLogger
+    /// <summary>
+    /// Log instrumentation to log errors.
+    /// </summary>
+    public class ConsoleInstrumentationLogger : IInstrumentationLogger
     {
         public void WriteLog(string log)
         {

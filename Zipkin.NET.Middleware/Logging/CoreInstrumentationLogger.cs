@@ -3,11 +3,14 @@ using Zipkin.NET.Logging;
 
 namespace Zipkin.NET.Middleware.Logging
 {
-    public class CoreTracingLogger : ITracingLogger
+    /// <summary>
+    /// .NET Core logger used to log instrumentation errors using a <see cref="ILogger{T}"/>.
+    /// </summary>
+    public class CoreInstrumentationLogger : IInstrumentationLogger
     {
-        private readonly ILogger<CoreTracingLogger> _logger;
+        private readonly ILogger<CoreInstrumentationLogger> _logger;
 
-        public CoreTracingLogger(ILogger<CoreTracingLogger> logger)
+        public CoreInstrumentationLogger(ILogger<CoreInstrumentationLogger> logger)
         {
             _logger = logger;
         }
