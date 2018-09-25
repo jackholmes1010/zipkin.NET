@@ -4,10 +4,25 @@ using Zipkin.NET.Models;
 
 namespace Zipkin.NET
 {
+    /// <summary>
+    /// Helper class used to build spans.
+    /// </summary>
     public class SpanBuilder
     {
         private readonly Span _span;
 
+        /// <summary>
+        /// Construct a new <see cref="SpanBuilder"/>.
+        /// </summary>
+        /// <param name="traceId">
+        /// The trace ID for the current trace context.
+        /// </param>
+        /// <param name="id">
+        /// The span ID for the current trace context.
+        /// </param>
+        /// <param name="parentId">
+        /// The parent span ID for the current trace context.
+        /// </param>
         public SpanBuilder(string traceId, string id, string parentId)
         {
             _span = new Span
@@ -93,18 +108,45 @@ namespace Zipkin.NET
             return this;
         }
 
+        /// <summary>
+        /// Set the span local endpoint.
+        /// <remarks>
+        /// The local endpoint describes the host that is recording the span.
+        /// </remarks>
+        /// </summary>
+        /// <param name="endpoint">
+        /// The <see cref="Endpoint"/>.
+        /// </param>
         public SpanBuilder WithLocalEndpoint(Endpoint endpoint)
         {
             _span.LocalEndpoint = endpoint;
             return this;
         }
 
+        /// <summary>
+        /// Set the span remote endpoint.
+        /// <remarks>
+        /// The span endpoint describes the other side of the connection.
+        /// </remarks>
+        /// </summary>
+        /// <param name="endpoint">
+        /// The <see cref="Endpoint"/>.
+        /// </param>
         public SpanBuilder WithRemoteEndpoint(Endpoint endpoint)
         {
             _span.RemoteEndpoint = endpoint;
             return this;
         }
 
+        /// <summary>
+        /// Set the span kind.
+        /// </summary>
+        /// <remarks>
+        /// The span kind clarifies the duration and start time.
+        /// </remarks>
+        /// <param name="kind">
+        /// The <see cref="SpanKind"/>.
+        /// </param>
         public SpanBuilder Kind(SpanKind kind)
         {
             _span.Kind = kind;
