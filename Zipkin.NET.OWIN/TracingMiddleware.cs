@@ -24,9 +24,9 @@ namespace Zipkin.NET.OWIN
             IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
-            _sampler = sampler;
-            _traceAccessor = traceAccessor;
-            _extractor = extractor;
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
+            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
         }
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
