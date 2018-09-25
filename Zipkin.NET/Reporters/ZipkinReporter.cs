@@ -10,11 +10,11 @@ namespace Zipkin.NET.Reporters
     /// Receives and forwards spans recorded by instrumentation 
     /// to an <see cref="ISender"/> to be sent to a Zipkin server.
     /// </summary>
-    public class Reporter : IReporter
+    public class ZipkinReporter : IReporter
     {
         private readonly ISender _sender;
 
-        public Reporter(ISender sender)
+        public ZipkinReporter(ISender sender)
         {
             _sender = sender;
         }

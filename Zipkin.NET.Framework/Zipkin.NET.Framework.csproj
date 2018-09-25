@@ -43,9 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CallContextTraceAccessor.cs" />
+    <Compile Include="CallContextTraceContextAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemWebHttpContextTraceAccessor.cs" />
+    <Compile Include="SystemWebHttpContextTraceContextAccessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj">

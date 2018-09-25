@@ -3,7 +3,6 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.WCF
 {
@@ -11,22 +10,17 @@ namespace Zipkin.NET.WCF
     {
         private readonly string _applicationName;
         private readonly IOperationInvoker _originalInvoker;
-        private readonly Sampler _sampler;
-        private readonly ITraceAccessor _traceAccessor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public ZipkinInvoker(
             string applicationName,
-            IOperationInvoker originalInvoker,
-            Sampler sampler,
-            ITraceAccessor traceAccessor,
-            IExtractor<IncomingWebRequestContext> extractor)
+            IOperationInvoker originalInvoker)
         {
+
+
             _applicationName = applicationName;
             _originalInvoker = originalInvoker ?? throw new ArgumentNullException(nameof(originalInvoker));
-            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
-            _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
+            _extractor = new IncomingWebRequestB3Extractor();
         }
 
         public bool IsSynchronous => _originalInvoker.IsSynchronous;
@@ -38,7 +32,7 @@ namespace Zipkin.NET.WCF
             var traceContext = _extractor
                 .Extract(WebOperationContext.Current?.IncomingRequest);
 
-            TraceManager.Sample(ref traceContext);
+            Tracer.Sampler.Sample(ref traceContext);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()
@@ -49,13 +43,13 @@ namespace Zipkin.NET.WCF
                     ServiceName = _applicationName
                 });
                 
-            _traceAccessor.SaveTrace(traceContext);
+            Tracer.ContextAccessor.SaveTrace(traceContext);
 
             var response = _originalInvoker.Invoke(instance, inputs, out outputs);
 
             spanBuilder.End();
 
-            TraceManager.Report(traceContext, spanBuilder.Build());
+            Tracer.Report(traceContext, spanBuilder.Build());
 
             return response;
         }

@@ -9,7 +9,7 @@ namespace Zipkin.NET.Framework
     /// middleware's context is not shared with the controller call context.
     /// </remarks>
     /// </summary>
-    public class CallContextTraceAccessor : ITraceAccessor
+    public class CallContextTraceContextAccessor : ITraceContextAccessor
     {
         private const string ContextKey = "server-trace";
 

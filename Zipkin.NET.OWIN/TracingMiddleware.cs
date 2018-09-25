@@ -12,16 +12,16 @@ namespace Zipkin.NET.OWIN
     public class TracingMiddleware
     {
         private readonly string _applicationName;
-        private readonly ITraceAccessor _traceAccessor;
+        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IExtractor<IOwinContext> _extractor;
 
         public TracingMiddleware(
             string applicationName,
-            ITraceAccessor traceAccessor,
+            ITraceContextAccessor traceContextAccessor,
             IExtractor<IOwinContext> extractor)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
             _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
         }
 
@@ -29,7 +29,7 @@ namespace Zipkin.NET.OWIN
         {
             var traceContext = _extractor.Extract(context);
 
-            TraceManager.Sample(ref traceContext);
+            Tracer.Sampler.Sample(ref traceContext);
 
             var spanBuilder = traceContext.GetSpanBuilder();
 
@@ -45,7 +45,7 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _applicationName
                 });
 
-            _traceAccessor.SaveTrace(traceContext);
+            _traceContextAccessor.SaveTrace(traceContext);
 
             try
             {
@@ -58,7 +58,7 @@ namespace Zipkin.NET.OWIN
             finally
             {
                 spanBuilder.End();
-                TraceManager.Report(traceContext, spanBuilder.Build());
+                Tracer.Report(traceContext, spanBuilder.Build());
             }
         }
     }

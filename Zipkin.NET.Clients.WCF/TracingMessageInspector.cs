@@ -15,7 +15,7 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
-        private readonly ITraceAccessor _traceAccessor;
+        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
@@ -23,21 +23,21 @@ namespace Zipkin.NET.Clients.WCF
 
         public TracingMessageInspector(
             string applicationName,
-            ITraceAccessor traceAccessor,
+            ITraceContextAccessor traceContextAccessor,
             IPropagator<HttpRequestMessageProperty> propagator)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
-            _propagator = propagator ?? throw new ArgumentNullException(nameof(traceAccessor));
+            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _propagator = propagator ?? throw new ArgumentNullException(nameof(traceContextAccessor));
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            _traceContext = _traceAccessor.HasTrace()
-                ? _traceAccessor.GetTrace().Refresh()
+            _traceContext = _traceContextAccessor.HasTrace()
+                ? _traceContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
             
-            TraceManager.Sample(ref _traceContext);
+            Tracer.Sampler.Sample(ref _traceContext);
 
             var httpRequest = ExtractHttpRequest(request);
 
@@ -61,7 +61,7 @@ namespace Zipkin.NET.Clients.WCF
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             _spanBuilder.End();
-            TraceManager.Report(_traceContext, _spanBuilder.Build());
+            Tracer.Report(_traceContext, _spanBuilder.Build());
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

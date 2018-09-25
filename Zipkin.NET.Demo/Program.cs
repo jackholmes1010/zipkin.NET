@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Zipkin.NET.Logging;
-using Zipkin.NET.Reporters;
-using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo
 {

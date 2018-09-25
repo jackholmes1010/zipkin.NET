@@ -7,7 +7,7 @@
     /// context of the current request such as the HttpContext or CallContext.
     /// </remarks>
     /// </summary>
-    public interface ITraceAccessor
+    public interface ITraceContextAccessor
     {
         void SaveTrace(TraceContext traceContext);
         TraceContext GetTrace();

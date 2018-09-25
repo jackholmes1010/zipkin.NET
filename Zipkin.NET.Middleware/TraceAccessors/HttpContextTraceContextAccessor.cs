@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Http;
 namespace Zipkin.NET.Middleware.TraceAccessors
 {
     /// <summary>
-    /// <see cref="ITraceAccessor"/> backed by the <see cref="HttpContext"/>.
+    /// <see cref="ITraceContextAccessor"/> backed by the <see cref="HttpContext"/>.
     /// </summary>
     /// <inheritdoc />
-    public class HttpContextTraceAccessor : ITraceAccessor
+    public class HttpContextTraceContextAccessor : ITraceContextAccessor
     {
         private const string ContextKey = "server-trace";
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpContextTraceAccessor(IHttpContextAccessor httpContextAccessor)
+        public HttpContextTraceContextAccessor(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor 
                 ?? throw new ArgumentNullException(nameof(httpContextAccessor));

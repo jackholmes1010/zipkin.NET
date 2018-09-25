@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using Zipkin.NET.Logging;
 using Zipkin.NET.Middleware;
 using Zipkin.NET.Middleware.Logging;
 using Zipkin.NET.Middleware.Reporters;
+using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
@@ -28,6 +30,8 @@ namespace Zipkin.NET.Demo
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddLogging();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             // Register Zipkin dependencies
             services.AddZipkin("test-api");
 
@@ -43,7 +47,7 @@ namespace Zipkin.NET.Demo
             services.AddTransient<IReporter>(provider =>
             {
                 var sender = new HttpSender("http://localhost:9411");
-                var reporter = new Reporter(sender);
+                var reporter = new ZipkinReporter(sender);
                 return reporter;
             });
 
@@ -53,32 +57,14 @@ namespace Zipkin.NET.Demo
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {           
-            // Register zipkin reporters
-            var reporters = app.ApplicationServices.GetServices<IReporter>();
-            foreach (var reporter in reporters)
-            {
-                TraceManager.Register(reporter);
-            }
-
-            // Register custom exception loggers
-            var loggers = app.ApplicationServices.GetServices<IInstrumentationLogger>();
-            foreach (var logger in loggers)
-            {
-                TraceManager.RegisterLogger(logger);
-            }
-
-            // Register sampler
-            TraceManager.RegisterSampler(new DebugSampler());
-
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            // Register tracing middleware
-            app.UseZipkinTracing();
-
+            app.UseZipkin(app.ApplicationServices.GetServices<IReporter>());
+            app.UseTracingMiddleware();
             app.UseMvc();
         }
     }

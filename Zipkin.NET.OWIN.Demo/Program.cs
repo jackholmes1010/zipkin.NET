@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Owin.Hosting;
+using Zipkin.NET.Framework;
+using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
@@ -12,10 +15,12 @@ namespace Zipkin.NET.OWIN.Demo
         {
             // Register zipkin reporter
             var sender = new HttpSender("http://localhost:9411");
-            var reporter = new Reporter(sender);
-            TraceManager.Register(reporter);
-            TraceManager.Register(new ConsoleReporter());
-            TraceManager.RegisterSampler(new DebugSampler());
+            var zipkinReporter = new ZipkinReporter(sender);
+            Tracer.Start(
+                new DebugSampler(),
+                new CallContextTraceContextAccessor(), 
+                new ConsoleInstrumentationLogger(), 
+                new List<IReporter> {zipkinReporter, new ConsoleReporter()});
 
             const string baseAddress = "http://localhost:9055/";
 

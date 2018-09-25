@@ -19,7 +19,7 @@
         /// <returns>
         /// True if the trace is sampled.
         /// </returns>
-        public bool IsSampled(ref TraceContext traceContext)
+        public bool Sample(ref TraceContext traceContext)
         {
             if (traceContext.Debug)
             {

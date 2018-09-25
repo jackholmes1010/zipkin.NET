@@ -2,8 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Zipkin.NET.Framework;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN.Demo
 {
@@ -13,10 +11,8 @@ namespace Zipkin.NET.OWIN.Demo
         [HttpGet]
         public async Task<IHttpActionResult> GetStatus()
         {
-            var traceContextAccessor = new CallContextTraceAccessor();
-            var propagator = new HttpRequestMessagePropagator();
-            var httpClient = new HttpClient(new TracingHandler(
-                new HttpClientHandler(), "reqres-api", traceContextAccessor, propagator));
+            var tracingHandler = new TracingHandler(new HttpClientHandler(), "reqres-api");
+            var httpClient = new HttpClient(tracingHandler);
             var result = await httpClient.GetAsync(new Uri("https://www.google.com"));
             return Ok(await result.Content.ReadAsStringAsync());
        }

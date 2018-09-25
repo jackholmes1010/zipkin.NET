@@ -5,7 +5,7 @@ namespace Zipkin.NET.Framework
     /// <summary>
     /// Stores the <see cref="TraceContext"/> in the <see cref="HttpContext.Current"/>.
     /// </summary>
-    public class SystemWebHttpContextTraceAccessor : ITraceAccessor
+    public class SystemWebHttpContextTraceContextAccessor : ITraceContextAccessor
     {
         private const string ContextKey = "server-trace";
 

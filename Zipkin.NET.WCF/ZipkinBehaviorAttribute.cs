@@ -5,7 +5,10 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Framework;
+using Zipkin.NET.Logging;
+using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
+using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.WCF
 {
@@ -21,12 +24,15 @@ namespace Zipkin.NET.WCF
         // IOperationBehavior
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            var traceAccessor = new SystemWebHttpContextTraceAccessor();
-            var extractor = new IncomingWebRequestB3Extractor();
-            var sampler = new DebugSampler();
+            var reporter = new ZipkinReporter(new HttpSender("http://localhost:9411"));
 
-            dispatchOperation.Invoker = new ZipkinInvoker(
-                _applicationName, dispatchOperation.Invoker, sampler, traceAccessor, extractor);
+            Tracer.Start(
+                new DebugSampler(), 
+                new SystemWebHttpContextTraceContextAccessor(), 
+                new ConsoleInstrumentationLogger(),
+                new [] {reporter});
+
+            dispatchOperation.Invoker = new ZipkinInvoker(_applicationName, dispatchOperation.Invoker);
         }
 
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)

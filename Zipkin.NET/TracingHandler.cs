@@ -14,37 +14,30 @@ namespace Zipkin.NET
     public class TracingHandler : DelegatingHandler
     {
         private readonly string _applicationName;
-        private readonly ITraceAccessor _traceAccessor;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
-        public TracingHandler(HttpMessageHandler innerHandler,
-            string applicationName,
-            ITraceAccessor traceAccessor,
-            IPropagator<HttpRequestMessage> propagator) : base(innerHandler)
+        public TracingHandler(
+            HttpMessageHandler innerHandler,
+            string applicationName) : base(innerHandler)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
-            _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
+            _propagator = new HttpRequestMessagePropagator();
         }
 
-        public TracingHandler(
-            string applicationName,
-            ITraceAccessor traceAccessor,
-            IPropagator<HttpRequestMessage> propagator)
+        public TracingHandler(string applicationName)
         {
             _applicationName = applicationName;
-            _traceAccessor = traceAccessor ?? throw new ArgumentNullException(nameof(traceAccessor));
-            _propagator = propagator ?? throw new ArgumentNullException(nameof(propagator));
+            _propagator = new HttpRequestMessagePropagator();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceAccessor.HasTrace()
-                ? _traceAccessor.GetTrace().Refresh()
+            var traceContext = Tracer.ContextAccessor.HasTrace()
+                ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
 
-            TraceManager.Sample(ref traceContext);
+            Tracer.Sampler.Sample(ref traceContext);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()
@@ -73,7 +66,7 @@ namespace Zipkin.NET
             finally
             {
                 spanBuilder.End();
-                TraceManager.Report(traceContext, spanBuilder.Build());
+                Tracer.Report(traceContext, spanBuilder.Build());
             }
         }
     }
