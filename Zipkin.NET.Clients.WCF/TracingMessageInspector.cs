@@ -8,6 +8,10 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
+    /// <summary>
+    /// Message inspector used by WCF clients to build
+    /// and report client spans from outgoing requests.
+    /// </summary>
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;

@@ -7,6 +7,9 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Middleware
 {
+    /// <summary>
+    /// .NET Core middleware used to build and report server spans from incoming requests.
+    /// </summary>
     public class TracingMiddleware : IMiddleware
     {
         private readonly string _applicationName;

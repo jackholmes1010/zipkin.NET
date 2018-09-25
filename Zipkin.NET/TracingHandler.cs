@@ -8,6 +8,10 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
+    /// <summary>
+    /// Delegating handler used by http clients to build
+    /// and report client spans from outgoing requests.
+    /// </summary>
     public class TracingHandler : DelegatingHandler
     {
         private readonly string _applicationName;

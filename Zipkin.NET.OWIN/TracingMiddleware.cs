@@ -7,6 +7,9 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN
 {
+    /// <summary>
+    /// OWIN middleware used to build and report server spans from incoming requests.
+    /// </summary>
     public class TracingMiddleware
     {
         private readonly string _applicationName;
