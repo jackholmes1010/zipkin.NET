@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {

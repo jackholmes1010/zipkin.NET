@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Zipkin.NET.Middleware.Propagation;
+using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
@@ -14,6 +16,15 @@ namespace Zipkin.NET.Middleware
         private readonly string _applicationName;
         private readonly IExtractor<HttpRequest> _extractor;
         private readonly ITraceAccessor _traceAccessor;
+
+        public TracingMiddleware(
+            string applicationName, 
+            IHttpContextAccessor httpContextAccessor)
+        {
+            _applicationName = applicationName;
+            _traceAccessor = new HttpContextTraceAccessor(httpContextAccessor);
+            _extractor = new HttpRequestExtractor();
+        }
 
         public TracingMiddleware(
             string applicationName,
