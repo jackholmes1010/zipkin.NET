@@ -3,7 +3,8 @@
 namespace Zipkin.NET.Logging
 {
     /// <summary>
-    /// Log instrumentation to log errors.
+    /// An <see cref="IInstrumentationLogger"/>
+    /// used to log instrumentation errors to the console.
     /// </summary>
     public class ConsoleInstrumentationLogger : IInstrumentationLogger
     {
