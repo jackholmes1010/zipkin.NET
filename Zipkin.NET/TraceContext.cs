@@ -56,9 +56,9 @@ namespace Zipkin.NET
         /// <summary>
         /// Make a sampling decision.
         /// <remarks>
-        /// The sampling decision is based on the presence of the
-        /// sampling and debug flags. If no sampling flag exists
-        /// and the debug flag has not been set, make a sampling decision.
+        /// The sampling decision is based on the presence of the sampling and debug
+        /// flags. If no sampling flag exists and the debug flag has not been set,
+        /// the <see cref="ISampler"/> is used to make a sampling decision.
         /// </remarks>
         /// </summary>
         /// <param name="sampler">
