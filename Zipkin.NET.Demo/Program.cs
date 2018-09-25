@@ -13,6 +13,7 @@ namespace Zipkin.NET.Demo
             var sender = new HttpSender("http://localhost:9411");
             var reporter = new Reporter(sender);
             TraceManager.Register(reporter);
+            TraceManager.Register(new ConsoleReporter());
 
             CreateWebHostBuilder(args).Build().Run();
         }
