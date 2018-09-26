@@ -61,9 +61,8 @@ namespace Zipkin.NET.Demo.Controllers
         private DataServiceClient GetWcfDemoClient()
         {
             var wcfClient = new DataServiceClient();
-            var traceContextAccessor = new HttpContextTraceContextAccessor(_httpContextAccessor);
             wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-            var endpoint = new TracingEndpointBehavior("wcf-demo", traceContextAccessor);
+            var endpoint = new TracingEndpointBehavior("wcf-demo");
             wcfClient.Endpoint.EndpointBehaviors.Add(endpoint);
             return wcfClient;
         }

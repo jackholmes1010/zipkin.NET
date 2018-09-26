@@ -10,30 +10,28 @@ namespace Zipkin.NET.Clients.WCF
     /// <summary>
     /// Message inspector used by WCF clients to build
     /// and report client spans from outgoing requests.
+    /// <remarks>
+    /// This message inspector is supported by .NET Standard.
+    /// </remarks>
     /// </summary>
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
-        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
         private TraceContext _traceContext;
 
-        public TracingMessageInspector(
-            string applicationName,
-            ITraceContextAccessor traceContextAccessor,
-            IPropagator<HttpRequestMessageProperty> propagator)
+        public TracingMessageInspector(string applicationName)
         {
             _applicationName = applicationName;
-            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
-            _propagator = propagator ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _propagator = new HttpRequestMessagePropertyB3Propagator();
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            _traceContext = _traceContextAccessor.HasTrace()
-                ? _traceContextAccessor.GetTrace().Refresh()
+            _traceContext = Tracer.ContextAccessor.HasTrace()
+                ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
             
             Tracer.Sampler.Sample(ref _traceContext);
