@@ -63,7 +63,7 @@ namespace Zipkin.NET.Demo
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseZipkin(app.ApplicationServices.GetServices<IReporter>());
+            app.UseTracer(app.ApplicationServices.GetServices<IReporter>());
             app.UseTracingMiddleware();
             app.UseMvc();
         }

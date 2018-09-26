@@ -23,7 +23,7 @@ namespace Zipkin.NET.Middleware
             return app.UseMiddleware<TracingMiddleware>();
         }
 
-        public static IApplicationBuilder UseZipkin(this IApplicationBuilder app,
+        public static IApplicationBuilder UseZipkinTracer(this IApplicationBuilder app,
             string zipkinHost = "http://localhost:9411",
             Sampler sampler = null,
             ISender sender = null,
@@ -32,7 +32,7 @@ namespace Zipkin.NET.Middleware
         {
             var reporter = new ZipkinReporter(sender ?? new HttpSender(zipkinHost));
 
-            app.UseZipkin(
+            app.UseTracer(
                 new[] {reporter},
                 sampler,
                 traceContextAccessor,
@@ -41,7 +41,7 @@ namespace Zipkin.NET.Middleware
             return app;
         }
 
-        public static IApplicationBuilder UseZipkin(this IApplicationBuilder app,
+        public static IApplicationBuilder UseTracer(this IApplicationBuilder app,
             IEnumerable<IReporter> reporters,
             Sampler sampler = null,
             ITraceContextAccessor traceContextAccessor = null,
