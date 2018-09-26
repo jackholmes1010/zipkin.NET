@@ -30,7 +30,7 @@ namespace Zipkin.NET.WCF
                 var channelDispatcher = (ChannelDispatcher)channelDispatcherBase;
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
-                    endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector("test"));
+                    endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
                 }
             }
         }

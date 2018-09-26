@@ -22,14 +22,14 @@ namespace Zipkin.NET.WCF
         {
             StartTracer();
 
-            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector("test"));
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
         }
 
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             StartTracer();
 
-            clientRuntime.MessageInspectors.Add(new TracingMessageInspector("application-name"));
+            clientRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
         }
     }
 }
