@@ -1,6 +1,5 @@
 ﻿using System.ServiceModel.Web;
 using Zipkin.NET.Constants;
-using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
 namespace Zipkin.NET.WCF
