@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zipkin.NET.Core;
+using Zipkin.NET.Core.Logging;
+using Zipkin.NET.Core.Reporters;
 using Zipkin.NET.Logging;
-using Zipkin.NET.Middleware;
-using Zipkin.NET.Middleware.Logging;
-using Zipkin.NET.Middleware.Reporters;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Senders;
 

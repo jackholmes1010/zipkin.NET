@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Zipkin.NET.Middleware.TraceAccessors
+namespace Zipkin.NET.Core.TraceAccessors
 {
     /// <summary>
     /// <see cref="ITraceContextAccessor"/> backed by the <see cref="HttpContext"/>.

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     public static class TracingServiceCollectionExtensions
     {

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Zipkin.NET.Models;
 using Zipkin.NET.Reporters;
 
-namespace Zipkin.NET.Middleware.Reporters
+namespace Zipkin.NET.Core.Reporters
 {
     public class LoggerReporter : IReporter
     {

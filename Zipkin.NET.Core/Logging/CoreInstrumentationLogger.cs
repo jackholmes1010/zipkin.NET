@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Zipkin.NET.Logging;
 
-namespace Zipkin.NET.Middleware.Logging
+namespace Zipkin.NET.Core.Logging
 {
     /// <summary>
     /// .NET Core <see cref="IInstrumentationLogger"/> used to log

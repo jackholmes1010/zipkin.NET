@@ -2,7 +2,7 @@
 using Zipkin.NET.Constants;
 using Zipkin.NET.Propagation;
 
-namespace Zipkin.NET.Middleware.Propagation
+namespace Zipkin.NET.Core.Propagation
 {
     public class HttpRequestExtractor : IExtractor<HttpRequest>
     {

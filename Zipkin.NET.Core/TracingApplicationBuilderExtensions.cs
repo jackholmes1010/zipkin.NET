@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Zipkin.NET.Core.Logging;
+using Zipkin.NET.Core.TraceAccessors;
 using Zipkin.NET.Logging;
-using Zipkin.NET.Middleware.Logging;
-using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     public static class TracingApplicationBuilderExtensions
     {

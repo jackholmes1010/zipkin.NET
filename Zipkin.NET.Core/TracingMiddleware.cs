@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Zipkin.NET.Middleware.Propagation;
+using Zipkin.NET.Core.Propagation;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 
-namespace Zipkin.NET.Middleware
+namespace Zipkin.NET.Core
 {
     /// <summary>
     /// .NET Core middleware used to build and report server spans from incoming requests.

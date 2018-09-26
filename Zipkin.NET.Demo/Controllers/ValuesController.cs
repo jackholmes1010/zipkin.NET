@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Zipkin.NET.Clients.WCF;
 using Zipkin.NET.Demo.Connected_Services.DataService;
-using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Demo.Controllers
