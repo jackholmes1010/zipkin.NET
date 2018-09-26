@@ -24,7 +24,7 @@ namespace Zipkin.NET.WCF.Demo
         {
             get
             {
-                var sender = new HttpSender("http://localhost:9411");
+                var sender = new ZipkinHttpSender("http://localhost:9411");
                 var reporter = new ZipkinReporter(sender);
                 return new[] { reporter };
             }

@@ -8,25 +8,40 @@ using Zipkin.NET.Propagation;
 namespace Zipkin.NET
 {
     /// <summary>
-    /// Delegating handler used by http clients to build
-    /// and report client spans from outgoing requests.
+    /// Delegating handler used by http clients to 
+    /// report client spans and propagate trace context.
     /// </summary>
     public class TracingHandler : DelegatingHandler
     {
-        private readonly string _applicationName;
+        private readonly string _remoteEndpointName;
         private readonly IPropagator<HttpRequestMessage> _propagator;
 
+        /// <summary>
+        /// Construct a new <see cref="TracingHandler"/> with an inner handler.
+        /// </summary>
+        /// <param name="innerHandler">
+        /// An optional inner handler.
+        /// </param>
+        /// <param name="remoteEndpointName">
+        /// The name of the reciever.
+        /// </param>
         public TracingHandler(
             HttpMessageHandler innerHandler,
-            string applicationName) : base(innerHandler)
+            string remoteEndpointName) : base(innerHandler)
         {
-            _applicationName = applicationName;
+            _remoteEndpointName = remoteEndpointName;
             _propagator = new HttpRequestMessagePropagator();
         }
 
-        public TracingHandler(string applicationName)
+        /// <summary>
+        /// Construct a new <see cref="TracingHandler"/>.
+        /// </summary>
+        /// <param name="remoteEndpointName">
+        /// The name of the reciever.
+        /// </param>
+        public TracingHandler(string remoteEndpointName)
         {
-            _applicationName = applicationName;
+            _remoteEndpointName = remoteEndpointName;
             _propagator = new HttpRequestMessagePropagator();
         }
 
@@ -48,7 +63,7 @@ namespace Zipkin.NET
                 .Tag("method", request.Method.Method)
                 .WithRemoteEndpoint(new Endpoint
                 {
-                    ServiceName = _applicationName
+                    ServiceName = _remoteEndpointName
                 });
 
             // Add X-B3 headers to the request

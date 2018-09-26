@@ -31,12 +31,12 @@ namespace Zipkin.NET.Demo
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Register Zipkin dependencies
-            services.AddZipkin("test-api");
+            services.AddTracingMiddleware("test-api");
 
             // Register ZipkinHandler for HttpClients
-            services.AddHttpClient("tracingClient").AddZipkinMessageHandler("reqres.in-1");
-            services.AddHttpClient("tracingClient2").AddZipkinMessageHandler("reqres.in-2");
-            services.AddHttpClient("owinClient").AddZipkinMessageHandler("owin-demo");
+            services.AddHttpClient("tracingClient").AddTracingMessageHandler("reqres.in-1");
+            services.AddHttpClient("tracingClient2").AddTracingMessageHandler("reqres.in-2");
+            services.AddHttpClient("owinClient").AddTracingMessageHandler("owin-demo");
 
             // Register .NET Core ILogger span reporter
             services.AddTransient<IReporter, LoggerReporter>();
@@ -44,7 +44,7 @@ namespace Zipkin.NET.Demo
             // Register Zipkin server reporter
             services.AddTransient<IReporter>(provider =>
             {
-                var sender = new HttpSender("http://localhost:9411");
+                var sender = new ZipkinHttpSender("http://localhost:9411");
                 var reporter = new ZipkinReporter(sender);
                 return reporter;
             });
@@ -63,6 +63,7 @@ namespace Zipkin.NET.Demo
 
             app.UseTracer(app.ApplicationServices.GetServices<IReporter>());
             app.UseTracingMiddleware();
+
             app.UseMvc();
         }
     }

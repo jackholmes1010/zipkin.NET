@@ -11,13 +11,18 @@ namespace Zipkin.NET.OWIN
     /// </summary>
     public class TracingMiddleware
     {
-        private readonly string _applicationName;
+        private readonly string _localEndpointName;
         private readonly IExtractor<IOwinContext> _extractor;
 
-        public TracingMiddleware(
-            string applicationName)
+        /// <summary>
+        /// Construct a new <see cref="TracingMiddleware"/>.
+        /// </summary>
+        /// <param name="localEndpointName">
+        /// The endpoint name describes the host recording the span.
+        /// </param>
+        public TracingMiddleware(string localEndpointName)
         {
-            _applicationName = applicationName;
+            _localEndpointName = localEndpointName;
             _extractor = new OwinContextB3Extractor();
         }
 
@@ -27,9 +32,8 @@ namespace Zipkin.NET.OWIN
 
             Tracer.Sampler.Sample(ref traceContext);
 
-            var spanBuilder = traceContext.GetSpanBuilder();
-
-            spanBuilder
+            var spanBuilder = traceContext
+                .GetSpanBuilder()
                 .Start()
                 .Name(context.Request.Method)
                 .Kind(SpanKind.Server)
@@ -38,7 +42,7 @@ namespace Zipkin.NET.OWIN
                 .Tag("method", context.Request.Method)
                 .WithLocalEndpoint(new Endpoint
                 {
-                    ServiceName = _applicationName
+                    ServiceName = _localEndpointName
                 });
 
             Tracer.ContextAccessor.SaveTrace(traceContext);

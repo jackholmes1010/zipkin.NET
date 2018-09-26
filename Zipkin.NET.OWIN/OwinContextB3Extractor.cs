@@ -5,8 +5,21 @@ using Zipkin.NET.Propagation;
 
 namespace Zipkin.NET.OWIN
 {
+    /// <summary>
+    /// Used to extract a <see cref="TraceContext"/> from a 
+    /// <see cref="IOwinRequest"/> inside an <see cref="IOwinContext"/>.
+    /// </summary>
     public class OwinContextB3Extractor : IExtractor<IOwinContext>
     {
+        /// <summary>
+        /// Extracts a <see cref="TraceContext"/> from an <see cref="IOwinContext"/>.
+        /// </summary>
+        /// <param name="extract">
+        /// The <see cref="IOwinContext"/>.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TraceContext"/>.
+        /// </returns>
         public TraceContext Extract(IOwinContext extract)
         {
             string traceId = null;

@@ -14,7 +14,7 @@ namespace Zipkin.NET.OWIN.Demo
         public static void Main(string[] args)
         {
             // Register zipkin reporter
-            var sender = new HttpSender("http://localhost:9411");
+            var sender = new ZipkinHttpSender("http://localhost:9411");
             var zipkinReporter = new ZipkinReporter(sender);
             Tracer.Start(
                 new DebugSampler(),

@@ -1,5 +1,4 @@
 ﻿using System;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
