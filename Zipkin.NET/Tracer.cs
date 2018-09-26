@@ -52,6 +52,7 @@ namespace Zipkin.NET
 
             foreach (var reporter in reporters)
             {
+                // TODO improve logic for preventing duplicate reporters
                 var exists = Reporters.Any(r => r.GetType() == reporter.GetType());
                 if (!exists)
                 {
