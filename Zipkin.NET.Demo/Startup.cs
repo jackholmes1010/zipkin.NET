@@ -8,9 +8,7 @@ using Zipkin.NET.Logging;
 using Zipkin.NET.Middleware;
 using Zipkin.NET.Middleware.Logging;
 using Zipkin.NET.Middleware.Reporters;
-using Zipkin.NET.Middleware.TraceAccessors;
 using Zipkin.NET.Reporters;
-using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo
