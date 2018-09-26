@@ -72,7 +72,7 @@ namespace Zipkin.NET
         public bool Debug { get; set; }
 
         /// <summary>
-        /// Should this trace be sampled.]?
+        /// Should this trace be sampled?
         /// <remarks>
         /// The Sample() method should be used to make a sampling decision.
         /// </remarks>
