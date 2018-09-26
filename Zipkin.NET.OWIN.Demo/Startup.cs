@@ -25,10 +25,7 @@ namespace Zipkin.NET.OWIN.Demo
 
             app.Use(async (ctx, next) =>
             {
-                var propagator = new OwinContextB3Extractor();
-                var traceContextAccessor = new CallContextTraceContextAccessor();
-                var middleware = new TracingMiddleware(
-                    "owin-api", traceContextAccessor, propagator);
+                var middleware = new TracingMiddleware("owin-api");
                 await middleware.Invoke(ctx, next);
             });
 

@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -44,10 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpRequestMessagePropertyB3Propagator.cs" />
     <Compile Include="IncomingWebRequestB3Extractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZipkinBehaviorAttribute.cs" />
-    <Compile Include="ZipkinInvoker.cs" />
+    <Compile Include="TracingMessageInspector.cs" />
+    <Compile Include="TracingBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">

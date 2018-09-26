@@ -52,7 +52,7 @@ namespace Zipkin.NET
 
             foreach (var reporter in reporters)
             {
-                var exists = Reporters.Any(r => r.GetHashCode() == reporter.GetHashCode());
+                var exists = Reporters.Any(r => r.GetType() == reporter.GetType());
                 if (!exists)
                 {
                     Reporters.Add(reporter);
