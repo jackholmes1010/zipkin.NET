@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj" />
-    <ProjectReference Include="..\Zipkin.NET.Core\Zipkin.NET.Core.csproj" />
+    <ProjectReference Include="..\..\src\Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj" />
+    <ProjectReference Include="..\..\src\Zipkin.NET.Core\Zipkin.NET.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -95,11 +95,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
-      <Project>{7CE205C2-0E81-4710-8296-02F10DDA1971}</Project>
+      <Project>{7ce205c2-0e81-4710-8296-02f10dda1971}</Project>
       <Name>Zipkin.NET.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Zipkin.NET.WCF\Zipkin.NET.WCF.csproj">
-      <Project>{090D0A58-04CE-4EE4-9A74-C0569E0B1497}</Project>
+      <Project>{090d0a58-04ce-4ee4-9a74-c0569e0b1497}</Project>
       <Name>Zipkin.NET.WCF</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Zipkin.NET\Zipkin.NET.csproj">
