@@ -4,7 +4,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {

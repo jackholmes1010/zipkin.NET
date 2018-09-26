@@ -11,7 +11,7 @@ namespace Zipkin.NET.WCF.Demo
     {
         public static void Configure(ServiceConfiguration config)
         {
-            config.Description.Behaviors.Add(new ZipkinTracingBehavior());
+            config.Description.Behaviors.Add(new ZipkinTracingBehavior("demo-service"));
             config.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
             config.Description.Behaviors.Add(new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true });
         }
