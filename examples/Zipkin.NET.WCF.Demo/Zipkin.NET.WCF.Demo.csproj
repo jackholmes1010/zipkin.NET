@@ -94,15 +94,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
       <Project>{7CE205C2-0E81-4710-8296-02F10DDA1971}</Project>
       <Name>Zipkin.NET.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zipkin.NET.WCF\Zipkin.NET.WCF.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET.WCF\Zipkin.NET.WCF.csproj">
       <Project>{090D0A58-04CE-4EE4-9A74-C0569E0B1497}</Project>
       <Name>Zipkin.NET.WCF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET\Zipkin.NET.csproj">
       <Project>{39e0b793-95ee-4c55-bb40-90dbd723a8ad}</Project>
       <Name>Zipkin.NET</Name>
     </ProjectReference>

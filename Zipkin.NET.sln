@@ -3,27 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Demo", "Zipkin.NET.Demo\Zipkin.NET.Demo.csproj", "{3A19DEFE-B983-4403-B7F9-45ACE7426ECE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Demo", "examples\Zipkin.NET.Demo\Zipkin.NET.Demo.csproj", "{3A19DEFE-B983-4403-B7F9-45ACE7426ECE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF.Demo", "Zipkin.NET.WCF.Demo\Zipkin.NET.WCF.Demo.csproj", "{74650B3B-C656-41D0-B634-1F466FA95988}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF.Demo", "examples\Zipkin.NET.WCF.Demo\Zipkin.NET.WCF.Demo.csproj", "{74650B3B-C656-41D0-B634-1F466FA95988}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Clients.WCF", "Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj", "{458119F2-766C-489B-871A-471AFD2B6222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Clients.WCF", "src\Zipkin.NET.Clients.WCF\Zipkin.NET.Clients.WCF.csproj", "{458119F2-766C-489B-871A-471AFD2B6222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF", "Zipkin.NET.WCF\Zipkin.NET.WCF.csproj", "{090D0A58-04CE-4EE4-9A74-C0569E0B1497}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.WCF", "src\Zipkin.NET.WCF\Zipkin.NET.WCF.csproj", "{090D0A58-04CE-4EE4-9A74-C0569E0B1497}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F0EC4501-05AF-41F1-B68C-45776737509E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{56E29C0D-101B-4E2B-B9CF-8E1EAD87D7AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN.Demo", "Zipkin.NET.OWIN.Demo\Zipkin.NET.OWIN.Demo.csproj", "{34D490BE-1988-48BC-A03F-4ECA514926C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN.Demo", "examples\Zipkin.NET.OWIN.Demo\Zipkin.NET.OWIN.Demo.csproj", "{34D490BE-1988-48BC-A03F-4ECA514926C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN", "Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj", "{F1275248-66CF-45BC-B5B5-1836F24A3BD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.OWIN", "src\Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj", "{F1275248-66CF-45BC-B5B5-1836F24A3BD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Framework", "Zipkin.NET.Framework\Zipkin.NET.Framework.csproj", "{7CE205C2-0E81-4710-8296-02F10DDA1971}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Framework", "src\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj", "{7CE205C2-0E81-4710-8296-02F10DDA1971}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET", "Zipkin.NET\Zipkin.NET.csproj", "{39E0B793-95EE-4C55-BB40-90DBD723A8AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET", "src\Zipkin.NET\Zipkin.NET.csproj", "{39E0B793-95EE-4C55-BB40-90DBD723A8AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Core", "Zipkin.NET.Core\Zipkin.NET.Core.csproj", "{15BCE856-C946-478B-AFA3-C1E6B334B081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Core", "src\Zipkin.NET.Core\Zipkin.NET.Core.csproj", "{15BCE856-C946-478B-AFA3-C1E6B334B081}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

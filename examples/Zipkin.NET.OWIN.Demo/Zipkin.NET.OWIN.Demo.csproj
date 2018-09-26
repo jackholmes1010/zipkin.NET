@@ -82,15 +82,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
       <Project>{7CE205C2-0E81-4710-8296-02F10DDA1971}</Project>
       <Name>Zipkin.NET.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET.OWIN\Zipkin.NET.OWIN.csproj">
       <Project>{f1275248-66cf-45bc-b5b5-1836f24a3bd6}</Project>
       <Name>Zipkin.NET.OWIN</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zipkin.NET\Zipkin.NET.csproj">
+    <ProjectReference Include="..\..\src\Zipkin.NET\Zipkin.NET.csproj">
       <Project>{39E0B793-95EE-4C55-BB40-90DBD723A8AD}</Project>
       <Name>Zipkin.NET</Name>
     </ProjectReference>
