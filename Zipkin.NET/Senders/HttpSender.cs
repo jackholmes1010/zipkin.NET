@@ -28,7 +28,7 @@ namespace Zipkin.NET.Senders
 
             var content = new StringContent(serializedSpans);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var result = await client.PostAsync($"{_zipkinHost}/api/v2/spans", content);
+            await client.PostAsync($"{_zipkinHost}/api/v2/spans", content);
         }
     }
 }
