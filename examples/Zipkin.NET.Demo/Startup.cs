@@ -31,7 +31,9 @@ namespace Zipkin.NET.Demo
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddLogging();
 
-            // Register ZipkinHandler for HttpClients.
+            // Add a tracing handler to the HTTP clients.
+            // The TracingHandler builds spans from outgoing client
+            // requests and reports them using the registered reporters.
             services.AddHttpClient("tracingClient").AddTracingMessageHandler("reqres.in-1");
             services.AddHttpClient("tracingClient2").AddTracingMessageHandler("reqres.in-2");
             services.AddHttpClient("owinClient").AddTracingMessageHandler("owin-demo");
@@ -87,8 +89,12 @@ namespace Zipkin.NET.Demo
                 app.UseDeveloperExceptionPage();
             }
 
+            // Register static tracer used to report completed spans.
             app.UseTracer();
+
+            // Add the tracing middleware to the request pipeline.
             app.UseTracingMiddleware();
+
             app.UseMvc();
         }
     }
