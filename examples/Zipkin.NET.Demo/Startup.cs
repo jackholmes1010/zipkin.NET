@@ -45,7 +45,7 @@ namespace Zipkin.NET.Demo
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Register rate sampler.
-            // This RateSampler will sampler 100% of traces providing a
+            // This RateSampler will sample 100% of traces providing a
             // sampling decision has not already been made by an upstream service.
             services.AddTransient<Sampler>(provider => new RateSampler(1f));
 
