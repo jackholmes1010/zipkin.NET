@@ -6,7 +6,7 @@ namespace Zipkin.NET.Sampling
     /// <summary>
     /// Sampler which samples a certain percentage of traces.
     /// </summary>
-    public class PercentageSampler : Sampler
+    public class RateSampler : Sampler
     {
         private int _counter;
         private readonly BitArray _bitArray;
@@ -14,13 +14,13 @@ namespace Zipkin.NET.Sampling
         private readonly bool _alwaysSample;
 
         /// <summary>
-        /// Construct a new <see cref="PercentageSampler"/>.
+        /// Construct a new <see cref="RateSampler"/>.
         /// </summary>
         /// <param name="rate">
         /// The percentage of traces to sample. 1.0 means sample 
         /// everything (100%) and 0.0 means sample nothing (0%).
         /// </param>
-        public PercentageSampler(float rate)
+        public RateSampler(float rate)
         {
             if (rate > 1f)
             {

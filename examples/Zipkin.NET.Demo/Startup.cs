@@ -63,7 +63,7 @@ namespace Zipkin.NET.Demo
             }
 
             var reporters = app.ApplicationServices.GetServices<IReporter>();
-            var sampler = new PercentageSampler(1f);
+            var sampler = new RateSampler(1f);
 
             app.UseTracer(reporters, sampler);
             app.UseTracingMiddleware();

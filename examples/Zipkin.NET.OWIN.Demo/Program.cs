@@ -17,7 +17,7 @@ namespace Zipkin.NET.OWIN.Demo
             var sender = new ZipkinHttpSender("http://localhost:9411");
             var zipkinReporter = new ZipkinReporter(sender);
             Tracer.Start(
-                new DebugSampler(),
+                new RateSampler(1f),
                 new CallContextTraceContextAccessor(), 
                 new ConsoleInstrumentationLogger(), 
                 new List<IReporter> {zipkinReporter, new ConsoleReporter()});
