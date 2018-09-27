@@ -12,8 +12,7 @@
         /// Make a sampling decision based on the value of the debug and sampled flags.
         /// <remarks>
         /// If the debug flag has been set then always sample. Otherwise,
-        /// if the sampled flag has not been set, make a sampling decision.
-        /// Returns the sampling decision.
+        /// if the sampled flag has not been set, make a sampling decision return the decision.
         /// </remarks>
         /// </summary>
         /// <param name="traceContext">
@@ -25,31 +24,20 @@
         /// <returns>
         /// True if the trace is sampled.
         /// </returns>
-        public bool Sample(ref TraceContext traceContext)
+        public bool IsSampled(TraceContext traceContext)
         {
-            if (traceContext.Debug)
-            {
-                traceContext.Sampled = true;
-                return true;
-            }
-
-            if (traceContext.Sampled == null)
-            {
-                traceContext.Sampled = MakeSamplingDecision(traceContext);
-            }
-
-            return traceContext.Sampled == true;
+            return traceContext.Debug || IsSampled(traceContext.TraceId);
         }
 
         /// <summary>
         /// Make a sampling decision if the sampled flags has not been set.
         /// </summary>
-        /// <param name="traceContext">
-        /// The <see cref="TraceContext"/>.
+        /// <param name="traceId">
+        /// The trace ID.
         /// </param>
         /// <returns>
         /// True if the trace is sampled.
         /// </returns>
-        protected abstract bool MakeSamplingDecision(TraceContext traceContext);
+        protected abstract bool IsSampled(string traceId);
     }
 }

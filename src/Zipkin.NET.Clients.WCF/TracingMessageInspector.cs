@@ -39,7 +39,7 @@ namespace Zipkin.NET.Clients.WCF
                 ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
             
-            Tracer.Sampler.Sample(ref _traceContext);
+            Tracer.Sample(ref _traceContext);
 
             var httpRequest = ExtractHttpRequest(request);
 

@@ -52,7 +52,7 @@ namespace Zipkin.NET
                 ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
 
-            Tracer.Sampler.Sample(ref traceContext);
+            Tracer.Sample(ref traceContext);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()

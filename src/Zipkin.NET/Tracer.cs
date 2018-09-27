@@ -103,13 +103,24 @@ namespace Zipkin.NET
             if (traceContext.Sampled == null)
             {
                 throw new Exception(
-                    "TraceContext.Sampled property has not been set. Call Tracer.Sampler.Sample() to set the Sampled property before reporting span.");
+                    "TraceContext.Sampled property has not been set. Call Tracer.Sample() to set the Sampled property before reporting span.");
             }
 
             if (traceContext.Sampled == true)
             {
                 Processor.Post(span);
             }
+        }
+
+        /// <summary>
+        /// Use the <see cref="Sampler"/> to make a sampling decision.
+        /// </summary>
+        /// <param name="traceContext">
+        /// The current <see cref="TraceContext"/>.
+        /// </param>
+        public static void Sample(ref TraceContext traceContext)
+        {
+            traceContext.Sampled = Sampler.IsSampled(traceContext);
         }
 
         private static async Task ReportSpan(Span span)

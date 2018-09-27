@@ -38,7 +38,7 @@ namespace Zipkin.NET.Sampling
             }
         }
 
-        protected override bool MakeSamplingDecision(TraceContext traceContext)
+        protected override bool IsSampled(string traceId)
         {
             return _alwaysSample || !_neverSample && IsSampled();
         }

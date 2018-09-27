@@ -30,7 +30,7 @@ namespace Zipkin.NET.OWIN
         {
             var traceContext = _extractor.Extract(context);
 
-            Tracer.Sampler.Sample(ref traceContext);
+            Tracer.Sample(ref traceContext);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()

@@ -31,7 +31,7 @@ namespace Zipkin.NET.Core
         {
             var traceContext = _extractor.Extract(context.Request);
 
-            Tracer.Sampler.Sample(ref traceContext);
+            Tracer.Sample(ref traceContext);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()
