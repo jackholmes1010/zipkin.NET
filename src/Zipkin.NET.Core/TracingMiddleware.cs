@@ -29,38 +29,19 @@ namespace Zipkin.NET.Core
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var traceContext = _extractor.Extract(context.Request);
+            var trace = new ServerTrace<HttpRequest>(
+                _localEndpointName, _extractor, context.Request);
 
-            Tracer.Sampler.Sample(ref traceContext);
-
-            var spanBuilder = traceContext
-                .GetSpanBuilder()
-                .Start()
-                .Name(context.Request.Method)
-                .Kind(SpanKind.Server)
-                .Tag("host", context.Request.Host.Value)
-                .Tag("resource", context.Request.Path.Value)
-                .Tag("method", context.Request.Method)
-                .WithLocalEndpoint(new Endpoint
-                {
-                    ServiceName = _localEndpointName
-                });
-
-            Tracer.ContextAccessor.SaveTrace(traceContext);
-
-            try
+            await trace.Start(_localEndpointName, async spanBuilder =>
             {
+                spanBuilder
+                    .Name(context.Request.Method)
+                    .Tag("host", context.Request.Host.Value)
+                    .Tag("resource", context.Request.Path.Value)
+                    .Tag("method", context.Request.Method);
+
                 await next(context);
-            }
-            catch (Exception ex)
-            {
-                spanBuilder.Error(ex.Message);
-            }
-            finally
-            {
-                spanBuilder.End();
-                Tracer.Report(traceContext, spanBuilder.Build());
-            }
+            });
         }
     }
 }
