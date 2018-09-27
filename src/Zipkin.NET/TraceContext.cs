@@ -22,31 +22,6 @@ namespace Zipkin.NET
             _spanId = GenerateTraceId();
         }
 
-        public T StartNew<T>(TraceContext context, Func<SpanBuilder, T> work)
-        {
-            var spanBuilder = GetSpanBuilder();
-
-            try
-            {
-                Tracer.Sampler.Sample(ref context);
-
-                var result = work(spanBuilder);
-
-                Tracer.ContextAccessor.SaveTrace(context);
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                spanBuilder.Error(ex.Message);
-                throw;
-            }
-            finally
-            {
-                Tracer.Report(context, spanBuilder.Build());
-            }
-        }
-
         /// <summary>
         /// Create a trace context from a trace and span ID extracted from an upstream request.
         /// <remarks>
