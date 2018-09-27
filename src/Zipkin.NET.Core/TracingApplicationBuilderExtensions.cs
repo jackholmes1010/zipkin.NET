@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Zipkin.NET.Core.Logging;
-using Zipkin.NET.Core.TraceAccessors;
 using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
@@ -40,38 +36,41 @@ namespace Zipkin.NET.Core
         /// <param name="app">
         /// The <see cref="IApplicationBuilder"/>.
         /// </param>
-        /// <param name="reporters">
-        /// A collection of <see cref="IReporter"/>s used by the <see cref="Tracer"/> to report completed spans.
-        /// </param>
-        /// <param name="sampler">
-        /// A <see cref="Sampler"/> used to make sampling decisions.
-        /// </param>
-        /// <param name="traceContextAccessor">
-        /// A <see cref="ITraceContextAccessor"/> used to access trace context in the context of the current request.
-        /// </param>
-        /// <param name="instrumentationLogger">
-        /// A <see cref="IInstrumentationLogger"/> used by instrumentation to log errors.
-        /// </param>
         /// <returns>
         /// The <see cref="IApplicationBuilder"/>.
         /// </returns>
-        public static IApplicationBuilder UseTracer(
-            this IApplicationBuilder app,
-            IEnumerable<IReporter> reporters,
-            Sampler sampler,
-            ITraceContextAccessor traceContextAccessor = null,
-            IInstrumentationLogger instrumentationLogger = null)
+        public static IApplicationBuilder UseTracer(this IApplicationBuilder app)
         {
-            if (traceContextAccessor == null)
+            var sampler = app.ApplicationServices.GetService<Sampler>();
+
+            if (sampler == null)
             {
-                var httpContextAccessor = app.ApplicationServices.GetService<IHttpContextAccessor>();
-                traceContextAccessor = new HttpContextTraceContextAccessor(httpContextAccessor);
+                throw new Exception(
+                    "Sampler not registered with service collection. Register a Sampler in the ConfigureServices method.");
             }
 
-            if (instrumentationLogger == null)
+            var traceContextAccessor = app.ApplicationServices.GetService<ITraceContextAccessor>();
+
+            if (traceContextAccessor == null)
             {
-                var logger = app.ApplicationServices.GetService<ILogger<CoreInstrumentationLogger>>();
-                instrumentationLogger = new CoreInstrumentationLogger(logger);
+                throw new Exception(
+                    "No ITraceContextAccessor registered with service collection. Register an ITraceContextAccessor in the ConfigureServices method.");
+            }
+
+            var instrumentationLogger = app.ApplicationServices.GetService<IInstrumentationLogger>();
+
+            if (traceContextAccessor == null)
+            {
+                throw new Exception(
+                    "No IInstrumentationLogger registered with service collection. Register an IInstrumentationLogger in the ConfigureServices method.");
+            }
+
+            var reporters = app.ApplicationServices.GetServices<IReporter>()?.ToList();
+
+            if (reporters == null || !reporters.Any())
+            {
+                throw new Exception(
+                    "No IReporters registered with service collection. Register an IReporter in the ConfigureServices method.");
             }
 
             Tracer.Start(
