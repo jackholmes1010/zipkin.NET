@@ -14,7 +14,7 @@ namespace Zipkin.NET.WCF.Demo
         {
         }
 
-        protected override Sampler Sampler => new DebugSampler();
+        protected override Sampler Sampler => new PercentageSampler(1f);
 
         protected override ITraceContextAccessor TraceContextAccessor => new CallContextTraceContextAccessor();
 

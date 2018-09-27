@@ -1,7 +1,10 @@
 ﻿namespace Zipkin.NET.Sampling
 {
     /// <summary>
-    /// Class used to make sampling decisions about traces.
+    /// Samplers are responsible for deciding if a particular trace should be sampled.
+    /// <remarks>
+    /// The sampling decision should be made once and the decision propagated downstream.
+    /// </remarks>
     /// </summary>
     public abstract class Sampler
     {

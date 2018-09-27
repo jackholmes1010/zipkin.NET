@@ -9,6 +9,7 @@ using Zipkin.NET.Core.Logging;
 using Zipkin.NET.Core.Reporters;
 using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.Demo
@@ -61,9 +62,11 @@ namespace Zipkin.NET.Demo
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseTracer(app.ApplicationServices.GetServices<IReporter>());
-            app.UseTracingMiddleware();
+            var reporters = app.ApplicationServices.GetServices<IReporter>();
+            var sampler = new PercentageSampler(1f);
 
+            app.UseTracer(reporters, sampler);
+            app.UseTracingMiddleware();
             app.UseMvc();
         }
     }

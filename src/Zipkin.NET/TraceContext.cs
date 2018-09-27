@@ -105,7 +105,11 @@ namespace Zipkin.NET
         public TraceContext Refresh()
         {
             var traceId = TraceId ?? GenerateTraceId();
-            return new TraceContext(traceId, GenerateTraceId(), _spanId);
+            return new TraceContext(traceId, GenerateTraceId(), _spanId)
+            {
+                Sampled = Sampled,
+                Debug = Debug
+            };
         }
 
         /// <summary>

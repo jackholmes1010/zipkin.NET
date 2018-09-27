@@ -58,15 +58,10 @@ namespace Zipkin.NET.Core
         public static IApplicationBuilder UseTracer(
             this IApplicationBuilder app,
             IEnumerable<IReporter> reporters,
-            Sampler sampler = null,
+            Sampler sampler,
             ITraceContextAccessor traceContextAccessor = null,
             IInstrumentationLogger instrumentationLogger = null)
         {
-            if (sampler == null)
-            {
-                sampler = new DebugSampler();
-            }
-
             if (traceContextAccessor == null)
             {
                 var httpContextAccessor = app.ApplicationServices.GetService<IHttpContextAccessor>();
