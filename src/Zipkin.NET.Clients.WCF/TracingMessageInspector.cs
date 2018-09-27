@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Models;
@@ -8,23 +7,29 @@ using Zipkin.NET.Propagation;
 namespace Zipkin.NET.Clients.WCF
 {
     /// <summary>
-    /// Message inspector used by WCF clients to build
-    /// and report client spans from outgoing requests.
+    /// Message inspector used by WCF clients to build and 
+    /// report client spans from outgoing WCF client requests.
     /// <remarks>
     /// This message inspector is supported by .NET Standard.
     /// </remarks>
     /// </summary>
     public class TracingMessageInspector : IClientMessageInspector
     {
-        private readonly string _applicationName;
+        private readonly string _remoteServiceName;
         private readonly IPropagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
         private TraceContext _traceContext;
 
-        public TracingMessageInspector(string applicationName)
+        /// <summary>
+        /// Construct a new <see cref="TracingMessageInspector"/>.
+        /// </summary>
+        /// <param name="remoteServiceName">
+        /// The name of the WCF service the client is calling.
+        /// </param>
+        public TracingMessageInspector(string remoteServiceName)
         {
-            _applicationName = applicationName;
+            _remoteServiceName = remoteServiceName;
             _propagator = new HttpRequestMessagePropertyB3Propagator();
         }
 
@@ -45,7 +50,7 @@ namespace Zipkin.NET.Clients.WCF
                 .Tag("action", request.Headers.Action)
                 .WithRemoteEndpoint(new Endpoint
                 {
-                    ServiceName = _applicationName
+                    ServiceName = _remoteServiceName
                 });
 
             // Inject X-B3 headers to the outgoing request

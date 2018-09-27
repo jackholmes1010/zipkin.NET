@@ -5,7 +5,7 @@ using System.ServiceModel.Dispatcher;
 namespace Zipkin.NET.Clients.WCF
 {
     /// <summary>
-    /// Endpoint behavior responsible for applying the <see cref="TracingMessageInspector"/> to the client runtime.
+    /// Endpoint behavior responsible for adding a <see cref="TracingMessageInspector"/> to the client runtime.
     /// </summary>
     public class TracingEndpointBehavior : IEndpointBehavior
     {

@@ -96,7 +96,7 @@ namespace Zipkin.NET
         {
             if (!Started)
             {
-                throw new Exception("Tracer has not been started. Call Start() to start tracer.");
+                throw new Exception("Tracer has not been started. Call Tracer.Start() to start tracer.");
             }
 
             if (traceContext.Sampled == true)

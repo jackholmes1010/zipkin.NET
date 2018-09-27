@@ -6,6 +6,12 @@ using System.ServiceModel.Dispatcher;
 
 namespace Zipkin.NET.WCF
 {
+    /// <summary>
+    /// An <see cref="IServiceBehavior"/> which adds a <see cref="TracingMessageInspector"/> to a service endpoint.
+    /// <remarks>
+    /// Override this to build and report spans from requests entering a WCF service.
+    /// </remarks>
+    /// </summary>
     public abstract class ServiceTracingBehavior : TracingBehaviorBase, IServiceBehavior
     {
         protected ServiceTracingBehavior(string name) : base(name)
