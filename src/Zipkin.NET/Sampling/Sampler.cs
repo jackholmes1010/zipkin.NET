@@ -18,6 +18,9 @@
         /// </summary>
         /// <param name="traceContext">
         /// The <see cref="TraceContext"/>.
+        /// <remarks>
+        /// The sampled property will be set based on the result of the sampling decision.
+        /// </remarks>
         /// </param>
         /// <returns>
         /// True if the trace is sampled.
