@@ -86,9 +86,9 @@ namespace Zipkin.NET.WCF
         // IDispatchMessageInspector
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            _clientSpanBuilder.End();
+            _serverSpanBuilder.End();
 
-            Tracer.Report(_serverTraceContext, _clientSpanBuilder.Build());
+            Tracer.Report(_serverTraceContext, _serverSpanBuilder.Build());
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)
