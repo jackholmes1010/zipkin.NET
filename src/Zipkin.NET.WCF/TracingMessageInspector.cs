@@ -15,7 +15,8 @@ namespace Zipkin.NET.WCF
 
         private TraceContext _clientTraceContext;
         private TraceContext _serverTraceContext;
-        private SpanBuilder _spanBuilder;
+        private SpanBuilder _clientSpanBuilder;
+        private SpanBuilder _serverSpanBuilder;
 
         public TracingMessageInspector(string applicationName)
         {
@@ -30,12 +31,12 @@ namespace Zipkin.NET.WCF
             _clientTraceContext = Tracer.ContextAccessor.HasTrace()
                 ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
-            
-            Tracer.Sample(ref _clientTraceContext);
+
+            _clientTraceContext.Sample();
 
             var httpRequest = ExtractHttpRequest(request);
 
-            _spanBuilder = _clientTraceContext
+            _clientSpanBuilder = _clientTraceContext
                 .GetSpanBuilder()
                 .Start()
                 .Kind(SpanKind.Client)
@@ -47,7 +48,7 @@ namespace Zipkin.NET.WCF
 
             // Inject X-B3 headers to the outgoing request
             _propagator.Inject(
-                httpRequest, _spanBuilder.Build(), _clientTraceContext.Sampled == true);
+                httpRequest, _clientSpanBuilder.Build(), _clientTraceContext.Sampled == true);
 
             return null;
         }
@@ -55,19 +56,19 @@ namespace Zipkin.NET.WCF
         // IClientMessageInspector
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            _spanBuilder.End();
-            Tracer.Report(_clientTraceContext, _spanBuilder.Build());
+            _clientSpanBuilder.End();
+            Tracer.Report(_clientTraceContext, _clientSpanBuilder.Build());
         }
 
         // IDispatchMessageInspector
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var traceContext = _extractor
+            _serverTraceContext = _extractor
                 .Extract(WebOperationContext.Current?.IncomingRequest);
 
-            Tracer.Sample(ref traceContext);
+            _serverTraceContext.Sample();
 
-            var spanBuilder = traceContext
+            _serverSpanBuilder = _serverTraceContext
                 .GetSpanBuilder()
                 .Start()
                 .Tag("action", request.Headers.Action)
@@ -77,10 +78,7 @@ namespace Zipkin.NET.WCF
                     ServiceName = _applicationName
                 });
                 
-            Tracer.ContextAccessor.SaveTrace(traceContext);
-
-            _serverTraceContext = traceContext;
-            _spanBuilder = spanBuilder;
+            Tracer.ContextAccessor.SaveTrace(_serverTraceContext);
 
             return request;
         }
@@ -88,9 +86,9 @@ namespace Zipkin.NET.WCF
         // IDispatchMessageInspector
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            _spanBuilder.End();
+            _clientSpanBuilder.End();
 
-            Tracer.Report(_serverTraceContext, _spanBuilder.Build());
+            Tracer.Report(_serverTraceContext, _clientSpanBuilder.Build());
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

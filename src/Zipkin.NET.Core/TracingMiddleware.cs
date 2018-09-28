@@ -29,9 +29,9 @@ namespace Zipkin.NET.Core
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var traceContext = _extractor.Extract(context.Request);
-
-            Tracer.Sample(ref traceContext);
+            var traceContext = _extractor
+                .Extract(context.Request)
+                .Sample();
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()

@@ -1,4 +1,5 @@
 ﻿using System;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
 {
@@ -7,9 +8,6 @@ namespace Zipkin.NET
     /// </summary>
     public class TraceContext
     {
-        private readonly string _spanId;
-        private readonly string _parentSpanId;
-
         /// <summary>
         /// Create a new trace context.
         /// <remarks>
@@ -19,7 +17,7 @@ namespace Zipkin.NET
         public TraceContext()
         {
             TraceId = GenerateTraceId();
-            _spanId = GenerateTraceId();
+            Id = GenerateTraceId();
         }
 
         /// <summary>
@@ -38,8 +36,8 @@ namespace Zipkin.NET
         public TraceContext(string traceId, string spanId)
         {
             TraceId = traceId ?? GenerateTraceId();
-            _spanId = GenerateTraceId();
-            _parentSpanId = spanId;
+            Id = GenerateTraceId();
+            ParentId = spanId;
         }
 
         /// <summary>
@@ -57,14 +55,24 @@ namespace Zipkin.NET
         public TraceContext(string traceId, string spanId, string parentSpanId)
         {
             TraceId = traceId;
-            _spanId = spanId;
-            _parentSpanId = parentSpanId;
+            Id = spanId;
+            ParentId = parentSpanId;
         }
 
         /// <summary>
         /// The overall trace ID of the current trace.
         /// </summary>
         public string TraceId { get; set; }
+
+        /// <summary>
+        /// The ID of the current span.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// The parent span ID.
+        /// </summary>
+        public string ParentId { get; set; }
 
         /// <summary>
         /// Has the debug flag been set?
@@ -92,7 +100,7 @@ namespace Zipkin.NET
         {
             return refresh 
                 ? Refresh().GetSpanBuilder(false)
-                : new SpanBuilder(TraceId, _spanId, _parentSpanId);
+                : new SpanBuilder(TraceId, Id, ParentId);
         }
 
         /// <summary>
@@ -105,11 +113,23 @@ namespace Zipkin.NET
         public TraceContext Refresh()
         {
             var traceId = TraceId ?? GenerateTraceId();
-            return new TraceContext(traceId, GenerateTraceId(), _spanId)
+            return new TraceContext(traceId, GenerateTraceId(), Id)
             {
                 Sampled = Sampled,
                 Debug = Debug
             };
+        }
+
+        /// <summary>
+        /// Use the <see cref="Tracer"/>'s <see cref="Sampler"/> to make a sampling decision.
+        /// </summary>
+        /// <returns>
+        /// The current <see cref="TraceContext"/>.
+        /// </returns>
+        public TraceContext Sample()
+        {
+            Sampled = Tracer.Sampler.IsSampled(this);
+            return this;
         }
 
         /// <summary>

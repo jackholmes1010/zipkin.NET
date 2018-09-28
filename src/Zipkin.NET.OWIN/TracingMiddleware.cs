@@ -28,9 +28,9 @@ namespace Zipkin.NET.OWIN
 
         public async Task Invoke(IOwinContext context, Func<Task> next)
         {
-            var traceContext = _extractor.Extract(context);
-
-            Tracer.Sample(ref traceContext);
+            var traceContext = _extractor
+                .Extract(context)
+                .Sample();
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()

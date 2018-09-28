@@ -15,6 +15,10 @@ namespace Zipkin.NET
     /// </summary>
     public static class Tracer
     {
+        private static ITraceContextAccessor _contextAccessor;
+        private static Sampler _sampler;
+        private static IInstrumentationLogger _logger;
+
         private static readonly List<IReporter> Reporters;
         private static readonly ActionBlock<Span> Processor;
 
@@ -64,24 +68,66 @@ namespace Zipkin.NET
         }
 
         /// <summary>
+        /// Gets a <see cref="bool"/> indicating whether the tracer has been started.
+        /// </summary>
+        public static bool Started { get; private set; }
+
+        /// <summary>
         /// Gets a <see cref="ITraceContextAccessor"/> used to access trace context for the current request.
         /// </summary>
-        public static ITraceContextAccessor ContextAccessor { get; private set; }
+        public static ITraceContextAccessor ContextAccessor
+        {
+            get
+            {
+                if (_contextAccessor == null)
+                {
+                    throw new Exception(
+                        "ContextAccessor is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                }
+
+                return _contextAccessor;
+            }
+
+            private set => _contextAccessor = value;
+        }
 
         /// <summary>
         /// Gets a <see cref="Sampler"/> used to make sampling decisions about traces.
         /// </summary>
-        public static Sampler Sampler { get; private set; }
+        public static Sampler Sampler
+        {
+            get
+            {
+                if (_sampler == null)
+                {
+                    throw new Exception(
+                        "Sampler is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                }
+
+                return _sampler;
+            }
+
+            private set => _sampler = value;
+        }
 
         /// <summary>
         /// Gets a <see cref="IInstrumentationLogger"/> used by instrumentation to log errors.
         /// </summary>
-        public static IInstrumentationLogger Logger { get; private set; }
+        public static IInstrumentationLogger Logger
+        {
+            get
+            {
+                if (_sampler == null)
+                {
+                    throw new Exception(
+                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                }
 
-        /// <summary>
-        /// Gets a <see cref="bool"/> indicating whether the tracer has been started.
-        /// </summary>
-        public static bool Started { get; private set; }
+                return _logger;
+            }
+
+            private set => _logger = value;
+        }
 
         /// <summary>
         /// Asynchronously reports a span using the registered <see cref="IReporter"/>s.
@@ -110,17 +156,6 @@ namespace Zipkin.NET
             {
                 Processor.Post(span);
             }
-        }
-
-        /// <summary>
-        /// Use the <see cref="Sampler"/> to make a sampling decision.
-        /// </summary>
-        /// <param name="traceContext">
-        /// The current <see cref="TraceContext"/>.
-        /// </param>
-        public static void Sample(ref TraceContext traceContext)
-        {
-            traceContext.Sampled = Sampler.IsSampled(traceContext);
         }
 
         private static async Task ReportSpan(Span span)
