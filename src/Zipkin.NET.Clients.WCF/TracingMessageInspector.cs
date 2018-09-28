@@ -16,7 +16,7 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _remoteServiceName;
-        private readonly IPropagator<HttpRequestMessageProperty> _propagator;
+        private readonly Propagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
         private TraceContext _traceContext;
@@ -54,8 +54,7 @@ namespace Zipkin.NET.Clients.WCF
                 });
 
             // Inject X-B3 headers to the outgoing request
-            _propagator.Inject(
-                httpRequest, _spanBuilder.Build(), _traceContext.Sampled == true);
+            _propagator.Propagate(httpRequest, _traceContext);
 
             return null;
         }

@@ -14,7 +14,7 @@ namespace Zipkin.NET
     public class TracingHandler : DelegatingHandler
     {
         private readonly string _remoteEndpointName;
-        private readonly IPropagator<HttpRequestMessage> _propagator;
+        private readonly Propagator<HttpRequestMessage> _propagator;
 
         /// <summary>
         /// Construct a new <see cref="TracingHandler"/> with an inner handler.
@@ -67,7 +67,7 @@ namespace Zipkin.NET
                 });
 
             // Add X-B3 headers to the request
-            request = _propagator.Inject(request, spanBuilder.Build(), traceContext.Sampled == true);
+            request = _propagator.Propagate(request, traceContext);
 
             try
             {
