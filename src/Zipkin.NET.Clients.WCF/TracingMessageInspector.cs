@@ -61,8 +61,11 @@ namespace Zipkin.NET.Clients.WCF
 
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            _spanBuilder.End();
-            Tracer.Report(_traceContext, _spanBuilder.Build());
+            var span = _spanBuilder
+                .End()
+                .Build();
+
+            Tracer.Dispatcher.Dispatch(span);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

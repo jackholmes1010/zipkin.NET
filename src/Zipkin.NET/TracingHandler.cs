@@ -52,8 +52,6 @@ namespace Zipkin.NET
                 ? Tracer.ContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
 
-            traceContext.Sample();
-
             var spanBuilder = traceContext
                 .GetSpanBuilder()
                 .Start()
@@ -81,7 +79,7 @@ namespace Zipkin.NET
             finally
             {
                 spanBuilder.End();
-                Tracer.Report(traceContext, spanBuilder.Build());
+                Tracer.Dispatcher.Dispatch(spanBuilder.Build());
             }
         }
     }

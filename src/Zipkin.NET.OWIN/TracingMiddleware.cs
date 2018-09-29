@@ -57,8 +57,11 @@ namespace Zipkin.NET.OWIN
             }
             finally
             {
-                spanBuilder.End();
-                Tracer.Report(traceContext, spanBuilder.Build());
+                var span = spanBuilder
+                    .End()
+                    .Build();
+
+                Tracer.Dispatcher.Dispatch(span);
             }
         }
     }

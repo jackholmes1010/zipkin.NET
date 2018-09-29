@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Logging;
-using Zipkin.NET.Models;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
@@ -18,21 +15,16 @@ namespace Zipkin.NET
         private static ITraceContextAccessor _contextAccessor;
         private static Sampler _sampler;
         private static IInstrumentationLogger _logger;
-
-        private static readonly List<IReporter> Reporters;
-        private static readonly ActionBlock<Span> Processor;
-
-        static Tracer()
-        {
-            Reporters = new List<IReporter>();
-            Processor = new ActionBlock<Span>(async span => await ReportSpan(span));
-        }
+        private static IDispatcher _dispatcher;
 
         /// <summary>
         /// Register standard dependencies required to start the tracer.
         /// </summary>
         /// <param name="sampler">
         /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// </param>
+        /// <param name="dispatcher">
+        /// A <see cref="IDispatcher"/> used to dispatch completed spans.
         /// </param>
         /// <param name="traceContextAccessor">
         /// A <see cref="ITraceContextAccessor"/> used to access trace context
@@ -46,24 +38,15 @@ namespace Zipkin.NET
         /// </param>
         public static void Start(
             Sampler sampler,
+            IDispatcher dispatcher,
             ITraceContextAccessor traceContextAccessor,
             IInstrumentationLogger logger,
             IEnumerable<IReporter> reporters)
         {
             Sampler = sampler;
+            Dispatcher = dispatcher;
             ContextAccessor = traceContextAccessor;
             Logger = logger;
-
-            foreach (var reporter in reporters)
-            {
-                // TODO improve logic for preventing duplicate reporters
-                var exists = Reporters.Any(r => r.GetType() == reporter.GetType());
-                if (!exists)
-                {
-                    Reporters.Add(reporter);
-                }
-            }
-
             Started = true;
         }
 
@@ -130,47 +113,22 @@ namespace Zipkin.NET
         }
 
         /// <summary>
-        /// Asynchronously reports a span using the registered <see cref="IReporter"/>s.
+        /// Gets a <see cref="IInstrumentationLogger"/> used by instrumentation to log errors.
         /// </summary>
-        /// <param name="traceContext">
-        /// The current <see cref="TraceContext"/>.
-        /// </param>
-        /// <param name="span">
-        /// The completed span.
-        /// </param>
-        public static void Report(TraceContext traceContext, Span span)
+        public static IDispatcher Dispatcher
         {
-            if (!Started)
+            get
             {
-                throw new Exception(
-                    "Tracer has not been started. Call Tracer.Start() to start tracer.");
-            }
-
-            if (traceContext.Sampled == null)
-            {
-                throw new Exception(
-                    "TraceContext.Sampled property has not been set. Call Tracer.Sample() to set the Sampled property before reporting span.");
-            }
-
-            if (traceContext.Sampled == true)
-            {
-                Processor.Post(span);
-            }
-        }
-
-        private static async Task ReportSpan(Span span)
-        {
-            foreach (var reporter in Reporters)
-            {
-                try
+                if (_dispatcher == null)
                 {
-                    await reporter.ReportAsync(span);
+                    throw new Exception(
+                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start().");
                 }
-                catch (Exception ex)
-                {
-                    Logger.WriteError(ex.ToString());
-                }
+
+                return _dispatcher;
             }
+
+            private set => _dispatcher = value;
         }
     }
 }

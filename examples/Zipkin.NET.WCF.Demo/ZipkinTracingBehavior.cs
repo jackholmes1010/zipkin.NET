@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Framework;
 using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
@@ -15,6 +16,8 @@ namespace Zipkin.NET.WCF.Demo
         }
 
         protected override Sampler Sampler => new RateSampler(1f);
+
+        protected override IDispatcher Dispatcher => new AsyncActionBlockDispatcher(Reporters, Logger, TraceContextAccessor);
 
         protected override ITraceContextAccessor TraceContextAccessor => new CallContextTraceContextAccessor();
 

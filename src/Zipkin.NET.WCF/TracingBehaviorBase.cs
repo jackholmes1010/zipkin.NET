@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel.Configuration;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
@@ -17,6 +18,8 @@ namespace Zipkin.NET.WCF
 
         protected abstract Sampler Sampler { get; }
 
+        protected abstract IDispatcher Dispatcher { get; }
+
         protected abstract ITraceContextAccessor TraceContextAccessor { get; }
 
         protected abstract IEnumerable<IReporter> Reporters { get; }
@@ -27,7 +30,7 @@ namespace Zipkin.NET.WCF
         {
             if (!Tracer.Started)
             {
-                Tracer.Start(Sampler, TraceContextAccessor, Logger, Reporters);
+                Tracer.Start(Sampler, Dispatcher, TraceContextAccessor, Logger, Reporters);
             }
         }
     }

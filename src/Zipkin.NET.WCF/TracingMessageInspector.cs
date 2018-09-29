@@ -55,8 +55,11 @@ namespace Zipkin.NET.WCF
         // IClientMessageInspector
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            _clientSpanBuilder.End();
-            Tracer.Report(_clientTraceContext, _clientSpanBuilder.Build());
+            var span = _clientSpanBuilder
+                .End()
+                .Build();
+
+            Tracer.Dispatcher.Dispatch(span);
         }
 
         // IDispatchMessageInspector
@@ -85,9 +88,11 @@ namespace Zipkin.NET.WCF
         // IDispatchMessageInspector
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            _serverSpanBuilder.End();
+            var span = _serverSpanBuilder
+                .End()
+                .Build();
 
-            Tracer.Report(_serverTraceContext, _serverSpanBuilder.Build());
+            Tracer.Dispatcher.Dispatch(span);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)
