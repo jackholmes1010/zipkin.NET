@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Zipkin.NET.Models;
@@ -22,7 +23,8 @@ namespace Zipkin.NET.Reporters
         /// </param>
         public ZipkinReporter(ISender sender)
         {
-            _sender = sender;
+            _sender = sender
+                ?? throw new ArgumentNullException(nameof(sender));
         }
 
         /// <summary>

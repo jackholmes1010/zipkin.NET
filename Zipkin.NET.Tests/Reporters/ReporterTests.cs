@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,12 @@ namespace Zipkin.NET.Tests.Reporters
         public ReporterTests()
         {
             _fixture = new Fixture();
+        }
+
+        [Fact]
+        public void Ctor_NullArgument()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ZipkinReporter(null));
         }
 
         [Fact]

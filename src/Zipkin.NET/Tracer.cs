@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Logging;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET
@@ -33,21 +31,29 @@ namespace Zipkin.NET
         /// <param name="logger">
         /// A <see cref="IInstrumentationLogger"/> used by instrumentation to log errors.
         /// </param>
-        /// <param name="reporters">
-        /// A collection of <see cref="IReporter"/>s used to report spans recorded by instrumentation.
-        /// </param>
         public static void Start(
             Sampler sampler,
             Dispatcher dispatcher,
             ITraceContextAccessor traceContextAccessor,
-            IInstrumentationLogger logger,
-            IEnumerable<IReporter> reporters)
+            IInstrumentationLogger logger)
         {
             Sampler = sampler;
             Dispatcher = dispatcher;
             ContextAccessor = traceContextAccessor;
             Logger = logger;
             Started = true;
+        }
+
+        /// <summary>
+        /// Stop the tracer by removing all dependencies and setting the Start property to false.
+        /// </summary>
+        public static void Stop()
+        {
+            Sampler = null;
+            Dispatcher = null;
+            ContextAccessor = null;
+            Logger = null;
+            Started = false;
         }
 
         /// <summary>

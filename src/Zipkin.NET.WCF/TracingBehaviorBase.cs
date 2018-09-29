@@ -30,7 +30,7 @@ namespace Zipkin.NET.WCF
         {
             if (!Tracer.Started)
             {
-                Tracer.Start(Sampler, Dispatcher, TraceContextAccessor, Logger, Reporters);
+                Tracer.Start(Sampler, Dispatcher, TraceContextAccessor, Logger);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace Zipkin.NET.OWIN.Demo
             var reporters = new List<IReporter> {zipkinReporter, new ConsoleReporter()};
             var dispatcher = new AsyncActionBlockDispatcher(reporters, logger, contextAccessor);
 
-            Tracer.Start(sampler, dispatcher, contextAccessor, logger, reporters);
+            Tracer.Start(sampler, dispatcher, contextAccessor, logger);
 
             const string baseAddress = "http://localhost:9055/";
 

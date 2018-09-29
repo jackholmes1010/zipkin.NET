@@ -32,8 +32,7 @@ namespace Zipkin.NET.Core
                 app.ApplicationServices.GetService<Sampler>(),
                 app.ApplicationServices.GetService<Dispatcher>(),
                 app.ApplicationServices.GetService<ITraceContextAccessor>(),
-                app.ApplicationServices.GetService<IInstrumentationLogger>(),
-                app.ApplicationServices.GetServices<IReporter>());
+                app.ApplicationServices.GetService<IInstrumentationLogger>());
 
             return app.UseMiddleware<TracingMiddleware>();
         }
