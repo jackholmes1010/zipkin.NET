@@ -29,14 +29,13 @@ namespace Zipkin.NET.WCF
 
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            StartTracer();
-
             foreach (var channelDispatcherBase in serviceHostBase.ChannelDispatchers)
             {
                 var channelDispatcher = (ChannelDispatcher)channelDispatcherBase;
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
-                    endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
+                    endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
+                        new TracingMessageInspector(Name, TraceContextAccessor, Sampler, Dispatcher));
                 }
             }
         }

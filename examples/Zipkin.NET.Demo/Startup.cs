@@ -67,7 +67,7 @@ namespace Zipkin.NET.Demo
             }
 
             // Add the tracing middleware to the request pipeline.
-            //app.UseTracing();
+            app.UseTracing();
 
             app.UseMvc();
         }

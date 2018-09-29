@@ -28,12 +28,6 @@ namespace Zipkin.NET.Core
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
-            Tracer.Start(
-                app.ApplicationServices.GetService<Sampler>(),
-                app.ApplicationServices.GetService<Dispatcher>(),
-                app.ApplicationServices.GetService<ITraceContextAccessor>(),
-                app.ApplicationServices.GetService<IInstrumentationLogger>());
-
             return app.UseMiddleware<TracingMiddleware>();
         }
     }

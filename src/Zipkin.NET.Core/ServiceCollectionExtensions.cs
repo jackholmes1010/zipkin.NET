@@ -45,7 +45,11 @@ namespace Zipkin.NET.Core
             // Register tracing middleware.
             // This middleware builds spans from incoming requests 
             // and reports them to the registered IReporters.
-            services.TryAddTransient(s => new TracingMiddleware(localEndpointName));
+            services.TryAddTransient(s => new TracingMiddleware(
+                localEndpointName,
+                s.GetService<ITraceContextAccessor>(),
+                s.GetService<Dispatcher>(),
+                s.GetService<Sampler>()));
 
             return services;
         }

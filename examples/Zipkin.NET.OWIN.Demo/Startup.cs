@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Owin;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Framework;
 using Zipkin.NET.Sampling;
 
@@ -25,7 +26,12 @@ namespace Zipkin.NET.OWIN.Demo
 
             app.Use(async (ctx, next) =>
             {
-                var middleware = new TracingMiddleware("owin-api");
+                var middleware = new TracingMiddleware(
+                    "owin-api",
+                    new CallContextTraceContextAccessor(), 
+                    StaticDependencies.Get<Dispatcher>(),
+                    new RateSampler(1f));
+
                 await middleware.Invoke(ctx, next);
             });
 

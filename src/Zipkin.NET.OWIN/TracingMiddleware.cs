@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.OWIN
 {
@@ -12,6 +14,9 @@ namespace Zipkin.NET.OWIN
     public class TracingMiddleware
     {
         private readonly string _localEndpointName;
+        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly Dispatcher _dispatcher;
+        private readonly Sampler _sampler;
         private readonly IExtractor<IOwinContext> _extractor;
 
         /// <summary>
@@ -20,9 +25,25 @@ namespace Zipkin.NET.OWIN
         /// <param name="localEndpointName">
         /// The endpoint name describes the host recording the span.
         /// </param>
-        public TracingMiddleware(string localEndpointName)
+        /// <param name="traceContextAccessor">
+        /// A <see cref="ITraceContextAccessor"/> used to access trace context.
+        /// </param>
+        /// <param name="dispatcher">
+        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// </param>
+        /// <param name="sampler">
+        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// </param>
+        public TracingMiddleware(
+            string localEndpointName,
+            ITraceContextAccessor traceContextAccessor,
+            Dispatcher dispatcher,
+            Sampler sampler)
         {
             _localEndpointName = localEndpointName;
+            _traceContextAccessor = traceContextAccessor;
+            _dispatcher = dispatcher;
+            _sampler = sampler;
             _extractor = new OwinContextB3Extractor();
         }
 
@@ -30,7 +51,7 @@ namespace Zipkin.NET.OWIN
         {
             var traceContext = _extractor
                 .Extract(context)
-                .Sample();
+                .Sample(_sampler);
 
             var spanBuilder = traceContext
                 .GetSpanBuilder()
@@ -45,7 +66,7 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _localEndpointName
                 });
 
-            Tracer.ContextAccessor.SaveTrace(traceContext);
+            _traceContextAccessor.SaveTrace(traceContext);
 
             try
             {
@@ -61,7 +82,7 @@ namespace Zipkin.NET.OWIN
                     .End()
                     .Build();
 
-                Tracer.Dispatcher.Dispatch(span);
+                _dispatcher.Dispatch(span);
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
@@ -10,10 +12,20 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingEndpointBehavior : IEndpointBehavior
     {
         private readonly string _applicationName;
+        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly Sampler _sampler;
+        private readonly Dispatcher _dispatcher;
 
-        public TracingEndpointBehavior(string applicationName)
+        public TracingEndpointBehavior(
+            string applicationName,
+            ITraceContextAccessor traceContextAccessor,
+            Sampler sampler,
+            Dispatcher dispatcher)
         {
             _applicationName = applicationName;
+            _traceContextAccessor = traceContextAccessor;
+            _sampler = sampler;
+            _dispatcher = dispatcher;
         }
 
         public void Validate(ServiceEndpoint endpoint)
@@ -30,7 +42,8 @@ namespace Zipkin.NET.Clients.WCF
 
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            clientRuntime.ClientMessageInspectors.Add(new TracingMessageInspector(_applicationName));
+            clientRuntime.ClientMessageInspectors.Add(
+                new TracingMessageInspector(_applicationName, _traceContextAccessor, _sampler, _dispatcher));
         }
     }
 }

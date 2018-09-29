@@ -1,5 +1,7 @@
 ﻿using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Core
 {
@@ -32,8 +34,17 @@ namespace Zipkin.NET.Core
                     remoteEndpointName = builder.Name;
 
                 var handler = innerHandler != null
-                    ? new TracingHandler(innerHandler, remoteEndpointName)
-                    : new TracingHandler(remoteEndpointName);
+                    ? new TracingHandler(
+                        innerHandler,
+                        provider.GetService<ITraceContextAccessor>(),
+                        provider.GetService<Dispatcher>(),
+                        provider.GetService<Sampler>(),
+                        remoteEndpointName)
+                    : new TracingHandler(
+                        provider.GetService<ITraceContextAccessor>(),
+                        provider.GetService<Dispatcher>(),
+                        provider.GetService<Sampler>(),
+                        remoteEndpointName);
 
                 return handler;
             });

@@ -1,8 +1,10 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
+using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Clients.WCF
 {
@@ -16,6 +18,9 @@ namespace Zipkin.NET.Clients.WCF
     public class TracingMessageInspector : IClientMessageInspector
     {
         private readonly string _remoteServiceName;
+        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly Sampler _sampler;
+        private readonly Dispatcher _dispatcher;
         private readonly Propagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
@@ -27,19 +32,36 @@ namespace Zipkin.NET.Clients.WCF
         /// <param name="remoteServiceName">
         /// The name of the WCF service the client is calling.
         /// </param>
-        public TracingMessageInspector(string remoteServiceName)
+        /// <param name="traceContextAccessor">
+        /// A <see cref="ITraceContextAccessor"/> used to access trace context.
+        /// </param>
+        /// <param name="sampler">
+        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// </param>
+        /// <param name="dispatcher">
+        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// </param>
+        public TracingMessageInspector(
+            string remoteServiceName,
+            ITraceContextAccessor traceContextAccessor,
+            Sampler sampler,
+            Dispatcher dispatcher)
         {
             _remoteServiceName = remoteServiceName;
+            _traceContextAccessor = traceContextAccessor;
+            _sampler = sampler;
+            _dispatcher = dispatcher;
             _propagator = new HttpRequestMessagePropertyB3Propagator();
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            _traceContext = Tracer.ContextAccessor.HasTrace()
-                ? Tracer.ContextAccessor.GetTrace().Refresh()
+            _traceContext = _traceContextAccessor.HasTrace()
+                ? _traceContextAccessor.GetTrace().Refresh()
                 : new TraceContext();
 
-            _traceContext.Sample();
+            _traceContext.Sample(_sampler);
+            _traceContextAccessor.SaveTrace(_traceContext);
 
             var httpRequest = ExtractHttpRequest(request);
 
@@ -65,7 +87,7 @@ namespace Zipkin.NET.Clients.WCF
                 .End()
                 .Build();
 
-            Tracer.Dispatcher.Dispatch(span);
+            _dispatcher.Dispatch(span);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

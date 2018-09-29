@@ -26,16 +26,22 @@ namespace Zipkin.NET.WCF
 
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            StartTracer();
-
-            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
+                new TracingMessageInspector(
+                    Name,
+                    TraceContextAccessor,
+                    Sampler,
+                    Dispatcher));
         }
 
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            StartTracer();
-
-            clientRuntime.MessageInspectors.Add(new TracingMessageInspector(Name));
+            clientRuntime.MessageInspectors.Add(
+                new TracingMessageInspector(
+                    Name,
+                    TraceContextAccessor,
+                    Sampler,
+                    Dispatcher));
         }
     }
 }

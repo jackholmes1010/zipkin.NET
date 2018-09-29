@@ -17,8 +17,6 @@ namespace Zipkin.NET.WCF.Demo
 
         protected override Sampler Sampler => new RateSampler(1f);
 
-        protected override Dispatcher Dispatcher => new AsyncActionBlockDispatcher(Reporters, Logger, TraceContextAccessor);
-
         protected override ITraceContextAccessor TraceContextAccessor => new CallContextTraceContextAccessor();
 
         protected override IInstrumentationLogger Logger => new ConsoleInstrumentationLogger();
@@ -32,6 +30,10 @@ namespace Zipkin.NET.WCF.Demo
                 return new[] { reporter };
             }
         }
+
+        protected override Dispatcher Dispatcher => 
+            new AsyncActionBlockDispatcher(
+                Reporters, Logger, TraceContextAccessor);
 
         public override Type BehaviorType => typeof(ZipkinTracingBehavior);
 
