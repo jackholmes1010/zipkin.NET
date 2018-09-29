@@ -65,7 +65,7 @@ namespace Zipkin.NET
                 if (_contextAccessor == null)
                 {
                     throw new Exception(
-                        "ContextAccessor is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                        "ContextAccessor is null. Make sure the Tracer has been started by calling Tracer.Start() in application startup.");
                 }
 
                 return _contextAccessor;
@@ -84,7 +84,7 @@ namespace Zipkin.NET
                 if (_sampler == null)
                 {
                     throw new Exception(
-                        "Sampler is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                        "Sampler is null. Make sure the Tracer has been started by calling Tracer.Start() in application startup.");
                 }
 
                 return _sampler;
@@ -103,7 +103,7 @@ namespace Zipkin.NET
                 if (_sampler == null)
                 {
                     throw new Exception(
-                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start() in application startup.");
                 }
 
                 return _logger;
@@ -122,7 +122,7 @@ namespace Zipkin.NET
                 if (_dispatcher == null)
                 {
                     throw new Exception(
-                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start().");
+                        "Logger is null. Make sure the Tracer has been started by calling Tracer.Start() in application startup.");
                 }
 
                 return _dispatcher;
