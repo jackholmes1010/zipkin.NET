@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Core", "src\Zipk
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9C1E288C-EA49-4007-AEA4-3C61756F252B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Tests", "Zipkin.NET.Tests\Zipkin.NET.Tests.csproj", "{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Tests", "tests\Zipkin.NET.Tests\Zipkin.NET.Tests.csproj", "{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
