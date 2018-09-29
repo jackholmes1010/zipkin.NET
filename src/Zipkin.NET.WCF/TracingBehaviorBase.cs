@@ -18,7 +18,7 @@ namespace Zipkin.NET.WCF
 
         protected abstract Sampler Sampler { get; }
 
-        protected abstract IDispatcher Dispatcher { get; }
+        protected abstract Dispatcher Dispatcher { get; }
 
         protected abstract ITraceContextAccessor TraceContextAccessor { get; }
 

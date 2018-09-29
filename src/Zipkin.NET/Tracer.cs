@@ -8,14 +8,14 @@ using Zipkin.NET.Sampling;
 namespace Zipkin.NET
 {
     /// <summary>
-    /// Reports completed spans out of process to registered reporters.
+    /// Used by instrumentation to access singleton dependencies.
     /// </summary>
     public static class Tracer
     {
         private static ITraceContextAccessor _contextAccessor;
         private static Sampler _sampler;
         private static IInstrumentationLogger _logger;
-        private static IDispatcher _dispatcher;
+        private static Dispatcher _dispatcher;
 
         /// <summary>
         /// Register standard dependencies required to start the tracer.
@@ -24,7 +24,7 @@ namespace Zipkin.NET
         /// A <see cref="Sampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="dispatcher">
-        /// A <see cref="IDispatcher"/> used to dispatch completed spans.
+        /// A <see cref="Dispatchers.Dispatcher"/> used to dispatch completed spans.
         /// </param>
         /// <param name="traceContextAccessor">
         /// A <see cref="ITraceContextAccessor"/> used to access trace context
@@ -38,7 +38,7 @@ namespace Zipkin.NET
         /// </param>
         public static void Start(
             Sampler sampler,
-            IDispatcher dispatcher,
+            Dispatcher dispatcher,
             ITraceContextAccessor traceContextAccessor,
             IInstrumentationLogger logger,
             IEnumerable<IReporter> reporters)
@@ -115,7 +115,7 @@ namespace Zipkin.NET
         /// <summary>
         /// Gets a <see cref="IInstrumentationLogger"/> used by instrumentation to log errors.
         /// </summary>
-        public static IDispatcher Dispatcher
+        public static Dispatcher Dispatcher
         {
             get
             {

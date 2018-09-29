@@ -13,11 +13,10 @@ namespace Zipkin.NET.Dispatchers
     /// Asynchronously reports spans to a list of a 
     /// <see cref="IReporter"/>s using an <see cref="ActionBlock{TInput}"/>.
     /// </summary>
-    public class AsyncActionBlockDispatcher : IDispatcher
+    public class AsyncActionBlockDispatcher : Dispatcher
     {
         private readonly List<IReporter> _reporters;
         private readonly IInstrumentationLogger _logger;
-        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly ActionBlock<Span> _processor;
 
         /// <summary>
@@ -35,10 +34,9 @@ namespace Zipkin.NET.Dispatchers
         public AsyncActionBlockDispatcher(
             IEnumerable<IReporter> reporters,
             IInstrumentationLogger logger,
-            ITraceContextAccessor traceContextAccessor)
+            ITraceContextAccessor traceContextAccessor) : base(traceContextAccessor)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
             _processor = new ActionBlock<Span>(async span => await ReportSpan(span));
             _reporters = new List<IReporter>();
 
@@ -55,34 +53,13 @@ namespace Zipkin.NET.Dispatchers
 
         /// <summary>
         /// Schedule a completed <see cref="Span"/> to be reported to all of the available reporters.
-        /// <remarks>
-        /// Spans will only be reportered if the current <see cref="TraceContext"/> Sampled 
-        /// property is not null, i.e. a sampling decision has been made for the trace.
-        /// </remarks>
         /// </summary>
         /// <param name="span">
         /// A complete span.
         /// </param>
-        public void Dispatch(Span span)
+        protected  override void Schedule(Span span)
         {
-            if (!_traceContextAccessor.HasTrace())
-            {
-                throw new Exception(
-                    "Save the TraceContext using the ITraceContextContextAccessor.SaveTrace() before dispatching span.");
-            }
-
-            var traceContext = _traceContextAccessor.GetTrace();
-
-            if (traceContext.Sampled == null)
-            {
-                throw new Exception(
-                    "TraceContext.Sampled property has not been set. Call Tracer.Sample() to set the Sampled property before reporting span.");
-            }
-
-            if (traceContext.Sampled == true)
-            {
-                _processor.Post(span);
-            }
+            _processor.Post(span);
         }
 
         private async Task ReportSpan(Span span)

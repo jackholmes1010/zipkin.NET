@@ -30,7 +30,7 @@ namespace Zipkin.NET.Core
 
             Tracer.Start(
                 app.ApplicationServices.GetService<Sampler>(),
-                app.ApplicationServices.GetService<IDispatcher>(),
+                app.ApplicationServices.GetService<Dispatcher>(),
                 app.ApplicationServices.GetService<ITraceContextAccessor>(),
                 app.ApplicationServices.GetService<IInstrumentationLogger>(),
                 app.ApplicationServices.GetServices<IReporter>());
