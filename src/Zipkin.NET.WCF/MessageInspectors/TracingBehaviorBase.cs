@@ -5,7 +5,7 @@ using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 
-namespace Zipkin.NET.WCF
+namespace Zipkin.NET.WCF.MessageInspectors
 {
     public abstract class TracingBehaviorBase : BehaviorExtensionElement
     {

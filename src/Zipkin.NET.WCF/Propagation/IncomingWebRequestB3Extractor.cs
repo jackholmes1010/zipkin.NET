@@ -2,7 +2,7 @@
 using Zipkin.NET.Constants;
 using Zipkin.NET.Propagation;
 
-namespace Zipkin.NET.WCF
+namespace Zipkin.NET.WCF.Propagation
 {
     public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
     {

@@ -2,7 +2,7 @@
 using Zipkin.NET.Constants;
 using Zipkin.NET.Propagation;
 
-namespace Zipkin.NET.WCF
+namespace Zipkin.NET.WCF.Propagation
 {
     /// <summary>
     /// Propagates trace context by adding X-B3 headers to a <see cref="HttpRequestMessageProperty"/>.

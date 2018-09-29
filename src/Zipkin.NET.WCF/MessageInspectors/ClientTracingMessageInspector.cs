@@ -1,29 +1,26 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using System.ServiceModel.Web;
 using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Sampling;
+using Zipkin.NET.WCF.Propagation;
 
-namespace Zipkin.NET.WCF
+namespace Zipkin.NET.WCF.MessageInspectors
 {
-    public class TracingMessageInspector : IClientMessageInspector, IDispatchMessageInspector
+    public class ClientTracingMessageInspector : IClientMessageInspector
     {
         private readonly string _applicationName;
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly Sampler _sampler;
         private readonly Dispatcher _dispatcher;
         private readonly Propagator<HttpRequestMessageProperty> _propagator;
-        private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         private TraceContext _clientTraceContext;
-        private TraceContext _serverTraceContext;
         private SpanBuilder _clientSpanBuilder;
-        private SpanBuilder _serverSpanBuilder;
 
-        public TracingMessageInspector(
+        public ClientTracingMessageInspector(
             string applicationName,
             ITraceContextAccessor traceContextAccessor,
             Sampler sampler,
@@ -34,7 +31,6 @@ namespace Zipkin.NET.WCF
             _sampler = sampler;
             _dispatcher = dispatcher;
             _propagator = new HttpRequestMessagePropertyB3Propagator();
-            _extractor = new IncomingWebRequestB3Extractor();
         }
 
         // IClientMessageInspector
@@ -69,39 +65,6 @@ namespace Zipkin.NET.WCF
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             var span = _clientSpanBuilder
-                .End()
-                .Build();
-
-            _dispatcher.Dispatch(span);
-        }
-
-        // IDispatchMessageInspector
-        public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
-        {
-            _serverTraceContext = _extractor
-                .Extract(WebOperationContext.Current?.IncomingRequest);
-
-            _serverTraceContext.Sample(_sampler);
-
-            _serverSpanBuilder = _serverTraceContext
-                .GetSpanBuilder()
-                .Start()
-                .Tag("action", request.Headers.Action)
-                .Kind(SpanKind.Server)
-                .WithLocalEndpoint(new Endpoint
-                {
-                    ServiceName = _applicationName
-                });
-                
-            _traceContextAccessor.SaveTrace(_serverTraceContext);
-
-            return request;
-        }
-
-        // IDispatchMessageInspector
-        public void BeforeSendReply(ref Message reply, object correlationState)
-        {
-            var span = _serverSpanBuilder
                 .End()
                 .Build();
 

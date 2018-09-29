@@ -6,12 +6,13 @@ using Zipkin.NET.Logging;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
 using Zipkin.NET.Senders;
+using Zipkin.NET.WCF.Behaviors;
 
 namespace Zipkin.NET.WCF.Demo
 {
-    public class ZipkinTracingBehavior : ServiceTracingBehavior
+    public class ZipkinServiceBehavior : ServiceTracingBehavior
     {
-        public ZipkinTracingBehavior(string name) : base(name)
+        public ZipkinServiceBehavior(string name) : base(name)
         {
         }
 
@@ -35,11 +36,11 @@ namespace Zipkin.NET.WCF.Demo
             new AsyncActionBlockDispatcher(
                 Reporters, Logger, TraceContextAccessor);
 
-        public override Type BehaviorType => typeof(ZipkinTracingBehavior);
+        public override Type BehaviorType => typeof(ZipkinServiceBehavior);
 
         protected override object CreateBehavior()
         {
-            return new ZipkinTracingBehavior(Name);
+            return new ZipkinServiceBehavior(Name);
         }
 
     }

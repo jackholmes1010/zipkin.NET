@@ -45,13 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EndpointTracingBehavior.cs" />
-    <Compile Include="HttpRequestMessagePropertyB3Propagator.cs" />
-    <Compile Include="IncomingWebRequestB3Extractor.cs" />
+    <Compile Include="MessageInspectors\ClientTracingMessageInspector.cs" />
+    <Compile Include="Behaviors\EndpointTracingBehavior.cs" />
+    <Compile Include="Propagation\HttpRequestMessagePropertyB3Propagator.cs" />
+    <Compile Include="Propagation\IncomingWebRequestB3Extractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceTracingBehavior.cs" />
-    <Compile Include="TracingBehaviorBase.cs" />
-    <Compile Include="TracingMessageInspector.cs" />
+    <Compile Include="Behaviors\ServiceTracingBehavior.cs" />
+    <Compile Include="MessageInspectors\TracingBehaviorBase.cs" />
+    <Compile Include="MessageInspectors\DispatchTracingMessageInspector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zipkin.NET.Framework\Zipkin.NET.Framework.csproj">
@@ -63,5 +64,6 @@
       <Name>Zipkin.NET</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,11 +3,12 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.WCF.MessageInspectors;
 
-namespace Zipkin.NET.WCF
+namespace Zipkin.NET.WCF.Behaviors
 {
     /// <summary>
-    /// An <see cref="IServiceBehavior"/> which adds a <see cref="TracingMessageInspector"/> to a service endpoint.
+    /// An <see cref="IServiceBehavior"/> which adds a <see cref="DispatchTracingMessageInspector"/> to a service endpoint.
     /// <remarks>
     /// Override this to build and report spans from requests entering a WCF service.
     /// </remarks>
@@ -35,7 +36,7 @@ namespace Zipkin.NET.WCF
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
                     endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
-                        new TracingMessageInspector(Name, TraceContextAccessor, Sampler, Dispatcher));
+                        new DispatchTracingMessageInspector(Name, TraceContextAccessor, Sampler, Dispatcher));
                 }
             }
         }

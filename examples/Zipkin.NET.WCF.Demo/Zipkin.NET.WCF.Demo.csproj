@@ -79,7 +79,7 @@
     </Compile>
     <Compile Include="IDataService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZipkinTracingBehavior.cs" />
+    <Compile Include="ZipkinServiceBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
