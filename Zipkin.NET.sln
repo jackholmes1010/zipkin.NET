@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET", "src\Zipkin.NE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Core", "src\Zipkin.NET.Core\Zipkin.NET.Core.csproj", "{15BCE856-C946-478B-AFA3-C1E6B334B081}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9C1E288C-EA49-4007-AEA4-3C61756F252B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Tests", "Zipkin.NET.Tests\Zipkin.NET.Tests.csproj", "{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,10 @@ Global
 		{15BCE856-C946-478B-AFA3-C1E6B334B081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BCE856-C946-478B-AFA3-C1E6B334B081}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BCE856-C946-478B-AFA3-C1E6B334B081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +89,7 @@ Global
 		{7CE205C2-0E81-4710-8296-02F10DDA1971} = {F0EC4501-05AF-41F1-B68C-45776737509E}
 		{39E0B793-95EE-4C55-BB40-90DBD723A8AD} = {F0EC4501-05AF-41F1-B68C-45776737509E}
 		{15BCE856-C946-478B-AFA3-C1E6B334B081} = {F0EC4501-05AF-41F1-B68C-45776737509E}
+		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75} = {9C1E288C-EA49-4007-AEA4-3C61756F252B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00DB1000-1363-46A2-960B-9F540BC2A572}
