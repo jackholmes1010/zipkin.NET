@@ -9,6 +9,9 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Core
 {
+    /// <summary>
+    /// <see cref="IServiceCollection"/> extension methods.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
@@ -40,7 +43,7 @@ namespace Zipkin.NET.Core
 
             // Register .NET Core ILogger tracing logger (used for exception logging).
             // This logger logs instrumentation exceptions using the .NET Core ILogger.
-            services.TryAddTransient<IInstrumentationLogger, CoreInstrumentationLogger>();
+            services.TryAddSingleton<IInstrumentationLogger, CoreInstrumentationLogger>();
 
             // Register tracing middleware.
             // This middleware builds spans from incoming requests 

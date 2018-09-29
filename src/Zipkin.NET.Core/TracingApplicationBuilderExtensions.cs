@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Zipkin.NET.Dispatchers;
-using Zipkin.NET.Logging;
-using Zipkin.NET.Reporters;
-using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Core
 {

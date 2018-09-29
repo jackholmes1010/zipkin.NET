@@ -23,7 +23,7 @@ namespace Zipkin.NET.OWIN.Demo
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-
+            
             app.Use(async (ctx, next) =>
             {
                 var middleware = new TracingMiddleware(
