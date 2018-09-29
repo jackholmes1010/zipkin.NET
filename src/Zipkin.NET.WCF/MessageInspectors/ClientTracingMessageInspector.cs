@@ -36,12 +36,19 @@ namespace Zipkin.NET.WCF.MessageInspectors
         // IClientMessageInspector
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            _clientTraceContext = _traceContextAccessor.HasTrace()
-                ? _traceContextAccessor.GetTrace().Refresh()
-                : new TraceContext();
+            if (!_traceContextAccessor.HasTrace())
+            {
+                _clientTraceContext = new TraceContext();
+                _traceContextAccessor.SaveTrace(_clientTraceContext);
+            }
+            else
+            {
+                _clientTraceContext = _traceContextAccessor
+                    .GetTrace()
+                    .Refresh();
+            }
 
             _clientTraceContext.Sample(_sampler);
-            _traceContextAccessor.SaveTrace(_clientTraceContext);
 
             var httpRequest = ExtractHttpRequest(request);
 
