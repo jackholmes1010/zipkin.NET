@@ -9,7 +9,7 @@ using Zipkin.NET.Models;
 using Zipkin.NET.Reporters;
 using Zipkin.NET.Senders;
 
-namespace Zipkin.NET.Tests.Reporters
+namespace Zipkin.NET.Tests.ReporterTests
 {
     public class ReporterTests
     {

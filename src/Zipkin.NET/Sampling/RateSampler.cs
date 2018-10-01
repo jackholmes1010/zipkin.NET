@@ -26,7 +26,7 @@ namespace Zipkin.NET.Sampling
             {
                 _alwaysSample = true;
             }
-            else if (Math.Abs(rate) < 0.0000001f)
+            else if (rate < 0 || Math.Abs(rate) < 0.0000001f)
             {
                 _neverSample = true;
             }
