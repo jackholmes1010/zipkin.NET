@@ -13,34 +13,14 @@ namespace Zipkin.NET.Dispatchers
     {
         protected Dispatcher(ITraceContextAccessor traceContextAccessor, IEnumerable<IReporter> reporters)
         {
-            if (traceContextAccessor == null)
-            {
-                throw new ArgumentNullException(nameof(traceContextAccessor));
-            }
-
-            if (reporters == null)
-            {
-                throw new ArgumentNullException(nameof(reporters));
-            }
-
-            TraceContextAccessor = traceContextAccessor;
-            Reporters = new List<IReporter>();
-
-            foreach (var reporter in reporters)
-            {
-                // TODO improve logic for preventing duplicate reporters
-                var exists = Reporters.Any(r => r.GetType() == reporter.GetType());
-                if (!exists)
-                {
-                    Reporters.Add(reporter);
-                }
-            }
+            TraceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            Reporters = reporters ?? throw new ArgumentNullException(nameof(reporters));
         }
 
         /// <summary>
         /// Gets a list of available reporters used to report spans.
         /// </summary>
-        protected List<IReporter> Reporters { get; }
+        protected IEnumerable<IReporter> Reporters { get; }
 
         /// <summary>
         /// An <see cref="ITraceContextAccessor"/> used to get the current trace context.

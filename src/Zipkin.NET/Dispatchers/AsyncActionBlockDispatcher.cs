@@ -13,7 +13,7 @@ namespace Zipkin.NET.Dispatchers
     /// Asynchronously reports spans to a list of a 
     /// <see cref="IReporter"/>s using an <see cref="ActionBlock{TInput}"/>.
     /// </summary>
-    public class AsyncActionBlockDispatcher : Dispatcher
+    public class AsyncActionBlockDispatcher : Dispatcher, IDisposable
     {
         private readonly IInstrumentationLogger _logger;
         private readonly ActionBlock<Span> _processor;
@@ -38,6 +38,16 @@ namespace Zipkin.NET.Dispatchers
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processor = new ActionBlock<Span>(async span => await ReportSpan(span));            
+        }
+
+        public bool IsCompleted()
+        {
+            return _processor.InputCount == 0;
+        }
+
+        public void Dispose()
+        {
+            _processor.Complete();
         }
 
         /// <summary>
