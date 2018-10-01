@@ -29,7 +29,7 @@ namespace Zipkin.NET.OWIN.Demo
                 var middleware = new TracingMiddleware(
                     "owin-api",
                     new CallContextTraceContextAccessor(), 
-                    StaticDependencies.Get<Dispatcher>(),
+                    StaticDependencies.Get<IDispatcher>(),
                     new RateSampler(1f));
 
                 await middleware.Invoke(ctx, next);

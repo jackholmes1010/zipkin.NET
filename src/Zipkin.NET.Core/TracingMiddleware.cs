@@ -16,8 +16,8 @@ namespace Zipkin.NET.Core
     {
         private readonly string _localEndpointName;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly Dispatcher _dispatcher;
-        private readonly Sampler _sampler;
+        private readonly IDispatcher _dispatcher;
+        private readonly ISampler _sampler;
         private readonly IExtractor<HttpRequest> _extractor;
 
         /// <summary>
@@ -30,16 +30,16 @@ namespace Zipkin.NET.Core
         /// A <see cref="ITraceContextAccessor"/> used to access trace context.
         /// </param>
         /// <param name="dispatcher">
-        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
         /// </param>
         /// <param name="sampler">
-        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         public TracingMiddleware(
             string localEndpointName, 
             ITraceContextAccessor traceContextAccessor,
-            Dispatcher dispatcher,
-            Sampler sampler)
+            IDispatcher dispatcher,
+            ISampler sampler)
         {
             _localEndpointName = localEndpointName;
             _traceContextAccessor = traceContextAccessor;

@@ -6,7 +6,7 @@ namespace Zipkin.NET.Dispatchers
     /// <summary>
     /// Dispatch a completed span to available reporters.
     /// </summary>
-    public abstract class Dispatcher
+    public abstract class Dispatcher : IDispatcher
     {
         private readonly ITraceContextAccessor _traceContextAccessor;
 

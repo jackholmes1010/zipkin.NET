@@ -17,8 +17,8 @@ namespace Zipkin.NET
     {
         private readonly string _remoteEndpointName;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly Dispatcher _dispatcher;
-        private readonly Sampler _sampler;
+        private readonly IDispatcher _dispatcher;
+        private readonly ISampler _sampler;
         private readonly Propagator<HttpRequestMessage> _propagator;
 
         /// <summary>
@@ -31,10 +31,10 @@ namespace Zipkin.NET
         /// A <see cref="ITraceContextAccessor"/> used to access trace context.
         /// </param>
         /// <param name="dispatcher">
-        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
         /// </param>
         /// <param name="sampler">
-        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="remoteEndpointName">
         /// The name of the reciever.
@@ -42,8 +42,8 @@ namespace Zipkin.NET
         public TracingHandler(
             HttpMessageHandler innerHandler,
             ITraceContextAccessor traceContextAccessor,
-            Dispatcher dispatcher,
-            Sampler sampler,
+            IDispatcher dispatcher,
+            ISampler sampler,
             string remoteEndpointName) : base(innerHandler)
         {
             _remoteEndpointName = remoteEndpointName;
@@ -60,18 +60,18 @@ namespace Zipkin.NET
         /// A <see cref="ITraceContextAccessor"/> used to access trace context.
         /// </param>
         /// <param name="dispatcher">
-        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
         /// </param>
         /// <param name="sampler">
-        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="remoteEndpointName">
         /// The name of the reciever.
         /// </param>
         public TracingHandler(
             ITraceContextAccessor traceContextAccessor,
-            Dispatcher dispatcher,
-            Sampler sampler,
+            IDispatcher dispatcher,
+            ISampler sampler,
             string remoteEndpointName)
         {
             _remoteEndpointName = remoteEndpointName;

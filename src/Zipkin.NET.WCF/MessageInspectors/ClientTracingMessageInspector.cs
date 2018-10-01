@@ -13,8 +13,8 @@ namespace Zipkin.NET.WCF.MessageInspectors
     {
         private readonly string _applicationName;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly Sampler _sampler;
-        private readonly Dispatcher _dispatcher;
+        private readonly ISampler _sampler;
+        private readonly IDispatcher _dispatcher;
         private readonly Propagator<HttpRequestMessageProperty> _propagator;
 
         private TraceContext _clientTraceContext;
@@ -23,8 +23,8 @@ namespace Zipkin.NET.WCF.MessageInspectors
         public ClientTracingMessageInspector(
             string applicationName,
             ITraceContextAccessor traceContextAccessor,
-            Sampler sampler,
-            Dispatcher dispatcher)
+            ISampler sampler,
+            IDispatcher dispatcher)
         {
             _applicationName = applicationName;
             _traceContextAccessor = traceContextAccessor;

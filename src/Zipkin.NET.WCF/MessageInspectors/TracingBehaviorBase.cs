@@ -16,7 +16,7 @@ namespace Zipkin.NET.WCF.MessageInspectors
             Name = name;
         }
 
-        protected abstract Sampler Sampler { get; }
+        protected abstract ISampler Sampler { get; }
 
         protected abstract ITraceContextAccessor TraceContextAccessor { get; }
 
@@ -24,6 +24,6 @@ namespace Zipkin.NET.WCF.MessageInspectors
 
         protected abstract IInstrumentationLogger Logger { get; }
 
-        protected abstract Dispatcher Dispatcher { get; }
+        protected abstract IDispatcher Dispatcher { get; }
     }
 }

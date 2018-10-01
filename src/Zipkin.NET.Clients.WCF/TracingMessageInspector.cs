@@ -19,8 +19,8 @@ namespace Zipkin.NET.Clients.WCF
     {
         private readonly string _remoteServiceName;
         private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly Sampler _sampler;
-        private readonly Dispatcher _dispatcher;
+        private readonly ISampler _sampler;
+        private readonly IDispatcher _dispatcher;
         private readonly Propagator<HttpRequestMessageProperty> _propagator;
 
         private SpanBuilder _spanBuilder;
@@ -36,16 +36,16 @@ namespace Zipkin.NET.Clients.WCF
         /// A <see cref="ITraceContextAccessor"/> used to access trace context.
         /// </param>
         /// <param name="sampler">
-        /// A <see cref="Sampler"/> used to make sampling decisions.
+        /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="dispatcher">
-        /// A <see cref="Dispatcher"/> used to dispatch completed spans to reporters.
+        /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
         /// </param>
         public TracingMessageInspector(
             string remoteServiceName,
             ITraceContextAccessor traceContextAccessor,
-            Sampler sampler,
-            Dispatcher dispatcher)
+            ISampler sampler,
+            IDispatcher dispatcher)
         {
             _remoteServiceName = remoteServiceName;
             _traceContextAccessor = traceContextAccessor;

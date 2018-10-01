@@ -16,14 +16,14 @@ namespace Zipkin.NET.Demo.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly Dispatcher _dispatcher;
-        private readonly Sampler _sampler;
+        private readonly IDispatcher _dispatcher;
+        private readonly ISampler _sampler;
         private readonly ITraceContextAccessor _traceContextAccessor;
 
         public ValuesController(
             IHttpClientFactory httpClientFactory,
-            Dispatcher dispatcher, 
-            Sampler sampler, 
+            IDispatcher dispatcher,
+            ISampler sampler, 
             ITraceContextAccessor traceContextAccessor)
         {
             _httpClientFactory = httpClientFactory;

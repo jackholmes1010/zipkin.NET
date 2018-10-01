@@ -121,12 +121,12 @@ namespace Zipkin.NET
         }
 
         /// <summary>
-        /// Use the <see cref="Sampler"/> to make a sampling decision.
+        /// Use the <see cref="ISampler"/> to make a sampling decision.
         /// </summary>
         /// <returns>
         /// The current <see cref="TraceContext"/>.
         /// </returns>
-        public TraceContext Sample(Sampler sampler)
+        public TraceContext Sample(ISampler sampler)
         {
             Sampled = sampler.IsSampled(this);
             return this;

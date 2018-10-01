@@ -16,7 +16,7 @@ namespace Zipkin.NET.WCF.Demo
         {
         }
 
-        protected override Sampler Sampler => new RateSampler(1f);
+        protected override ISampler Sampler => new RateSampler(1f);
 
         protected override ITraceContextAccessor TraceContextAccessor => new CallContextTraceContextAccessor();
 
@@ -32,7 +32,7 @@ namespace Zipkin.NET.WCF.Demo
             }
         }
 
-        protected override Dispatcher Dispatcher => 
+        protected override IDispatcher Dispatcher => 
             new AsyncActionBlockDispatcher(
                 Reporters, Logger, TraceContextAccessor);
 

@@ -28,12 +28,12 @@ namespace Zipkin.NET.Core
 
             // Register async dispatcher.
             // This dispatcher will asynchronously report spans to the registered reporters.
-            services.TryAddSingleton<Dispatcher, AsyncActionBlockDispatcher>();
+            services.TryAddSingleton<IDispatcher, AsyncActionBlockDispatcher>();
 
             // Register rate sampler.
             // This RateSampler will sample 100% of traces providing a
             // sampling decision has not already been made by an upstream service.
-            services.TryAddSingleton<Sampler>(provider => new RateSampler(1f));
+            services.TryAddSingleton<ISampler>(provider => new RateSampler(1f));
 
             // Register the trace context accessor.
             // This ITraceContextAccessor will store the trace context in the HTTP context.
@@ -51,8 +51,8 @@ namespace Zipkin.NET.Core
             services.TryAddTransient(s => new TracingMiddleware(
                 localEndpointName,
                 s.GetService<ITraceContextAccessor>(),
-                s.GetService<Dispatcher>(),
-                s.GetService<Sampler>()));
+                s.GetService<IDispatcher>(),
+                s.GetService<ISampler>()));
 
             return services;
         }

@@ -17,7 +17,7 @@ namespace Zipkin.NET.OWIN.Demo
             var tracingHandler = new TracingHandler(
                 new HttpClientHandler(), 
                 new CallContextTraceContextAccessor(), 
-                StaticDependencies.Get<Dispatcher>(),
+                StaticDependencies.Get<IDispatcher>(),
                 new RateSampler(1f), 
                 "reqres-api");
 

@@ -37,13 +37,13 @@ namespace Zipkin.NET.Core
                     ? new TracingHandler(
                         innerHandler,
                         provider.GetService<ITraceContextAccessor>(),
-                        provider.GetService<Dispatcher>(),
-                        provider.GetService<Sampler>(),
+                        provider.GetService<IDispatcher>(),
+                        provider.GetService<ISampler>(),
                         remoteEndpointName)
                     : new TracingHandler(
                         provider.GetService<ITraceContextAccessor>(),
-                        provider.GetService<Dispatcher>(),
-                        provider.GetService<Sampler>(),
+                        provider.GetService<IDispatcher>(),
+                        provider.GetService<ISampler>(),
                         remoteEndpointName);
 
                 return handler;
