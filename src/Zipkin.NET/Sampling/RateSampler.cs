@@ -22,7 +22,7 @@ namespace Zipkin.NET.Sampling
         /// </param>
         public RateSampler(float rate)
         {
-            if (rate > 1f)
+            if (rate >= 1f)
             {
                 _alwaysSample = true;
             }

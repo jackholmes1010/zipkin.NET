@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AutoFixture;
 using Xunit;
@@ -6,6 +7,7 @@ using Zipkin.NET.Sampling;
 
 namespace Zipkin.NET.Tests.SamplerTests
 {
+    [ExcludeFromCodeCoverage]
     public class RateSamplerTests
     {
         private readonly IFixture _fixture;
@@ -18,10 +20,13 @@ namespace Zipkin.NET.Tests.SamplerTests
         /// <summary>
         /// A rate sampler with a sampling rate of 1f (100%) should sample all traces.
         /// </summary>
-        [Fact]
-        public void IsSampled_SampleEverything()
+        [Theory]
+        [InlineData(1f)]
+        [InlineData(2f)]
+        [InlineData(100f)]
+        public void IsSampled_SampleEverything(float rate)
         {
-            var rateSampler = new RateSampler(1f);
+            var rateSampler = new RateSampler(rate);
 
             for (var i = 0; i < 1000; i++)
             {
