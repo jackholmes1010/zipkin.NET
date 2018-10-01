@@ -15,7 +15,6 @@ namespace Zipkin.NET.Dispatchers
     /// </summary>
     public class AsyncActionBlockDispatcher : Dispatcher
     {
-        private readonly List<IReporter> _reporters;
         private readonly IInstrumentationLogger _logger;
         private readonly ActionBlock<Span> _processor;
 
@@ -34,21 +33,11 @@ namespace Zipkin.NET.Dispatchers
         public AsyncActionBlockDispatcher(
             IEnumerable<IReporter> reporters,
             IInstrumentationLogger logger,
-            ITraceContextAccessor traceContextAccessor) : base(traceContextAccessor)
+            ITraceContextAccessor traceContextAccessor) 
+            : base(traceContextAccessor, reporters)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _processor = new ActionBlock<Span>(async span => await ReportSpan(span));
-            _reporters = new List<IReporter>();
-
-            foreach (var reporter in reporters)
-            {
-                // TODO improve logic for preventing duplicate reporters
-                var exists = _reporters.Any(r => r.GetType() == reporter.GetType());
-                if (!exists)
-                {
-                    _reporters.Add(reporter);
-                }
-            }
+            _processor = new ActionBlock<Span>(async span => await ReportSpan(span));            
         }
 
         /// <summary>
@@ -64,7 +53,7 @@ namespace Zipkin.NET.Dispatchers
 
         private async Task ReportSpan(Span span)
         {
-            foreach (var reporter in _reporters)
+            foreach (var reporter in Reporters)
             {
                 try
                 {

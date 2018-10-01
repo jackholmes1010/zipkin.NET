@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Zipkin.NET.Models;
+using Zipkin.NET.Reporters;
 
 namespace Zipkin.NET.Dispatchers
 {
@@ -8,13 +11,41 @@ namespace Zipkin.NET.Dispatchers
     /// </summary>
     public abstract class Dispatcher : IDispatcher
     {
-        private readonly ITraceContextAccessor _traceContextAccessor;
-
-        protected Dispatcher(ITraceContextAccessor traceContextAccessor)
+        protected Dispatcher(ITraceContextAccessor traceContextAccessor, IEnumerable<IReporter> reporters)
         {
-            _traceContextAccessor = traceContextAccessor 
-                ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            if (traceContextAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(traceContextAccessor));
+            }
+
+            if (reporters == null)
+            {
+                throw new ArgumentNullException(nameof(reporters));
+            }
+
+            TraceContextAccessor = traceContextAccessor;
+            Reporters = new List<IReporter>();
+
+            foreach (var reporter in reporters)
+            {
+                // TODO improve logic for preventing duplicate reporters
+                var exists = Reporters.Any(r => r.GetType() == reporter.GetType());
+                if (!exists)
+                {
+                    Reporters.Add(reporter);
+                }
+            }
         }
+
+        /// <summary>
+        /// Gets a list of available reporters used to report spans.
+        /// </summary>
+        protected List<IReporter> Reporters { get; }
+
+        /// <summary>
+        /// An <see cref="ITraceContextAccessor"/> used to get the current trace context.
+        /// </summary>
+        protected ITraceContextAccessor TraceContextAccessor { get; }
 
         /// <summary>
         /// Schedule a completed <see cref="Span"/> to be reported to all of the available reporters.
@@ -28,13 +59,13 @@ namespace Zipkin.NET.Dispatchers
         /// </param>
         public void Dispatch(Span span)
         {
-            if (!_traceContextAccessor.HasTrace())
+            if (!TraceContextAccessor.HasTrace())
             {
                 throw new Exception(
                     "Save the TraceContext using the ITraceContextContextAccessor.SaveTrace() before dispatching span.");
             }
 
-            var traceContext = _traceContextAccessor.GetTrace();
+            var traceContext = TraceContextAccessor.GetTrace();
 
             if (traceContext.Sampled == null)
             {
