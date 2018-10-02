@@ -36,17 +36,11 @@ namespace Zipkin.NET.WCF.MessageInspectors
         // IClientMessageInspector
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            if (!_traceContextAccessor.HasTrace())
-            {
-                _clientTraceContext = new TraceContext();
-                _traceContextAccessor.SaveTrace(_clientTraceContext);
-            }
-            else
-            {
-                _clientTraceContext = _traceContextAccessor
+            _clientTraceContext = _traceContextAccessor.HasTrace()
+                ? _traceContextAccessor
                     .GetTrace()
-                    .Refresh();
-            }
+                    .Refresh()
+                : new TraceContext();
 
             _clientTraceContext.Sample(_sampler);
 
