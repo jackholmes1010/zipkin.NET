@@ -4,13 +4,11 @@ namespace Zipkin.NET.Extensions
 {
     public static class TimeSpanExtensions
     {
-        private const int TicksPerMicrosecond = 10;
-
         public static long ToMicroseconds(this TimeSpan timeSpan)
         {
-            return (int)Math.Floor(
-                timeSpan.Ticks % TimeSpan.TicksPerMillisecond 
-                / (double)TicksPerMicrosecond);
+            var milliseconds = timeSpan.Ticks / 10000.0;
+            var microseconds = milliseconds * 1000.0;
+            return (long) microseconds;
         }
     }
 }
