@@ -82,7 +82,7 @@ namespace Zipkin.NET.OWIN
                     .End()
                     .Build();
 
-                _dispatcher.Dispatch(span);
+                _dispatcher.Dispatch(span, traceContext);
             }
         }
     }

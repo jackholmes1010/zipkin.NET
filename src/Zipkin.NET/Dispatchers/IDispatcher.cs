@@ -4,6 +4,6 @@ namespace Zipkin.NET.Dispatchers
 {
     public interface IDispatcher
     {
-        void Dispatch(Span span);
+        void Dispatch(Span span, TraceContext traceContext);
     }
 }

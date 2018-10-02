@@ -33,8 +33,7 @@ namespace Zipkin.NET.WCF.Demo
         }
 
         protected override IDispatcher Dispatcher => 
-            new AsyncActionBlockDispatcher(
-                Reporters, Logger, TraceContextAccessor);
+            new AsyncActionBlockDispatcher(Reporters, Logger);
 
         public override Type BehaviorType => typeof(ZipkinServiceBehavior);
 

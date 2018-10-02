@@ -16,11 +16,9 @@ namespace Zipkin.NET.OWIN.Demo
         {
             // Register zipkin reporter
             var sender = new ZipkinHttpSender("http://localhost:9411");
-            var zipkinReporter = new ZipkinReporter(sender);
-            var contextAccessor = new CallContextTraceContextAccessor();
-            var logger = new ConsoleInstrumentationLogger();
+            var zipkinReporter = new ZipkinReporter(sender);            var logger = new ConsoleInstrumentationLogger();
             var reporters = new List<IReporter> {zipkinReporter, new ConsoleReporter()};
-            var dispatcher = new AsyncActionBlockDispatcher(reporters, logger, contextAccessor);
+            var dispatcher = new AsyncActionBlockDispatcher(reporters, logger);
 
             StaticDependencies.TryRegister<IDispatcher>(dispatcher);
 

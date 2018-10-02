@@ -84,19 +84,11 @@ namespace Zipkin.NET
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            TraceContext traceContext;
-
-            if (!_traceContextAccessor.HasTrace())
-            {
-                traceContext = new TraceContext();
-                _traceContextAccessor.SaveTrace(traceContext);
-            }
-            else
-            {
-                traceContext = _traceContextAccessor
+            var traceContext = _traceContextAccessor.HasTrace()
+                ? _traceContextAccessor
                     .GetTrace()
-                    .Refresh();
-            }
+                    .Refresh()
+                : new TraceContext();
 
             traceContext.Sample(_sampler);
 
@@ -126,8 +118,11 @@ namespace Zipkin.NET
             }
             finally
             {
-                spanBuilder.End();
-                _dispatcher.Dispatch(spanBuilder.Build());
+                var span = spanBuilder
+                    .End()
+                    .Build();
+
+                _dispatcher.Dispatch(span, traceContext);
             }
         }
     }

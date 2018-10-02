@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Zipkin.NET.Logging;
@@ -27,24 +26,27 @@ namespace Zipkin.NET.Dispatchers
         /// <param name="logger">
         /// A <see cref="IInstrumentationLogger"/> used to log instrumentation errors.
         /// </param>
-        /// <param name="traceContextAccessor">
-        /// A <see cref="ITraceContextAccessor" /> used to get the current trace context.
-        /// </param>
         public AsyncActionBlockDispatcher(
             IEnumerable<IReporter> reporters,
-            IInstrumentationLogger logger,
-            ITraceContextAccessor traceContextAccessor) 
-            : base(traceContextAccessor, reporters)
+            IInstrumentationLogger logger) 
+            : base (reporters)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processor = new ActionBlock<Span>(async span => await ReportSpan(span));            
         }
 
+        /// <summary>
+        /// True if there are no remaining spans to be processed.
+        /// </summary>
+        /// <returns></returns>
         public bool IsCompleted()
         {
             return _processor.InputCount == 0;
         }
 
+        /// <summary>
+        /// Complete span processing.
+        /// </summary>
         public void Dispose()
         {
             _processor.Complete();

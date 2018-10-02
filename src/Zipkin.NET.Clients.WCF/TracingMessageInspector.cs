@@ -94,7 +94,7 @@ namespace Zipkin.NET.Clients.WCF
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span);
+            _dispatcher.Dispatch(span, _traceContext);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

@@ -42,10 +42,9 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new []{_mockReporter1.Object, _mockReporter2.Object},
-                _mockInstrumentationLogger.Object,
-                _mockTraceContextAccessor.Object);
+                _mockInstrumentationLogger.Object);
 
-            dispatcher.Dispatch(span);
+            dispatcher.Dispatch(span, trace);
 
             // Wait for processing of spans to complete
             while (!dispatcher.IsCompleted())
@@ -73,10 +72,9 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object,
-                _mockTraceContextAccessor.Object);
+                _mockInstrumentationLogger.Object);
 
-            Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
+            Assert.Throws<Exception>(() => dispatcher.Dispatch(span, trace));
         }
 
         [Fact]
@@ -94,10 +92,9 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object,
-                _mockTraceContextAccessor.Object);
+                _mockInstrumentationLogger.Object);
 
-            Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
+            Assert.Throws<Exception>(() => dispatcher.Dispatch(span, trace));
         }
 
         /// <summary>
@@ -115,10 +112,9 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object,
-                _mockTraceContextAccessor.Object);
+                _mockInstrumentationLogger.Object);
 
-            dispatcher.Dispatch(span);
+            dispatcher.Dispatch(span, trace);
 
             // Wait for processing of spans to complete
             while (!dispatcher.IsCompleted())
