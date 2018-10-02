@@ -66,21 +66,5 @@ namespace Zipkin.NET.WCF.MessageInspectors
 
             _dispatcher.Dispatch(span, _serverTraceContext);
         }
-
-        private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)
-        {
-            HttpRequestMessageProperty httpRequest;
-            if (wcfMessage.Properties.TryGetValue(HttpRequestMessageProperty.Name, out var requestObject))
-            {
-                httpRequest = requestObject as HttpRequestMessageProperty;
-            }
-            else
-            {
-                httpRequest = new HttpRequestMessageProperty();
-                wcfMessage.Properties.Add(HttpRequestMessageProperty.Name, httpRequest);
-            }
-
-            return httpRequest;
-        }
     }
 }
