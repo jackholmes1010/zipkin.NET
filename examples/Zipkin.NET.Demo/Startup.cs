@@ -52,7 +52,7 @@ namespace Zipkin.NET.Demo
 
             // Register .NET Core ILogger span reporter.
             // This reporter logs completed spans using the .NET Core ILogger.
-            services.AddTransient<IReporter, LoggerReporter>();
+            services.TryAddTransient<IReporter, LoggerReporter>();
 
             // Register default tracing dependencies.
             services.AddTracing("test-api");

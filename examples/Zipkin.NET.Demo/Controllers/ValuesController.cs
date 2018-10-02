@@ -41,8 +41,8 @@ namespace Zipkin.NET.Demo.Controllers
             var owinClient = _httpClientFactory.CreateClient("owinClient");
             var wcfClient = GetWcfDemoClient();
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("https://reqres.in/api/users?delay=3"));
-            var httpRequest2 = new HttpRequestMessage(HttpMethod.Get, new Uri("https://reqres.in/api/users?delay=2"));
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:5005/api/ping"));
+            var httpRequest2 = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:5005/api/ping"));
             var owinHttpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:9055/api/owin/status"));
 
             var resultTask = httpClient.SendAsync(httpRequest);
