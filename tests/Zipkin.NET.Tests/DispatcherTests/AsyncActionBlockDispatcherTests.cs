@@ -19,7 +19,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
         private readonly Mock<IReporter> _mockReporter1;
         private readonly Mock<IReporter> _mockReporter2;
         private readonly Mock<IInstrumentationLogger> _mockInstrumentationLogger;
-        private readonly Mock<ITraceContextAccessor> _mockTraceContextAccessor;
 
         public AsyncActionBlockDispatcherTests()
         {
@@ -27,7 +26,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             _mockReporter1 = new Mock<IReporter>();
             _mockReporter2 = new Mock<IReporter>();
             _mockInstrumentationLogger = new Mock<IInstrumentationLogger>();
-            _mockTraceContextAccessor = new Mock<ITraceContextAccessor>();
         }
 
         [Fact]
@@ -38,7 +36,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             trace.Sampled = true;
 
             SetupMockReporters(span);
-            SetupMockTraceContextAccessor(trace);
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new []{_mockReporter1.Object, _mockReporter2.Object},
@@ -54,7 +51,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             _mockReporter1.VerifyAll();
             _mockReporter2.VerifyAll();
-            _mockTraceContextAccessor.VerifyAll();
         }
 
         /// <summary>
@@ -68,7 +64,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             trace.Sampled = null;
 
             SetupMockReporters(span);
-            SetupMockTraceContextAccessor(trace);
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
@@ -85,10 +80,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             trace.Sampled = null;
 
             SetupMockReporters(span);
-
-            _mockTraceContextAccessor
-                .Setup(t => t.HasTrace())
-                .Returns(false);
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
@@ -108,7 +99,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             trace.Sampled = false;
 
             SetupMockReporters(span);
-            SetupMockTraceContextAccessor(trace);
 
             var dispatcher = new AsyncActionBlockDispatcher(
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
@@ -124,7 +114,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
 
             _mockReporter1.Verify(r => r.ReportAsync(It.IsAny<Span>()), Times.Never);
             _mockReporter2.Verify(r => r.ReportAsync(It.IsAny<Span>()), Times.Never);
-            _mockTraceContextAccessor.VerifyAll();
         }
 
         private void SetupMockReporters(Span span = null)
@@ -136,17 +125,6 @@ namespace Zipkin.NET.Tests.DispatcherTests
             _mockReporter2
                 .Setup(r => r.ReportAsync(It.Is<Span>(s => s == span)))
                 .Returns(Task.CompletedTask);
-        }
-
-        private void SetupMockTraceContextAccessor(TraceContext trace = null)
-        {
-            _mockTraceContextAccessor
-                .Setup(t => t.HasTrace())
-                .Returns(true);
-
-            _mockTraceContextAccessor
-                .Setup(t => t.GetTrace())
-                .Returns(trace);
         }
     }
 }
