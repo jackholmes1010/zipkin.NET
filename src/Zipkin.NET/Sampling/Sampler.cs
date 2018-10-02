@@ -26,7 +26,18 @@
         /// </returns>
         public bool IsSampled(TraceContext traceContext)
         {
-            return traceContext.Debug || IsSampled(traceContext.TraceId);
+            if (traceContext.Debug)
+            {
+                return true;
+            }
+
+            if (traceContext.Sampled != null)
+            {
+                return traceContext.Sampled == true;
+            }
+
+            // No sampling decision has been made upstream, make a sampling decision.
+            return IsSampled(traceContext.TraceId);
         }
 
         /// <summary>
