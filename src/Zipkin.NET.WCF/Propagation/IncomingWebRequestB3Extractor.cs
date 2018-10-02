@@ -13,8 +13,11 @@ namespace Zipkin.NET.WCF.Propagation
             var debug = extract.Headers[B3HeaderConstants.Flags] == "1";
 
             bool? sampled = null;
-            if (extract.Headers[B3HeaderConstants.Sampled] != null)
-                sampled = true;
+            var sampledHeader = extract.Headers[B3HeaderConstants.Sampled];
+            if (sampledHeader != null)
+            {
+                sampled = sampledHeader == "1";
+            }
 
             return new TraceContext(traceId, spanId)
             {
