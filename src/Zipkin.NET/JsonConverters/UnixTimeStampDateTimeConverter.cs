@@ -13,7 +13,7 @@ namespace Zipkin.NET.JsonConverters
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var unixTime = ((DateTime) value).ToUnixTime();
-            writer.WriteRawValue(((long)(unixTime.TotalMilliseconds * 1000L)).ToString());
+            writer.WriteRawValue(unixTime.ToMicroseconds().ToString());
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
