@@ -11,7 +11,7 @@ namespace Zipkin.NET.OWIN
     /// <summary>
     /// OWIN middleware used to build and report server spans from incoming requests.
     /// </summary>
-    public class TracingMiddleware
+    public class TracingMiddleware : OwinMiddleware
     {
         private readonly string _localEndpointName;
         private readonly ITraceContextAccessor _traceContextAccessor;
@@ -22,6 +22,9 @@ namespace Zipkin.NET.OWIN
         /// <summary>
         /// Construct a new <see cref="TracingMiddleware"/>.
         /// </summary>
+        /// <param name="next">
+        /// The next middleware in the pipeline.
+        /// </param>
         /// <param name="localEndpointName">
         /// The endpoint name describes the host recording the span.
         /// </param>
@@ -35,10 +38,11 @@ namespace Zipkin.NET.OWIN
         /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         public TracingMiddleware(
+            OwinMiddleware next,
             string localEndpointName,
             ITraceContextAccessor traceContextAccessor,
             IDispatcher dispatcher,
-            ISampler sampler)
+            ISampler sampler) : base(next)
         {
             _localEndpointName = localEndpointName;
             _traceContextAccessor = traceContextAccessor;
@@ -47,7 +51,7 @@ namespace Zipkin.NET.OWIN
             _extractor = new OwinContextB3Extractor();
         }
 
-        public async Task Invoke(IOwinContext context, Func<Task> next)
+        public override async Task Invoke(IOwinContext context)
         {
             var traceContext = _extractor
                 .Extract(context)
@@ -70,7 +74,7 @@ namespace Zipkin.NET.OWIN
 
             try
             {
-                await next();
+                await Next.Invoke(context);
             }
             catch (Exception ex)
             {

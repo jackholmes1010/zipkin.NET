@@ -1,34 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Zipkin.NET.Dispatchers;
-using Zipkin.NET.Framework;
-using Zipkin.NET.Logging;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
-using Zipkin.NET.Senders;
 
 namespace Zipkin.NET.OWIN.Demo
 {
     public class StatusController : ApiController
     {
+        private readonly IDispatcher _dispatcher;
+        private readonly ISampler _sampler;
+        private readonly ITraceContextAccessor _traceContextAccessor;
+
+        public StatusController(
+            IDispatcher dispatcher, 
+            ISampler sampler, 
+            ITraceContextAccessor traceContextAccessor)
+        {
+            _dispatcher = dispatcher;
+            _sampler = sampler;
+            _traceContextAccessor = traceContextAccessor;
+        }
+
         [Route("api/owin/status")]
         [HttpGet]
         public async Task<IHttpActionResult> GetStatus()
         {
-            // Register zipkin reporter
-            var sender = new ZipkinHttpSender("http://localhost:9411");
-            var zipkinReporter = new ZipkinReporter(sender); var logger = new ConsoleInstrumentationLogger();
-            var reporters = new List<IReporter> { zipkinReporter, new ConsoleReporter() };
-            var dispatcher = new AsyncActionBlockDispatcher(reporters, logger);
-
             var tracingHandler = new TracingHandler(
                 new HttpClientHandler(), 
-                new CallContextTraceContextAccessor(),
-                dispatcher,
-                new RateSampler(1f), 
+                _traceContextAccessor,
+                _dispatcher,
+                _sampler,
                 "reqres-api");
 
             var httpClient = new HttpClient(tracingHandler);
