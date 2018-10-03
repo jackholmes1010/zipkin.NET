@@ -27,7 +27,7 @@ namespace Zipkin.NET.OWIN.Demo
                 new { id = RouteParameter.Optional });
 
             var builder = new ContainerBuilder();
-            builder.Register(ctx => new ZipkinHttpSender("h")).As<ISender>();
+            builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>();
             builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>();
             builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>();
             builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>();
