@@ -32,7 +32,12 @@ namespace Zipkin.NET.Dispatchers
             : base (reporters)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _processor = new ActionBlock<Span>(async span => await ReportSpan(span));            
+            _processor = new ActionBlock<Span>(
+                async span => await ReportSpan(span),
+                new ExecutionDataflowBlockOptions
+                {
+                    MaxDegreeOfParallelism = 50
+                });
         }
 
         /// <summary>

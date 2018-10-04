@@ -28,7 +28,7 @@ namespace Zipkin.NET.Core
 
             // Register async dispatcher.
             // This dispatcher will asynchronously report spans to the registered reporters.
-            services.TryAddTransient<IDispatcher, AsyncActionBlockDispatcher>();
+            services.TryAddSingleton<IDispatcher, AsyncActionBlockDispatcher>();
 
             // Register rate sampler.
             // This RateSampler will sample 100% of traces providing a
