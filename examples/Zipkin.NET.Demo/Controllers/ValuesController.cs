@@ -48,7 +48,7 @@ namespace Zipkin.NET.Demo.Controllers
             var resultTask = httpClient.SendAsync(httpRequest);
             var result2Task = httpClient2.SendAsync(httpRequest2);
             var owinTask = owinClient.SendAsync(owinHttpRequest);
-            var wcfTask = wcfClient.GetDataAsync(1);
+            var wcfResult = await wcfClient.GetDataAsync(1);
 
             var result = await resultTask;
             var result2 = await result2Task;
@@ -56,7 +56,7 @@ namespace Zipkin.NET.Demo.Controllers
 
             return new[]
             {
-                "wcfResult", await wcfTask,
+                "wcfResult", wcfResult,
                 "result", await result.Content.ReadAsStringAsync(),
                 "result2", await result2.Content.ReadAsStringAsync(),
                 "owinResult", await owinResult.Content.ReadAsStringAsync()

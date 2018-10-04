@@ -29,8 +29,8 @@ namespace Zipkin.NET.Demo
             // Add a tracing handler to the HTTP clients.
             // The TracingHandler builds spans from outgoing client
             // requests and reports them using the registered reporters.
-            services.AddHttpClient("tracingClient").AddTracingMessageHandler("reqres.in-1");
-            services.AddHttpClient("tracingClient2").AddTracingMessageHandler("reqres.in-2");
+            services.AddHttpClient("tracingClient").AddTracingMessageHandler("Ping.API-1");
+            services.AddHttpClient("tracingClient2").AddTracingMessageHandler("Ping.API-2");
             services.AddHttpClient("owinClient").AddTracingMessageHandler("owin-demo");
 
             // Register Zipkin dependencies.
@@ -55,7 +55,7 @@ namespace Zipkin.NET.Demo
             services.TryAddTransient<IReporter, LoggerReporter>();
 
             // Register default tracing dependencies.
-            services.AddTracing("test-api");
+            services.AddTracing("example-api");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
