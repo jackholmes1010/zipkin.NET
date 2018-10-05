@@ -87,5 +87,52 @@ namespace Zipkin.NET.Tests.SamplerTests
 
             Assert.Equal(expectedSampleCount, sampleDecisions.Count());
         }
+
+        /// <summary>
+        /// If the trace context debug property is true, the Sampler should always sample.
+        /// </summary>
+        [Fact]
+        public void IsSampled_TraceContextDebug()
+        {
+            var rateSampler = new RateSampler(0f);
+            var traceContext = _fixture.Create<TraceContext>();
+            traceContext.Debug = true;
+            traceContext.Sampled = null;
+
+            var sampled = rateSampler.IsSampled(traceContext);
+            Assert.True(sampled);
+        }
+
+        /// <summary>
+        /// If the trace context sampled property is not null, this means a sampling decision has already been made.
+        /// The sampler should respect the existing sampling decision.
+        /// </summary>
+        [Theory]
+        [InlineData(0f, true)]
+        [InlineData(0.5f, false)]
+        [InlineData(1f, false)]
+        [InlineData(0.5f, true)]
+        public void IsSampled_SamplingDecisionAlreadyMade(float rate, bool decision)
+        {
+            var rateSampler = new RateSampler(rate);
+
+            for (var i = 0; i < 1000; i++)
+            {
+                var traceContext = _fixture.Create<TraceContext>();
+                traceContext.Debug = false;
+                traceContext.Sampled = decision;
+
+                var sampled = rateSampler.IsSampled(traceContext);
+
+                if (decision)
+                {
+                    Assert.True(sampled);
+                }
+                else
+                {
+                    Assert.False(sampled);
+                }
+            }
+        }
     }
 }
