@@ -1,6 +1,8 @@
 # zipkin.NET
 Zipkin instrumentation for .NET with support for .NET Core, OWIN and WCF.
 
+Uses Zipkin V2 format.
+
 ## Client Tracing
 The ```TracingHandler``` delegating handler can be used to create spans and propagate trace context for outgoing HTTP requests.
 
@@ -24,19 +26,34 @@ services.TryAddTransient<IReporter>(provider =>
 services.TryAddTransient<IReporter, LoggerReporter>();
 
 // Register default tracing dependencies.
-services.AddTracing("test-api");
+services.AddTracing("test-api", 1f);
 ```
 
 Add the ```TracingMiddleware``` to the pipeline.
 ```csharp
-// Middleware creates server spans from incoming requests
+// Middleware builds server spans from incoming requests
 // and reports them using the registered dispatcher.
 app.UseMiddleware<TracingMiddleware>();
 ```
-Create a new HTTP client which uses a ```TracingHandler```.
+Using the ```HttpClientFactory```, create an HTTP client with a ```TracingHandler```.
 ```csharp
-// Add a tracing handler to the HTTP clients.
-// The TracingHandler builds client from outgoing HTTP
+// The TracingHandler builds client spans from outgoing HTTP
 // requests and reports them using the registered dispatcher.
-services.AddHttpClient("tracingClient").AddTracingMessageHandler("my-other-api");
+services.AddHttpClient("my-http-client").AddTracingMessageHandler("my-other-api");
+```
+## OWIN
+Register dependencies, for example, if using Autofac.
+```csharp
+builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>();
+builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>();
+builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>();
+builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>();
+builder.RegisterType<RateSampler>().As<ISampler>().WithParameter("rate", 1f);
+builder.RegisterType<ConsoleReporter>().As<IReporter>();
+builder.RegisterType<ZipkinReporter>().As<IReporter>();
+builder.RegisterType<TracingMiddleware>().WithParameter("localEndpointName", "owin-api");
+```
+Add the OWIN ```TracingMiddleware``` to the pipeline.
+```csharp
+app.UseMiddlewareFromContainer<TracingMiddleware>();
 ```
