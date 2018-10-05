@@ -24,7 +24,7 @@ services.TryAddTransient<IReporter>(provider =>
 services.TryAddTransient<IReporter, LoggerReporter>();
 
 // Register default tracing dependencies.
-services.AddTracing("test-api");
+services.AddTracing("test-api", 1f);
 ```
 
 Add the ```TracingMiddleware``` to the pipeline.
@@ -39,4 +39,20 @@ Create a new HTTP client which uses a ```TracingHandler```.
 // The TracingHandler builds client from outgoing HTTP
 // requests and reports them using the registered dispatcher.
 services.AddHttpClient("tracingClient").AddTracingMessageHandler("my-other-api");
+```
+## OWIN
+Register dependencies, for example, if using Autofac.
+```csharp
+builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>();
+builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>();
+builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>();
+builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>();
+builder.RegisterType<RateSampler>().As<ISampler>().WithParameter("rate", 1f);
+builder.RegisterType<ConsoleReporter>().As<IReporter>();
+builder.RegisterType<ZipkinReporter>().As<IReporter>();
+builder.RegisterType<TracingMiddleware>().WithParameter("localEndpointName", "owin-api");
+```
+Add the OWIN ```TracingMiddleware``` to the pipeline.
+```csharp
+app.UseMiddlewareFromContainer<TracingMiddleware>();
 ```
