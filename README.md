@@ -33,12 +33,11 @@ Add the ```TracingMiddleware``` to the pipeline.
 // and reports them using the registered dispatcher.
 app.UseMiddleware<TracingMiddleware>();
 ```
-Create a new HTTP client which uses a ```TracingHandler```.
+Using the ```HttpClientFactory```, create an HTTP client with a ```TracingHandler```.
 ```csharp
-// Add a tracing handler to the HTTP clients.
 // The TracingHandler builds client spans from outgoing HTTP
 // requests and reports them using the registered dispatcher.
-services.AddHttpClient("tracingClient").AddTracingMessageHandler("my-other-api");
+services.AddHttpClient("my-http-client").AddTracingMessageHandler("my-other-api");
 ```
 ## OWIN
 Register dependencies, for example, if using Autofac.
