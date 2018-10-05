@@ -1,6 +1,8 @@
 # zipkin.NET
 Zipkin instrumentation for .NET with support for .NET Core, OWIN and WCF.
 
+Uses Zipkin V2 format.
+
 ## Client Tracing
 The ```TracingHandler``` delegating handler can be used to create spans and propagate trace context for outgoing HTTP requests.
 
