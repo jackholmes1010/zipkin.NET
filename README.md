@@ -29,14 +29,14 @@ services.AddTracing("test-api", 1f);
 
 Add the ```TracingMiddleware``` to the pipeline.
 ```csharp
-// Middleware creates server spans from incoming requests
+// Middleware builds server spans from incoming requests
 // and reports them using the registered dispatcher.
 app.UseMiddleware<TracingMiddleware>();
 ```
 Create a new HTTP client which uses a ```TracingHandler```.
 ```csharp
 // Add a tracing handler to the HTTP clients.
-// The TracingHandler builds client from outgoing HTTP
+// The TracingHandler builds client spans from outgoing HTTP
 // requests and reports them using the registered dispatcher.
 services.AddHttpClient("tracingClient").AddTracingMessageHandler("my-other-api");
 ```
