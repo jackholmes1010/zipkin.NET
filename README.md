@@ -1,6 +1,11 @@
 # zipkin.NET
 Zipkin instrumentation for .NET with support for .NET Core, OWIN and WCF.
 
+## Client Tracing
+The ```TracingHandler``` delegating handler can be used to create spans and propagate trace context for outgoing HTTP requests.
+
+For outgoing WCF requests, the ```EndpointTracingBehavior``` can be used to add a ```ClientTracingMessageInspector``` to the client runtime.
+
 ## .NET Core
 Add dependencies to the service collection.
 ```csharp
@@ -21,7 +26,17 @@ services.TryAddTransient<IReporter, LoggerReporter>();
 // Register default tracing dependencies.
 services.AddTracing("test-api");
 ```
-And add the ```TracingMiddleware``` to the pipeline.
+
+Add the ```TracingMiddleware``` to the pipeline.
 ```csharp
+// Middleware creates server spans from incoming requests
+// and reports them using the registered dispatcher.
 app.UseMiddleware<TracingMiddleware>();
+```
+Create a new HTTP client which uses a ```TracingHandler```.
+```csharp
+// Add a tracing handler to the HTTP clients.
+// The TracingHandler builds client from outgoing HTTP
+// requests and reports them using the registered dispatcher.
+services.AddHttpClient("tracingClient").AddTracingMessageHandler("my-other-api");
 ```
