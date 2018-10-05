@@ -17,12 +17,23 @@ namespace Zipkin.NET.Core
         /// <summary>
         /// Add default tracing dependencies to the <see cref="IServiceCollection"/>.
         /// </summary>
-        /// <param name="services">
-        /// The <see cref="IServiceCollection"/>.
-        /// </param>
-        /// <param name="localEndpointName"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddTracing(this IServiceCollection services, string localEndpointName)
+        /// <returns>
+        /// The current <see cref="IServiceCollection"/>.
+        /// </returns>
+        public static IServiceCollection AddTracing(
+            this IServiceCollection services, string localEndpointName, float sampleRate)
+        {
+            return services.AddTracing(localEndpointName,  new RateSampler(sampleRate));
+        }
+
+        /// <summary>
+        /// Add default tracing dependencies to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <returns>
+        /// The current <see cref="IServiceCollection"/>.
+        /// </returns>
+        public static IServiceCollection AddTracing(
+            this IServiceCollection services, string localEndpointName, ISampler sampler)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -33,7 +44,7 @@ namespace Zipkin.NET.Core
             // Register rate sampler.
             // This RateSampler will sample 100% of traces providing a
             // sampling decision has not already been made by an upstream service.
-            services.TryAddTransient<ISampler>(provider => new RateSampler(1f));
+            services.TryAddTransient(provider => sampler);
 
             // Register the trace context accessor.
             // This ITraceContextAccessor will store the trace context in the HTTP context.

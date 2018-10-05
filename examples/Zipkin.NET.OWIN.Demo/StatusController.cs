@@ -32,7 +32,7 @@ namespace Zipkin.NET.OWIN.Demo
                 _traceContextAccessor,
                 _dispatcher,
                 _sampler,
-                "reqres-api");
+                "Ping.API-OWIN");
 
             var httpClient = new HttpClient(tracingHandler);
             var result = await httpClient.GetAsync(new Uri("http://localhost:5005/api/ping"));
