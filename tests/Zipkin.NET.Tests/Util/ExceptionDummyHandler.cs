@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Zipkin.NET.Tests.Util
 {
+    [ExcludeFromCodeCoverage]
     public class ExceptionDummyHandler : DelegatingHandler
     {
         private readonly Action<HttpRequestMessage> _requestValidator;
