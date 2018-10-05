@@ -15,7 +15,7 @@ namespace Zipkin.NET.Clients.WCF
     /// This message inspector is supported by .NET Standard.
     /// </remarks>
     /// </summary>
-    public class TracingMessageInspector : IClientMessageInspector
+    public class ClientTracingMessageInspector : IClientMessageInspector
     {
         private readonly string _remoteServiceName;
         private readonly ITraceContextAccessor _traceContextAccessor;
@@ -27,7 +27,7 @@ namespace Zipkin.NET.Clients.WCF
         private TraceContext _traceContext;
 
         /// <summary>
-        /// Construct a new <see cref="TracingMessageInspector"/>.
+        /// Construct a new <see cref="ClientTracingMessageInspector"/>.
         /// </summary>
         /// <param name="remoteServiceName">
         /// The name of the WCF service the client is calling.
@@ -41,7 +41,7 @@ namespace Zipkin.NET.Clients.WCF
         /// <param name="dispatcher">
         /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
         /// </param>
-        public TracingMessageInspector(
+        public ClientTracingMessageInspector(
             string remoteServiceName,
             ITraceContextAccessor traceContextAccessor,
             ISampler sampler,

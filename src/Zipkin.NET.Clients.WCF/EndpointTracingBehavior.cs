@@ -7,16 +7,16 @@ using Zipkin.NET.Sampling;
 namespace Zipkin.NET.Clients.WCF
 {
     /// <summary>
-    /// Endpoint behavior responsible for adding a <see cref="TracingMessageInspector"/> to the client runtime.
+    /// Endpoint behavior responsible for adding a <see cref="ClientTracingMessageInspector"/> to the client runtime.
     /// </summary>
-    public class TracingEndpointBehavior : IEndpointBehavior
+    public class EndpointTracingBehavior : IEndpointBehavior
     {
         private readonly string _applicationName;
         private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
 
-        public TracingEndpointBehavior(
+        public EndpointTracingBehavior(
             string applicationName,
             ITraceContextAccessor traceContextAccessor,
             ISampler sampler,
@@ -43,7 +43,7 @@ namespace Zipkin.NET.Clients.WCF
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             clientRuntime.ClientMessageInspectors.Add(
-                new TracingMessageInspector(_applicationName, _traceContextAccessor, _sampler, _dispatcher));
+                new ClientTracingMessageInspector(_applicationName, _traceContextAccessor, _sampler, _dispatcher));
         }
     }
 }
