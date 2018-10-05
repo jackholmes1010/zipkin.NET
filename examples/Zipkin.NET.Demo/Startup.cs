@@ -55,7 +55,7 @@ namespace Zipkin.NET.Demo
             services.TryAddTransient<IReporter, LoggerReporter>();
 
             // Register default tracing dependencies.
-            services.AddTracing("example-api");
+            services.AddTracing("example-api", 1f);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
