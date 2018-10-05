@@ -37,19 +37,20 @@ namespace Zipkin.NET
         /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="remoteEndpointName">
-        /// The name of the reciever.
+        /// The name of the receiver.
         /// </param>
         public TracingHandler(
             HttpMessageHandler innerHandler,
             ITraceContextAccessor traceContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler,
-            string remoteEndpointName) : base(innerHandler)
+            string remoteEndpointName) 
+            : base(innerHandler)
         {
-            _remoteEndpointName = remoteEndpointName;
-            _traceContextAccessor = traceContextAccessor;
-            _dispatcher = dispatcher;
-            _sampler = sampler;
+            _remoteEndpointName = remoteEndpointName ?? throw new ArgumentNullException(nameof(remoteEndpointName));
+            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _propagator = new HttpRequestMessagePropagator();
         }
 
@@ -66,7 +67,7 @@ namespace Zipkin.NET
         /// A <see cref="ISampler"/> used to make sampling decisions.
         /// </param>
         /// <param name="remoteEndpointName">
-        /// The name of the reciever.
+        /// The name of the receiver.
         /// </param>
         public TracingHandler(
             ITraceContextAccessor traceContextAccessor,
@@ -74,10 +75,10 @@ namespace Zipkin.NET
             ISampler sampler,
             string remoteEndpointName)
         {
-            _remoteEndpointName = remoteEndpointName;
-            _traceContextAccessor = traceContextAccessor;
-            _dispatcher = dispatcher;
-            _sampler = sampler;
+            _remoteEndpointName = remoteEndpointName ?? throw new ArgumentNullException(nameof(remoteEndpointName));
+            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _propagator = new HttpRequestMessagePropagator();
         }
 
