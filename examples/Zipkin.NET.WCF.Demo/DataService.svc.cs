@@ -2,6 +2,13 @@
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Framework;
+using Zipkin.NET.Logging;
+using Zipkin.NET.Reporters;
+using Zipkin.NET.Sampling;
+using Zipkin.NET.Senders;
+using Zipkin.NET.WCF.Behaviors;
 
 namespace Zipkin.NET.WCF.Demo
 {
@@ -11,7 +18,15 @@ namespace Zipkin.NET.WCF.Demo
     {
         public static void Configure(ServiceConfiguration config)
         {
-            config.Description.Behaviors.Add(new ZipkinServiceBehavior("demo-service"));
+            config.Description.Behaviors.Add(
+                new ServiceTracingBehavior(
+                    "demo-service",
+                    () => new SystemWebHttpContextTraceContextAccessor(),
+                    () => new RateSampler(1f),
+                    () => new AsyncActionBlockDispatcher(new[]
+                    {
+                        new ZipkinReporter(new ZipkinHttpSender("http://localhost:9411"))
+                    }, new ConsoleInstrumentationLogger())));
             config.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
             config.Description.Behaviors.Add(new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true });
         }

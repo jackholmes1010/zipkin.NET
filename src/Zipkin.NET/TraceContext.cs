@@ -8,6 +8,8 @@ namespace Zipkin.NET
     /// </summary>
     public class TraceContext
     {
+        private SpanBuilder _spanBuilder;
+
         /// <summary>
         /// Create a new trace context.
         /// <remarks>
@@ -60,6 +62,11 @@ namespace Zipkin.NET
         }
 
         /// <summary>
+        /// Gets the span builder used to build spans.
+        /// </summary>
+        public SpanBuilder SpanBuilder => _spanBuilder ?? (_spanBuilder = new SpanBuilder(TraceId, Id, ParentId));
+
+        /// <summary>
         /// The overall trace ID of the current trace.
         /// </summary>
         public string TraceId { get; set; }
@@ -86,22 +93,6 @@ namespace Zipkin.NET
         /// </remarks>
         /// </summary>
         public bool? Sampled { get; set; }
-
-        /// <summary>
-        /// Gets a <see cref="SpanBuilder"/> used to build spans.
-        /// </summary>
-        /// <param name="refresh">
-        /// True if the trace ID's need to be updated (when starting a new child trace).
-        /// </param>
-        /// <returns>
-        /// The a new <see cref="SpanBuilder"/>.
-        /// </returns>
-        public SpanBuilder GetSpanBuilder(bool refresh = false)
-        {
-            return refresh 
-                ? Refresh().GetSpanBuilder(false)
-                : new SpanBuilder(TraceId, Id, ParentId);
-        }
 
         /// <summary>
         /// Refresh the trace ID's by setting the parent span ID

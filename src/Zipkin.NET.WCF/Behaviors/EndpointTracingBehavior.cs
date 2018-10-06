@@ -1,6 +1,9 @@
-﻿using System.ServiceModel.Channels;
+﻿using System;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.WCF.MessageInspectors;
 
 namespace Zipkin.NET.WCF.Behaviors
@@ -11,10 +14,23 @@ namespace Zipkin.NET.WCF.Behaviors
     /// Override this to build and report spans from WCF client requests.
     /// </remarks>
     /// </summary>
-    public abstract class EndpointTracingBehavior : TracingBehaviorBase, IEndpointBehavior
+    public class EndpointTracingBehavior : IEndpointBehavior
     {
-        protected EndpointTracingBehavior(string name) : base(name)
+        private readonly string _remoteEndpointName;
+        private readonly Func<ITraceContextAccessor> _traceContextAccessor;
+        private readonly Func<ISampler> _sampler;
+        private readonly Func<IDispatcher> _dispatcher;
+
+        public EndpointTracingBehavior(
+            string remoteEndpointName,
+            Func<ITraceContextAccessor> traceContextAccessor,
+            Func<ISampler> sampler,
+            Func<IDispatcher> dispatcher)
         {
+            _remoteEndpointName = remoteEndpointName;
+            _traceContextAccessor = traceContextAccessor;
+            _sampler = sampler;
+            _dispatcher = dispatcher;
         }
 
         public void Validate(ServiceEndpoint endpoint)
@@ -27,22 +43,12 @@ namespace Zipkin.NET.WCF.Behaviors
 
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
-                new DispatchTracingMessageInspector(
-                    Name,
-                    TraceContextAccessor,
-                    Sampler,
-                    Dispatcher));
         }
 
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            clientRuntime.MessageInspectors.Add(
-                new ClientTracingMessageInspector(
-                    Name,
-                    TraceContextAccessor,
-                    Sampler,
-                    Dispatcher));
+            clientRuntime.ClientMessageInspectors.Add(
+                new ClientTracingMessageInspector(_remoteEndpointName, _traceContextAccessor, _sampler, _dispatcher));
         }
     }
 }

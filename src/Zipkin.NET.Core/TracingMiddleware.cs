@@ -54,8 +54,7 @@ namespace Zipkin.NET.Core
                 .Extract(context.Request)
                 .Sample(_sampler);
 
-            var spanBuilder = traceContext
-                .GetSpanBuilder()
+            var spanBuilder = traceContext.SpanBuilder
                 .Start()
                 .Name(context.Request.Method)
                 .Kind(SpanKind.Server)

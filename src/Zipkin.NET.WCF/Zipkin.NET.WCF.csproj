@@ -51,7 +51,6 @@
     <Compile Include="Propagation\IncomingWebRequestB3Extractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Behaviors\ServiceTracingBehavior.cs" />
-    <Compile Include="MessageInspectors\TracingBehaviorBase.cs" />
     <Compile Include="MessageInspectors\DispatchTracingMessageInspector.cs" />
   </ItemGroup>
   <ItemGroup>

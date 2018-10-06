@@ -1,8 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.WCF.MessageInspectors;
 
 namespace Zipkin.NET.WCF.Behaviors
@@ -13,10 +16,23 @@ namespace Zipkin.NET.WCF.Behaviors
     /// Override this to build and report spans from requests entering a WCF service.
     /// </remarks>
     /// </summary>
-    public abstract class ServiceTracingBehavior : TracingBehaviorBase, IServiceBehavior
+    public class ServiceTracingBehavior : IServiceBehavior
     {
-        protected ServiceTracingBehavior(string name) : base(name)
+        private readonly string _localEndpointName;
+        private readonly Func<ITraceContextAccessor> _traceContextAccessor;
+        private readonly Func<ISampler> _sampler;
+        private readonly Func<IDispatcher> _dispatcher;
+
+        public ServiceTracingBehavior(
+            string localEndpointName,
+            Func<ITraceContextAccessor> traceContextAccessor,
+            Func<ISampler> sampler,
+            Func<IDispatcher> dispatcher)
         {
+            _localEndpointName = localEndpointName;
+            _traceContextAccessor = traceContextAccessor;
+            _sampler = sampler;
+            _dispatcher = dispatcher;
         }
 
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
@@ -36,7 +52,7 @@ namespace Zipkin.NET.WCF.Behaviors
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
                     endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
-                        new DispatchTracingMessageInspector(Name, TraceContextAccessor, Sampler, Dispatcher));
+                        new DispatchTracingMessageInspector(_localEndpointName, _traceContextAccessor, _sampler, _dispatcher));
                 }
             }
         }

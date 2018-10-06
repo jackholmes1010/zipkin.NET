@@ -93,8 +93,7 @@ namespace Zipkin.NET
 
             traceContext.Sample(_sampler);
 
-            var spanBuilder = traceContext
-                .GetSpanBuilder()
+            var spanBuilder = traceContext.SpanBuilder
                 .Start()
                 .Name(request.Method.Method)
                 .Kind(SpanKind.Client)

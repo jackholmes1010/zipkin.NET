@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Channels;
+﻿using System;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Dispatchers;
@@ -11,18 +12,18 @@ namespace Zipkin.NET.Clients.WCF
     /// </summary>
     public class EndpointTracingBehavior : IEndpointBehavior
     {
-        private readonly string _applicationName;
-        private readonly ITraceContextAccessor _traceContextAccessor;
-        private readonly ISampler _sampler;
-        private readonly IDispatcher _dispatcher;
+        private readonly string _remoteEndpointName;
+        private readonly Func<ITraceContextAccessor> _traceContextAccessor;
+        private readonly Func<ISampler> _sampler;
+        private readonly Func<IDispatcher> _dispatcher;
 
         public EndpointTracingBehavior(
-            string applicationName,
-            ITraceContextAccessor traceContextAccessor,
-            ISampler sampler,
-            IDispatcher dispatcher)
+            string remoteEndpointName,
+            Func<ITraceContextAccessor> traceContextAccessor,
+            Func<ISampler> sampler,
+            Func<IDispatcher> dispatcher)
         {
-            _applicationName = applicationName;
+            _remoteEndpointName = remoteEndpointName;
             _traceContextAccessor = traceContextAccessor;
             _sampler = sampler;
             _dispatcher = dispatcher;
@@ -43,7 +44,7 @@ namespace Zipkin.NET.Clients.WCF
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             clientRuntime.ClientMessageInspectors.Add(
-                new ClientTracingMessageInspector(_applicationName, _traceContextAccessor, _sampler, _dispatcher));
+                new ClientTracingMessageInspector(_remoteEndpointName, _traceContextAccessor, _sampler, _dispatcher));
         }
     }
 }
