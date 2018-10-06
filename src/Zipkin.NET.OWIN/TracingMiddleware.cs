@@ -45,9 +45,9 @@ namespace Zipkin.NET.OWIN
             ISampler sampler) : base(next)
         {
             _localEndpointName = localEndpointName;
-            _traceContextAccessor = traceContextAccessor;
-            _dispatcher = dispatcher;
-            _sampler = sampler;
+            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _extractor = new OwinContextB3Extractor();
         }
 

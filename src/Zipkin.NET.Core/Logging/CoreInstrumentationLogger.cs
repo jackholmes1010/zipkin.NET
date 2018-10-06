@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Zipkin.NET.Logging;
 
 namespace Zipkin.NET.Core.Logging
@@ -19,7 +20,7 @@ namespace Zipkin.NET.Core.Logging
         /// </param>
         public CoreInstrumentationLogger(ILogger<CoreInstrumentationLogger> logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>

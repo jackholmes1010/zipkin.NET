@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Zipkin.NET.Models;
@@ -21,7 +22,7 @@ namespace Zipkin.NET.Core.Reporters
         /// </param>
         public LoggerReporter(ILogger<LoggerReporter> logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
