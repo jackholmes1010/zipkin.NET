@@ -38,7 +38,6 @@ namespace Zipkin.NET.WCF.MessageInspectors
 
         public IDispatcher Dispatcher => _getDispatcher();
 
-        // IDispatchMessageInspector
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
             var traceContext = _extractor
@@ -57,13 +56,12 @@ namespace Zipkin.NET.WCF.MessageInspectors
                 
             TraceContextAccessor.SaveTrace(traceContext);
 
-            return request;
+            return traceContext;
         }
 
-        // IDispatchMessageInspector
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            var traceContext = TraceContextAccessor.GetTrace();
+            var traceContext = (TraceContext) correlationState;
             var span = traceContext.SpanBuilder
                 .End()
                 .Build();
