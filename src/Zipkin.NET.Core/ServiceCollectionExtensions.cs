@@ -39,22 +39,22 @@ namespace Zipkin.NET.Core
 
             // Register async dispatcher.
             // This dispatcher will asynchronously report spans to the registered reporters.
-            services.TryAddTransient<IDispatcher, AsyncActionBlockDispatcher>();
+            services.TryAddSingleton<IDispatcher, AsyncActionBlockDispatcher>();
 
             // Register rate sampler.
             // This RateSampler will sample 100% of traces providing a
             // sampling decision has not already been made by an upstream service.
-            services.TryAddTransient(provider => sampler);
+            services.TryAddSingleton(provider => sampler);
 
             // Register the trace context accessor.
             // This ITraceContextAccessor will store the trace context in the HTTP context.
             // This allows middleware to store trace context (trace ID, server span ID, debug flag, and sampled 
             // flag) for use by the tracing handler (HTTP client delegating handler) for creating client spans.
-            services.TryAddTransient<ITraceContextAccessor, HttpContextTraceContextAccessor>();
+            services.TryAddSingleton<ITraceContextAccessor, HttpContextTraceContextAccessor>();
 
             // Register .NET Core ILogger tracing logger (used for exception logging).
             // This logger logs instrumentation exceptions using the .NET Core ILogger.
-            services.TryAddTransient<IInstrumentationLogger, CoreInstrumentationLogger>();
+            services.TryAddSingleton<IInstrumentationLogger, CoreInstrumentationLogger>();
 
             // Register tracing middleware.
             // This middleware builds spans from incoming requests 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using Zipkin.NET.Dispatchers;
-using Zipkin.NET.Sampling;
 using Zipkin.NET.WCF.MessageInspectors;
 
 namespace Zipkin.NET.WCF.Behaviors
@@ -19,20 +16,14 @@ namespace Zipkin.NET.WCF.Behaviors
     public class ServiceTracingBehavior : IServiceBehavior
     {
         private readonly string _localEndpointName;
-        private readonly Func<ITraceContextAccessor> _traceContextAccessor;
-        private readonly Func<ISampler> _sampler;
-        private readonly Func<IDispatcher> _dispatcher;
+        private readonly float _sampleRate;
+        private readonly string _zipkinHost;
 
-        public ServiceTracingBehavior(
-            string localEndpointName,
-            Func<ITraceContextAccessor> traceContextAccessor,
-            Func<ISampler> sampler,
-            Func<IDispatcher> dispatcher)
+        public ServiceTracingBehavior(string localEndpointName, string zipkinHost, float sampleRate)
         {
             _localEndpointName = localEndpointName;
-            _traceContextAccessor = traceContextAccessor;
-            _sampler = sampler;
-            _dispatcher = dispatcher;
+            _zipkinHost = zipkinHost;
+            _sampleRate = sampleRate;
         }
 
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
@@ -52,7 +43,7 @@ namespace Zipkin.NET.WCF.Behaviors
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
                     endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
-                        new DispatchTracingMessageInspector(_localEndpointName, _traceContextAccessor, _sampler, _dispatcher));
+                        new DispatchTracingMessageInspector(_localEndpointName, _zipkinHost, _sampleRate));
                 }
             }
         }
