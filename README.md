@@ -14,19 +14,19 @@ Add dependencies to the service collection.
 // Register Zipkin server reporter.
 // This reporter sends completed spans to a Zipkin 
 // server's HTTP collector (POST api/v2/spans).
-services.TryAddTransient<IReporter>(provider =>
+services.AddSingleton<IReporter>(provider =>
 {
-    var sender = new ZipkinHttpSender("http://localhost:9411");
-    var reporter = new ZipkinReporter(sender);
-    return reporter;
+	var sender = new ZipkinHttpSender("http://localhost:9411");
+	var reporter = new ZipkinReporter(sender);
+	return reporter;
 });
 
 // Register .NET Core ILogger span reporter.
 // This reporter logs completed spans using the .NET Core ILogger.
-services.TryAddTransient<IReporter, LoggerReporter>();
+services.AddSingleton<IReporter, LoggerReporter>();
 
 // Register default tracing dependencies.
-services.AddTracing("test-api", 1f);
+services.AddTracing("example-api", 1f);
 ```
 
 Add the ```TracingMiddleware``` to the pipeline.
@@ -44,13 +44,14 @@ services.AddHttpClient("my-http-client").AddTracingMessageHandler("my-other-api"
 ## OWIN
 Register dependencies, for example, if using Autofac.
 ```csharp
-builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>();
-builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>();
-builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>();
-builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>();
-builder.RegisterType<RateSampler>().As<ISampler>().WithParameter("rate", 1f);
-builder.RegisterType<ConsoleReporter>().As<IReporter>();
-builder.RegisterType<ZipkinReporter>().As<IReporter>();
+var builder = new ContainerBuilder();
+builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>().SingleInstance();
+builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>().SingleInstance();
+builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>().SingleInstance();
+builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>().SingleInstance();
+builder.RegisterType<RateSampler>().As<ISampler>().WithParameter("rate", 1f).SingleInstance();
+builder.RegisterType<ConsoleReporter>().As<IReporter>().SingleInstance();
+builder.RegisterType<ZipkinReporter>().As<IReporter>().SingleInstance();
 builder.RegisterType<TracingMiddleware>().WithParameter("localEndpointName", "owin-api");
 ```
 Add the OWIN ```TracingMiddleware``` to the pipeline.
