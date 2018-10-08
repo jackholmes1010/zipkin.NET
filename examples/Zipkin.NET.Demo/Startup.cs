@@ -43,7 +43,7 @@ namespace Zipkin.NET.Demo
             // Register Zipkin server reporter.
             // This reporter sends completed spans to a Zipkin 
             // server's HTTP collector (POST api/v2/spans).
-            services.TryAddSingleton<IReporter>(provider =>
+            services.AddSingleton<IReporter>(provider =>
             {
                 var sender = new ZipkinHttpSender("http://localhost:9411");
                 var reporter = new ZipkinReporter(sender);
@@ -52,7 +52,7 @@ namespace Zipkin.NET.Demo
 
             // Register .NET Core ILogger span reporter.
             // This reporter logs completed spans using the .NET Core ILogger.
-            services.TryAddSingleton<IReporter, LoggerReporter>();
+            services.AddSingleton<IReporter, LoggerReporter>();
 
             // Register default tracing dependencies.
             services.AddTracing("example-api", 1f);
