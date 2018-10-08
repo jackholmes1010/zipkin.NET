@@ -20,7 +20,7 @@ namespace Zipkin.NET.WCF.Demo
 
         public string GetData(int value)
         {
-            Thread.Sleep(200);
+            Thread.Sleep(10);
             return string.Format("You entered: {0}", value);
         }
 
