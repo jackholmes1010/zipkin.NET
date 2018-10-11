@@ -64,7 +64,7 @@ namespace Zipkin.NET
         /// <summary>
         /// Gets the span builder used to build spans.
         /// </summary>
-        public SpanBuilder SpanBuilder => _spanBuilder ?? (_spanBuilder = new SpanBuilder(TraceId, Id, ParentId));
+        public SpanBuilder SpanBuilder => new SpanBuilder(TraceId, Id, ParentId);
 
         /// <summary>
         /// The overall trace ID of the current trace.

@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
@@ -42,7 +43,7 @@ namespace Zipkin.NET.WCF.MessageInspectors
 
             traceContext.Sample(_sampler);
 
-            traceContext.SpanBuilder
+            var spanBuilder = traceContext.SpanBuilder
                 .Start()
                 .Tag("action", request.Headers.Action)
                 .Kind(SpanKind.Server)
@@ -53,17 +54,17 @@ namespace Zipkin.NET.WCF.MessageInspectors
                 
             _traceContextAccessor.SaveTrace(traceContext);
 
-            return traceContext;
+            return new Tuple<TraceContext, SpanBuilder>(traceContext, spanBuilder);
         }
 
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            var traceContext = (TraceContext) correlationState;
-            var span = traceContext.SpanBuilder
+            var context = (Tuple<TraceContext, SpanBuilder>)correlationState;
+            var span = context.Item2
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span, traceContext);
+            _dispatcher.Dispatch(span, context.Item1);
         }
     }
 }

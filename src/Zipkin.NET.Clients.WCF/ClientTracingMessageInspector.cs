@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Dispatchers;
@@ -49,7 +50,10 @@ namespace Zipkin.NET.Clients.WCF
 
             var httpRequest = ExtractHttpRequest(request);
 
-            traceContext.SpanBuilder
+            // Inject X-B3 headers to the outgoing request
+            _propagator.Propagate(httpRequest, traceContext);
+
+            var spanBuilder = traceContext.SpanBuilder
                 .Start()
                 .Kind(SpanKind.Client)
                 .Tag("action", request.Headers.Action)
@@ -58,22 +62,17 @@ namespace Zipkin.NET.Clients.WCF
                     ServiceName = _remoteServiceName
                 });
 
-            // Inject X-B3 headers to the outgoing request
-            _propagator.Propagate(httpRequest, traceContext);
-
-            _traceContextAccessor.SaveTrace(traceContext);
-
-            return traceContext;
+            return new Tuple<TraceContext, SpanBuilder>(traceContext, spanBuilder);
         }
 
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            var traceContext = (TraceContext) correlationState;
-            var span = traceContext.SpanBuilder
+            var context = (Tuple<TraceContext, SpanBuilder>) correlationState;
+            var span = context.Item2
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span, traceContext);
+            _dispatcher.Dispatch(span, context.Item1);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)
