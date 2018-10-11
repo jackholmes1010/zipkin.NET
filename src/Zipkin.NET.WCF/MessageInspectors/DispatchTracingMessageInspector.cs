@@ -4,13 +4,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Dispatchers;
-using Zipkin.NET.Framework;
-using Zipkin.NET.Logging;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
-using Zipkin.NET.Reporters;
 using Zipkin.NET.Sampling;
-using Zipkin.NET.Senders;
 using Zipkin.NET.WCF.Propagation;
 
 namespace Zipkin.NET.WCF.MessageInspectors
@@ -19,21 +15,21 @@ namespace Zipkin.NET.WCF.MessageInspectors
     {
         private readonly string _localEndpointName;
         private readonly ISampler _sampler;
-        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IDispatcher _dispatcher;
+        private readonly ITraceContextAccessor _traceContextAccessor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
-        public DispatchTracingMessageInspector(string localEndpointName, string zipkinHost, float sampleRate)
+        public DispatchTracingMessageInspector(
+            string localEndpointName,
+            ISampler sampler,
+            IDispatcher dispatcher,
+            ITraceContextAccessor traceContextAccessor)
         {
             _localEndpointName = localEndpointName;
-            _sampler = new RateSampler(sampleRate);
-            _traceContextAccessor = new SystemWebHttpContextTraceContextAccessor();
+            _sampler = sampler;
+            _dispatcher = dispatcher;
+            _traceContextAccessor = traceContextAccessor;
             _extractor = new IncomingWebRequestB3Extractor();
-
-            var sender = new ZipkinHttpSender(zipkinHost);
-            var reporter = new ZipkinReporter(sender);
-            var logger = new ConsoleInstrumentationLogger();
-            _dispatcher = new AsyncActionBlockDispatcher(new[] { reporter }, logger);
         }
 
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)

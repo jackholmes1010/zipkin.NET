@@ -3,6 +3,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Sampling;
 using Zipkin.NET.WCF.MessageInspectors;
 
 namespace Zipkin.NET.WCF.Behaviors
@@ -16,14 +18,20 @@ namespace Zipkin.NET.WCF.Behaviors
     public class ServiceTracingBehavior : IServiceBehavior
     {
         private readonly string _localEndpointName;
-        private readonly float _sampleRate;
-        private readonly string _zipkinHost;
+        private readonly ISampler _sampler;
+        private readonly IDispatcher _dispatcher;
+        private readonly ITraceContextAccessor _traceContextAccessor;
 
-        public ServiceTracingBehavior(string localEndpointName, string zipkinHost, float sampleRate)
+        public ServiceTracingBehavior(
+            string localEndpointName, 
+            ISampler sampler,
+            IDispatcher dispatcher,
+            ITraceContextAccessor traceContextAccessor)
         {
             _localEndpointName = localEndpointName;
-            _zipkinHost = zipkinHost;
-            _sampleRate = sampleRate;
+            _sampler = sampler;
+            _dispatcher = dispatcher;
+            _traceContextAccessor = traceContextAccessor;
         }
 
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
@@ -43,7 +51,8 @@ namespace Zipkin.NET.WCF.Behaviors
                 foreach (var endpointDispatcher in channelDispatcher.Endpoints)
                 {
                     endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
-                        new DispatchTracingMessageInspector(_localEndpointName, _zipkinHost, _sampleRate));
+                        new DispatchTracingMessageInspector(
+                            _localEndpointName, _sampler, _dispatcher, _traceContextAccessor));
                 }
             }
         }

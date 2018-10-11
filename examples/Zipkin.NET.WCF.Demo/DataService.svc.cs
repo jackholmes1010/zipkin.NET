@@ -20,10 +20,16 @@ namespace Zipkin.NET.WCF.Demo
     {
         public static void Configure(ServiceConfiguration config)
         {
+            var reporter = new ZipkinReporter(new ZipkinHttpSender("http://localhost:9411"));
+            var reporters = new[] {reporter};
+            var sampler = new RateSampler(1f);
+            var dispatcher = new AsyncActionBlockDispatcher(reporters, new ConsoleInstrumentationLogger());
+            var traceContextAccessor = new SystemWebHttpContextTraceContextAccessor();
+
             config.Description.Behaviors.Add(
-                new ServiceTracingBehavior("demo-service", "http://localhost:9411", 1f));
-            config.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
-            config.Description.Behaviors.Add(new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true });
+                new ServiceTracingBehavior("demo-service", sampler, dispatcher, traceContextAccessor));
+            config.Description.Behaviors.Add(new ServiceMetadataBehavior {HttpGetEnabled = true});
+            config.Description.Behaviors.Add(new ServiceDebugBehavior {IncludeExceptionDetailInFaults = true});
         }
 
         public async Task<string> GetData(int value)

@@ -8,8 +8,6 @@ namespace Zipkin.NET
     /// </summary>
     public class TraceContext
     {
-        private SpanBuilder _spanBuilder;
-
         /// <summary>
         /// Create a new trace context.
         /// <remarks>

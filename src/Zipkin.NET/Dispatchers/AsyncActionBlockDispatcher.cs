@@ -33,7 +33,7 @@ namespace Zipkin.NET.Dispatchers
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processor = new ActionBlock<Span>(
-                async span => await ReportSpan(span), 
+                async span => await SendToReporters(span), 
                 new ExecutionDataflowBlockOptions
                 {
                     MaxDegreeOfParallelism = 10
@@ -68,7 +68,7 @@ namespace Zipkin.NET.Dispatchers
             _processor.Post(span);
         }
 
-        private async Task ReportSpan(Span span)
+        private async Task SendToReporters(Span span)
         {
             foreach (var reporter in Reporters)
             {
