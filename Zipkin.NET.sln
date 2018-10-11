@@ -29,7 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9C1E288C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zipkin.NET.Tests", "tests\Zipkin.NET.Tests\Zipkin.NET.Tests.csproj", "{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ping.API", "examples\Ping.API\Ping.API.csproj", "{C46AC0EC-5828-44F8-8255-29A097813436}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ping.API", "examples\Ping.API\Ping.API.csproj", "{C46AC0EC-5828-44F8-8255-29A097813436}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zipkin.NET.Senders.RabbitMq", "src\Zipkin.NET.Senders.RabbitMq\Zipkin.NET.Senders.RabbitMq.csproj", "{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{C46AC0EC-5828-44F8-8255-29A097813436}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C46AC0EC-5828-44F8-8255-29A097813436}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C46AC0EC-5828-44F8-8255-29A097813436}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{15BCE856-C946-478B-AFA3-C1E6B334B081} = {F0EC4501-05AF-41F1-B68C-45776737509E}
 		{693F1C2D-1A58-4DA1-AABD-8A38DCBA7C75} = {9C1E288C-EA49-4007-AEA4-3C61756F252B}
 		{C46AC0EC-5828-44F8-8255-29A097813436} = {56E29C0D-101B-4E2B-B9CF-8E1EAD87D7AD}
+		{0C1B848F-EEDE-453B-BE78-5BBE5C90C93A} = {F0EC4501-05AF-41F1-B68C-45776737509E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00DB1000-1363-46A2-960B-9F540BC2A572}

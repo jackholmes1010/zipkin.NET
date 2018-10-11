@@ -36,7 +36,7 @@ namespace Zipkin.NET.Dispatchers
                 async span => await ReportSpan(span), 
                 new ExecutionDataflowBlockOptions
                 {
-                    MaxDegreeOfParallelism = 5
+                    MaxDegreeOfParallelism = 10
                 });
         }
 
