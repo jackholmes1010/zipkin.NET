@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using DemoService;
 using Microsoft.AspNetCore.Mvc;
 using Zipkin.NET.Clients.WCF;
-using Zipkin.NET.Demo.Connected_Services.DataService;
 using Zipkin.NET.Dispatchers;
 using Zipkin.NET.Sampling;
 
@@ -40,6 +40,7 @@ namespace Zipkin.NET.Demo.Controllers
             var httpClient2 = _httpClientFactory.CreateClient("tracingClient2");
             var owinClient = _httpClientFactory.CreateClient("owinClient");
             var wcfClient = GetWcfDemoClient();
+            var wcfClient2 = GetWcfDemoClient();
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:5005/api/ping"));
             var httpRequest2 = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:5005/api/ping"));
@@ -48,7 +49,8 @@ namespace Zipkin.NET.Demo.Controllers
             var resultTask = httpClient.SendAsync(httpRequest);
             var result2Task = httpClient2.SendAsync(httpRequest2);
             var owinTask = owinClient.SendAsync(owinHttpRequest);
-            var wcfResult = await wcfClient.GetDataAsync(1);
+            var wcfResult = wcfClient.GetDataAsync(1);
+            var wcfResult2 = wcfClient2.GetDataAsync(2);
 
             var result = await resultTask;
             var result2 = await result2Task;
@@ -56,7 +58,8 @@ namespace Zipkin.NET.Demo.Controllers
 
             return new[]
             {
-                "wcfResult", wcfResult,
+                "wcfResult", await wcfResult,
+                "wcfResult2", await wcfResult2,
                 "result", await result.Content.ReadAsStringAsync(),
                 "result2", await result2.Content.ReadAsStringAsync(),
                 "owinResult", await owinResult.Content.ReadAsStringAsync()

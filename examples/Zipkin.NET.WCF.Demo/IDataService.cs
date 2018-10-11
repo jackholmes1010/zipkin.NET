@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Zipkin.NET.WCF.Demo
 {
@@ -14,7 +15,7 @@ namespace Zipkin.NET.WCF.Demo
     {
 
         [OperationContract]
-        string GetData(int value);
+        Task<string> GetData(int value);
 
         [OperationContract]
         CompositeType GetDataUsingDataContract(CompositeType composite);

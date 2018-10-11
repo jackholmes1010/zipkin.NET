@@ -7,13 +7,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Runtime.Serialization;
-
-namespace Zipkin.NET.Demo.Connected_Services.DataService
+namespace DemoService
 {
+    using System.Runtime.Serialization;
+    
+    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [DataContract(Name="CompositeType", Namespace="http://schemas.datacontract.org/2004/07/Zipkin.NET.WCF.Demo")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CompositeType", Namespace="http://schemas.datacontract.org/2004/07/Zipkin.NET.WCF.Demo")]
     public partial class CompositeType : object
     {
         
@@ -21,7 +22,7 @@ namespace Zipkin.NET.Demo.Connected_Services.DataService
         
         private string StringValueField;
         
-        [DataMember()]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public bool BoolValue
         {
             get
@@ -34,7 +35,7 @@ namespace Zipkin.NET.Demo.Connected_Services.DataService
             }
         }
         
-        [DataMember()]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string StringValue
         {
             get
@@ -49,7 +50,7 @@ namespace Zipkin.NET.Demo.Connected_Services.DataService
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DataService.IDataService")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DemoService.IDataService")]
     public interface IDataService
     {
         
@@ -57,17 +58,17 @@ namespace Zipkin.NET.Demo.Connected_Services.DataService
         System.Threading.Tasks.Task<string> GetDataAsync(int value);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IDataService/GetDataUsingDataContract", ReplyAction="http://tempuri.org/IDataService/GetDataUsingDataContractResponse")]
-        System.Threading.Tasks.Task<DataService.CompositeType> GetDataUsingDataContractAsync(DataService.CompositeType composite);
+        System.Threading.Tasks.Task<DemoService.CompositeType> GetDataUsingDataContractAsync(DemoService.CompositeType composite);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public interface IDataServiceChannel : DataService.IDataService, System.ServiceModel.IClientChannel
+    public interface IDataServiceChannel : DemoService.IDataService, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public partial class DataServiceClient : System.ServiceModel.ClientBase<DataService.IDataService>, DataService.IDataService
+    public partial class DataServiceClient : System.ServiceModel.ClientBase<DemoService.IDataService>, DemoService.IDataService
     {
         
     /// <summary>
@@ -115,7 +116,7 @@ namespace Zipkin.NET.Demo.Connected_Services.DataService
             return base.Channel.GetDataAsync(value);
         }
         
-        public System.Threading.Tasks.Task<DataService.CompositeType> GetDataUsingDataContractAsync(DataService.CompositeType composite)
+        public System.Threading.Tasks.Task<DemoService.CompositeType> GetDataUsingDataContractAsync(DemoService.CompositeType composite)
         {
             return base.Channel.GetDataUsingDataContractAsync(composite);
         }

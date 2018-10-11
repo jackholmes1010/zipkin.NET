@@ -5,8 +5,8 @@
     "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
   },
   "ExtendedData": {
-    "Uri": "C:\\Users\\jholmes\\Desktop\\DataService.wsdl",
-    "Namespace": "DataService",
+    "Uri": "http://localhost:54069/DataService.svc",
+    "Namespace": "DemoService",
     "SelectedAccessLevelForGeneratedClass": "Public",
     "GenerateMessageContract": false,
     "ReuseTypesinReferencedAssemblies": true,
@@ -21,7 +21,7 @@
     },
     "CheckedReferencedAssemblies": [],
     "InstanceId": null,
-    "Name": "DataService",
+    "Name": "DemoService",
     "Metadata": {}
   }
 }
