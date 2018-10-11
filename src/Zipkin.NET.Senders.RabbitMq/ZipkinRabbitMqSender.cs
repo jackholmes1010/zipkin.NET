@@ -21,7 +21,6 @@ namespace Zipkin.NET.Senders.RabbitMq
             };
         }
 
-
         private IConnection Connection
         {
             get
