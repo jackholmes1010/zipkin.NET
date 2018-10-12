@@ -20,14 +20,14 @@ namespace Zipkin.NET.Tests
     [ExcludeFromCodeCoverage]
     public class TracingHandlerTests
     {
-        private readonly Mock<ITraceContextAccessor> _mockTraceContextAccessor;
+        private readonly Mock<ISpanContextAccessor> _mockTraceContextAccessor;
         private readonly Mock<IDispatcher> _mockDispatcher;
         private readonly Mock<ISampler> _mockSampler;
         private readonly IFixture _fixture;
 
         public TracingHandlerTests()
         {
-            _mockTraceContextAccessor = new Mock<ITraceContextAccessor>();
+            _mockTraceContextAccessor = new Mock<ISpanContextAccessor>();
             _mockDispatcher = new Mock<IDispatcher>();
             _mockSampler = new Mock<ISampler>();
             _fixture = new Fixture();
@@ -36,23 +36,23 @@ namespace Zipkin.NET.Tests
         public static IEnumerable<object[]> CtorArgs()
         {
             yield return new object[] { null, new Mock<IDispatcher>().Object, new Mock<ISampler>().Object, "test" };
-            yield return new object[] { new Mock<ITraceContextAccessor>().Object, null, new Mock<ISampler>().Object, "test" };
-            yield return new object[] { new Mock<ITraceContextAccessor>().Object, new Mock<IDispatcher>().Object, null, "test" };
-            yield return new object[] { new Mock<ITraceContextAccessor>().Object, new Mock<IDispatcher>().Object, new Mock<ISampler>().Object, null };
+            yield return new object[] { new Mock<ISpanContextAccessor>().Object, null, new Mock<ISampler>().Object, "test" };
+            yield return new object[] { new Mock<ISpanContextAccessor>().Object, new Mock<IDispatcher>().Object, null, "test" };
+            yield return new object[] { new Mock<ISpanContextAccessor>().Object, new Mock<IDispatcher>().Object, new Mock<ISampler>().Object, null };
             
         }
 
         [Theory]
         [MemberData(nameof(CtorArgs))]
         public void Ctor_NullArgs(
-            ITraceContextAccessor traceContextAccessor,
+            ISpanContextAccessor spanContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler,
             string remoteEndpointName)
         {
             Assert.Throws<ArgumentNullException>(
                 () => new TracingHandler(
-                    traceContextAccessor,
+                    spanContextAccessor,
                     dispatcher,
                     sampler,
                     remoteEndpointName));
@@ -61,7 +61,7 @@ namespace Zipkin.NET.Tests
         [Theory]
         [MemberData(nameof(CtorArgs))]
         public void Ctor_NullArgsInnerHandler(
-            ITraceContextAccessor traceContextAccessor,
+            ISpanContextAccessor spanContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler,
             string remoteEndpointName)
@@ -69,7 +69,7 @@ namespace Zipkin.NET.Tests
             Assert.Throws<ArgumentNullException>(
                 () => new TracingHandler(
                     new HttpClientHandler(),
-                    traceContextAccessor,
+                    spanContextAccessor,
                     dispatcher,
                     sampler,
                     remoteEndpointName));
@@ -78,19 +78,18 @@ namespace Zipkin.NET.Tests
         [Fact]
         public async Task SendAsync_Success()
         {
-            var traceContextFixture = _fixture.Create<TraceContext>();
+            var traceContextFixture = _fixture.Create<SpanContext>();
 
-            _mockTraceContextAccessor.Setup(t => t.HasTrace()).Returns(true);
-            _mockTraceContextAccessor.Setup(t => t.GetTrace()).Returns(traceContextFixture);
+            _mockTraceContextAccessor.Setup(t => t.HasContext()).Returns(true);
+            _mockTraceContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
 
             _mockSampler.Setup(
-                    s => s.IsSampled(It.Is<TraceContext>(t => t.TraceId == traceContextFixture.TraceId)))
+                    s => s.IsSampled(It.Is<SpanContext>(t => t.TraceId == traceContextFixture.TraceId)))
                 .Returns(true);
 
             _mockDispatcher.Setup(
                 d => d.Dispatch(
-                    It.IsAny<Span>(), 
-                    It.Is<TraceContext>(t => t.TraceId == traceContextFixture.TraceId)));
+                    It.IsAny<Span>()));
 
             var tracingHandler = new TracingHandler(
                 new DummyHandler(AssertPropagationHeadersAddedToRequest),
@@ -117,20 +116,19 @@ namespace Zipkin.NET.Tests
         [Fact]
         public async Task SendAsync_InnerHandlerException()
         {
-            var traceContextFixture = _fixture.Create<TraceContext>();
+            var traceContextFixture = _fixture.Create<SpanContext>();
             var exceptionFixture = new Exception(_fixture.Create<string>());
 
-            _mockTraceContextAccessor.Setup(t => t.HasTrace()).Returns(true);
-            _mockTraceContextAccessor.Setup(t => t.GetTrace()).Returns(traceContextFixture);
+            _mockTraceContextAccessor.Setup(t => t.HasContext()).Returns(true);
+            _mockTraceContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
 
             _mockSampler.Setup(
-                    s => s.IsSampled(It.Is<TraceContext>(t => t.TraceId == traceContextFixture.TraceId)))
+                    s => s.IsSampled(It.Is<SpanContext>(t => t.TraceId == traceContextFixture.TraceId)))
                 .Returns(true);
 
             _mockDispatcher.Setup(
                 d => d.Dispatch(
-                    It.Is<Span>(s => s.Tags.ContainsKey("error") && s.Tags["error"] == exceptionFixture.Message),
-                    It.Is<TraceContext>(t => t.TraceId == traceContextFixture.TraceId)));
+                    It.Is<Span>(s => s.Tags.ContainsKey("error") && s.Tags["error"] == exceptionFixture.Message)));
 
             var tracingHandler = new TracingHandler(
                 new ExceptionDummyHandler(AssertPropagationHeadersAddedToRequest, exceptionFixture), 

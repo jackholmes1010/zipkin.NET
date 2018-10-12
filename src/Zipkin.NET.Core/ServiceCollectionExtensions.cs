@@ -46,11 +46,11 @@ namespace Zipkin.NET.Core
             // sampling decision has not already been made by an upstream service.
             services.TryAddSingleton(provider => sampler);
 
-            // Register the trace context accessor.
-            // This ITraceContextAccessor will store the trace context in the HTTP context.
-            // This allows middleware to store trace context (trace ID, server span ID, debug flag, and sampled 
+            // Register the span context accessor.
+            // This HttpContextSpanContextAccessor will store the span context in the HTTP context.
+            // This allows middleware to store span context (trace ID, server span ID, debug flag, and sampled 
             // flag) for use by the tracing handler (HTTP client delegating handler) for creating client spans.
-            services.TryAddSingleton<ITraceContextAccessor, HttpContextTraceContextAccessor>();
+            services.TryAddSingleton<ISpanContextAccessor, HttpContextSpanContextAccessor>();
 
             // Register .NET Core ILogger tracing logger (used for exception logging).
             // This logger logs instrumentation exceptions using the .NET Core ILogger.
@@ -61,7 +61,7 @@ namespace Zipkin.NET.Core
             // and reports them to the registered IReporters.
             services.TryAddTransient(s => new TracingMiddleware(
                 localEndpointName,
-                s.GetService<ITraceContextAccessor>(),
+                s.GetService<ISpanContextAccessor>(),
                 s.GetService<IDispatcher>(),
                 s.GetService<ISampler>()));
 

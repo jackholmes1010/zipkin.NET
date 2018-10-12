@@ -15,8 +15,8 @@
         /// if the sampled flag has not been set, make a sampling decision return the decision.
         /// </remarks>
         /// </summary>
-        /// <param name="traceContext">
-        /// The <see cref="TraceContext"/>.
+        /// <param name="spanContext">
+        /// The <see cref="SpanContext"/>.
         /// <remarks>
         /// The sampled property will be set based on the result of the sampling decision.
         /// </remarks>
@@ -24,20 +24,20 @@
         /// <returns>
         /// True if the trace is sampled.
         /// </returns>
-        public bool IsSampled(TraceContext traceContext)
+        public bool IsSampled(SpanContext spanContext)
         {
-            if (traceContext.Debug)
+            if (spanContext.Debug)
             {
                 return true;
             }
 
-            if (traceContext.Sampled != null)
+            if (spanContext.Sampled != null)
             {
-                return traceContext.Sampled == true;
+                return spanContext.Sampled == true;
             }
 
             // No sampling decision has been made upstream, make a sampling decision.
-            return IsSampled(traceContext.TraceId);
+            return IsSampled(spanContext.TraceId);
         }
 
         /// <summary>

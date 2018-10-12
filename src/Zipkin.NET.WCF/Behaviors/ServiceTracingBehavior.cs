@@ -20,18 +20,18 @@ namespace Zipkin.NET.WCF.Behaviors
         private readonly string _localEndpointName;
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
 
         public ServiceTracingBehavior(
             string localEndpointName, 
             ISampler sampler,
             IDispatcher dispatcher,
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _localEndpointName = localEndpointName;
             _sampler = sampler;
             _dispatcher = dispatcher;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
         }
 
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
@@ -52,7 +52,7 @@ namespace Zipkin.NET.WCF.Behaviors
                 {
                     endpointDispatcher.DispatchRuntime.MessageInspectors.Add(
                         new DispatchTracingMessageInspector(
-                            _localEndpointName, _sampler, _dispatcher, _traceContextAccessor));
+                            _localEndpointName, _sampler, _dispatcher, _spanContextAccessor));
                 }
             }
         }

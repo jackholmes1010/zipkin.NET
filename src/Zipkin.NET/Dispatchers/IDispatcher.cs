@@ -13,9 +13,6 @@ namespace Zipkin.NET.Dispatchers
         /// <param name="span">
         /// The completed span.
         /// </param>
-        /// <param name="traceContext">
-        /// The current trace context.
-        /// </param>
-        void Dispatch(Span span, TraceContext traceContext);
+        void Dispatch(Span span);
     }
 }

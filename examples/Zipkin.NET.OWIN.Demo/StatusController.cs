@@ -11,16 +11,16 @@ namespace Zipkin.NET.OWIN.Demo
     {
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
 
         public StatusController(
             IDispatcher dispatcher, 
             ISampler sampler, 
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _dispatcher = dispatcher;
             _sampler = sampler;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
         }
 
         [Route("api/owin/status")]
@@ -29,7 +29,7 @@ namespace Zipkin.NET.OWIN.Demo
         {
             var tracingHandler = new TracingHandler(
                 new HttpClientHandler(), 
-                _traceContextAccessor,
+                _spanContextAccessor,
                 _dispatcher,
                 _sampler,
                 "Ping.API-OWIN");

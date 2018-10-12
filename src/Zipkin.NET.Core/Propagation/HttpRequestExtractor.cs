@@ -5,21 +5,21 @@ using Zipkin.NET.Propagation;
 namespace Zipkin.NET.Core.Propagation
 {
     /// <summary>
-    /// Extracts a <see cref="TraceContext"/> from an <see cref="HttpRequest"/>.
+    /// Extracts a <see cref="SpanContext"/> from an <see cref="HttpRequest"/>.
     /// </summary>
     public class HttpRequestExtractor : IExtractor<HttpRequest>
     {
         /// <summary>
-        /// Extract a <see cref="TraceContext"/> from a 
+        /// Extract a <see cref="SpanContext"/> from a 
         /// <see cref="HttpRequest"/> by reading the values of the X-B3 headers.
         /// </summary>
         /// <param name="extract">
         /// The <see cref="HttpContext" />
         /// </param>
         /// <returns>
-        /// The extracted <see cref="TraceContext"/>.
+        /// The extracted <see cref="SpanContext"/>.
         /// </returns>
-        public TraceContext Extract(HttpRequest extract)
+        public SpanContext Extract(HttpRequest extract)
         {
             string traceId = null;
             if (extract.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
@@ -45,7 +45,7 @@ namespace Zipkin.NET.Core.Propagation
                 sampled = value == "1";
             }
             
-            return new TraceContext(traceId, spanId)
+            return new SpanContext(traceId, spanId)
             {
                 Debug = debug,
                 Sampled = sampled

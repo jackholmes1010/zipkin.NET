@@ -6,7 +6,7 @@ namespace Zipkin.NET.WCF.Propagation
 {
     public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
     {
-        public TraceContext Extract(IncomingWebRequestContext extract)
+        public SpanContext Extract(IncomingWebRequestContext extract)
         {
             var traceId = extract.Headers[B3HeaderConstants.TraceId];
             var spanId = extract.Headers[B3HeaderConstants.SpanId];
@@ -19,7 +19,7 @@ namespace Zipkin.NET.WCF.Propagation
                 sampled = sampledHeader == "1";
             }
 
-            return new TraceContext(traceId, spanId)
+            return new SpanContext(traceId, spanId)
             {
                 Debug = debug,
                 Sampled = sampled

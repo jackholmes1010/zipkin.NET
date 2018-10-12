@@ -14,7 +14,7 @@ namespace Zipkin.NET.OWIN
     public class TracingMiddleware : OwinMiddleware
     {
         private readonly string _localEndpointName;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
         private readonly IExtractor<IOwinContext> _extractor;
@@ -28,8 +28,8 @@ namespace Zipkin.NET.OWIN
         /// <param name="localEndpointName">
         /// The endpoint name describes the host recording the span.
         /// </param>
-        /// <param name="traceContextAccessor">
-        /// A <see cref="ITraceContextAccessor"/> used to access trace context.
+        /// <param name="spanContextAccessor">
+        /// A <see cref="ISpanContextAccessor"/> used to access the parent span context.
         /// </param>
         /// <param name="dispatcher">
         /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
@@ -40,12 +40,12 @@ namespace Zipkin.NET.OWIN
         public TracingMiddleware(
             OwinMiddleware next,
             string localEndpointName,
-            ITraceContextAccessor traceContextAccessor,
+            ISpanContextAccessor spanContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler) : base(next)
         {
             _localEndpointName = localEndpointName;
-            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _extractor = new OwinContextB3Extractor();
@@ -53,12 +53,12 @@ namespace Zipkin.NET.OWIN
 
         public override async Task Invoke(IOwinContext context)
         {
-            var traceContext = _extractor
+            var spanContext = _extractor
                 .Extract(context)
                 .Sample(_sampler);
 
-            var spanBuilder = traceContext.SpanBuilder
-                .Start()
+            var spanBuilder = new SpanBuilder(spanContext);
+            spanBuilder.Start()
                 .Name(context.Request.Method)
                 .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
@@ -69,7 +69,7 @@ namespace Zipkin.NET.OWIN
                     ServiceName = _localEndpointName
                 });
 
-            _traceContextAccessor.SaveTrace(traceContext);
+            _spanContextAccessor.SaveContext(spanContext);
 
             try
             {
@@ -85,7 +85,7 @@ namespace Zipkin.NET.OWIN
                     .End()
                     .Build();
 
-                _dispatcher.Dispatch(span, traceContext);
+                _dispatcher.Dispatch(span);
             }
         }
     }

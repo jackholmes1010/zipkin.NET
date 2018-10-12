@@ -16,31 +16,31 @@ namespace Zipkin.NET.WCF.MessageInspectors
         private readonly string _localEndpointName;
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly IExtractor<IncomingWebRequestContext> _extractor;
 
         public DispatchTracingMessageInspector(
             string localEndpointName,
             ISampler sampler,
             IDispatcher dispatcher,
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _localEndpointName = localEndpointName;
             _sampler = sampler;
             _dispatcher = dispatcher;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
             _extractor = new IncomingWebRequestB3Extractor();
         }
 
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var traceContext = _extractor
+            var spanContext = _extractor
                 .Extract(WebOperationContext.Current?.IncomingRequest);
 
-            traceContext.Sample(_sampler);
+            spanContext.Sample(_sampler);
 
-            var spanBuilder = traceContext.SpanBuilder
-                .Start()
+            var spanBuilder = new SpanBuilder(spanContext);
+            spanBuilder.Start()
                 .Tag("action", request.Headers.Action)
                 .Kind(SpanKind.Server)
                 .WithLocalEndpoint(new Endpoint
@@ -48,19 +48,19 @@ namespace Zipkin.NET.WCF.MessageInspectors
                     ServiceName = _localEndpointName
                 });
                 
-            _traceContextAccessor.SaveTrace(traceContext);
+            _spanContextAccessor.SaveContext(spanContext);
 
-            return new Tuple<TraceContext, SpanBuilder>(traceContext, spanBuilder);
+            return spanBuilder;
         }
 
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            var context = (Tuple<TraceContext, SpanBuilder>)correlationState;
-            var span = context.Item2
+            var spanBuilder = (SpanBuilder) correlationState;
+            var span = spanBuilder
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span, context.Item1);
+            _dispatcher.Dispatch(span);
         }
     }
 }

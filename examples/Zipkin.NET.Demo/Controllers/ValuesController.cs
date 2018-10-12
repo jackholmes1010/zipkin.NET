@@ -18,18 +18,18 @@ namespace Zipkin.NET.Demo.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
 
         public ValuesController(
             IHttpClientFactory httpClientFactory,
             IDispatcher dispatcher,
             ISampler sampler, 
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _httpClientFactory = httpClientFactory;
             _dispatcher = dispatcher;
             _sampler = sampler;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
         }
 
         // GET api/values
@@ -70,7 +70,7 @@ namespace Zipkin.NET.Demo.Controllers
         {
             var wcfClient = new DataServiceClient();
             wcfClient.Endpoint.Address = new EndpointAddress("http://localhost:54069/DataService.svc");
-            var endpoint = new EndpointTracingBehavior("wcf-demo",  _sampler,  _dispatcher, _traceContextAccessor);
+            var endpoint = new EndpointTracingBehavior("wcf-demo",  _sampler,  _dispatcher, _spanContextAccessor);
             wcfClient.Endpoint.EndpointBehaviors.Add(endpoint);
             return wcfClient;
         }

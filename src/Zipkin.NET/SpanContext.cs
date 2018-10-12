@@ -4,27 +4,27 @@ using Zipkin.NET.Sampling;
 namespace Zipkin.NET
 {
     /// <summary>
-    /// Represents trace context which has come into the application with a request.
+    /// Represents span context used to create child spans and propagate across process boundaries.
     /// </summary>
-    public class TraceContext
+    public class SpanContext
     {
         /// <summary>
-        /// Create a new trace context.
+        /// Create a new span context.
         /// <remarks>
         /// Generates a new trace ID and span builder.
         /// </remarks>
         /// </summary>
-        public TraceContext()
+        public SpanContext()
         {
             TraceId = GenerateTraceId();
             Id = GenerateTraceId();
         }
 
         /// <summary>
-        /// Create a trace context from a trace and span ID extracted from an upstream request.
+        /// Create a span context from a trace and span ID extracted from an upstream request.
         /// <remarks>
         /// Sets the parent span ID to the <see cref="spanId"/>
-        /// and generates a new span ID for the current trace context.
+        /// and generates a new span ID for the current span context.
         /// </remarks>
         /// </summary>
         /// <param name="traceId">
@@ -33,7 +33,7 @@ namespace Zipkin.NET
         /// <param name="spanId">
         /// The upstream span ID.
         /// </param>
-        public TraceContext(string traceId, string spanId)
+        public SpanContext(string traceId, string spanId)
         {
             TraceId = traceId ?? GenerateTraceId();
             Id = GenerateTraceId();
@@ -41,7 +41,7 @@ namespace Zipkin.NET
         }
 
         /// <summary>
-        /// Create a trace context from specified trace ID's.
+        /// Create a span context from specified trace ID's.
         /// </summary>
         /// <param name="traceId">
         /// An existing trace ID.
@@ -52,17 +52,12 @@ namespace Zipkin.NET
         /// <param name="parentSpanId">
         /// The parent span ID.
         /// </param>
-        public TraceContext(string traceId, string spanId, string parentSpanId)
+        public SpanContext(string traceId, string spanId, string parentSpanId)
         {
             TraceId = traceId;
             Id = spanId;
             ParentId = parentSpanId;
         }
-
-        /// <summary>
-        /// Gets the span builder used to build spans.
-        /// </summary>
-        public SpanBuilder SpanBuilder => new SpanBuilder(TraceId, Id, ParentId);
 
         /// <summary>
         /// The overall trace ID of the current trace.
@@ -93,16 +88,15 @@ namespace Zipkin.NET
         public bool? Sampled { get; set; }
 
         /// <summary>
-        /// Refresh the trace ID's by setting the parent span ID
-        /// to the current span ID and generating a new span ID.
+        /// Create a new child span context which shares a trace ID.
         /// </summary>
         /// <returns>
-        /// A new <see cref="TraceContext"/>.
+        /// A new <see cref="SpanContext"/>.
         /// </returns>
-        public TraceContext Refresh()
+        public SpanContext CreateChild()
         {
             var traceId = TraceId ?? GenerateTraceId();
-            return new TraceContext(traceId, GenerateTraceId(), Id)
+            return new SpanContext(traceId, GenerateTraceId(), Id)
             {
                 Sampled = Sampled,
                 Debug = Debug
@@ -113,9 +107,9 @@ namespace Zipkin.NET
         /// Use the <see cref="ISampler"/> to make a sampling decision.
         /// </summary>
         /// <returns>
-        /// The current <see cref="TraceContext"/>.
+        /// The current <see cref="SpanContext"/>.
         /// </returns>
-        public TraceContext Sample(ISampler sampler)
+        public SpanContext Sample(ISampler sampler)
         {
             Sampled = sampler.IsSampled(this);
             return this;

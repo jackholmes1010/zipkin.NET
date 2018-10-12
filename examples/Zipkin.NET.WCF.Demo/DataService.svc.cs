@@ -20,7 +20,7 @@ namespace Zipkin.NET.WCF.Demo
     {
         private static readonly IDispatcher Dispatcher;
         private static readonly ISampler Sampler;
-        private static readonly ITraceContextAccessor TraceContextAccessor;
+        private static readonly ISpanContextAccessor SpanContextAccessor;
 
         static DataService()
         {
@@ -29,13 +29,13 @@ namespace Zipkin.NET.WCF.Demo
             var reporters = new[] { reporter };
             Sampler = new RateSampler(1f);
             Dispatcher = new AsyncActionBlockDispatcher(reporters, new ConsoleInstrumentationLogger());
-            TraceContextAccessor = new SystemWebHttpContextTraceContextAccessor();
+            SpanContextAccessor = new SystemWebHttpContextSpanContextAccessor();
         }
 
         public static void Configure(ServiceConfiguration config)
         {
             config.Description.Behaviors.Add(
-                new ServiceTracingBehavior("demo-service", Sampler, Dispatcher, TraceContextAccessor));
+                new ServiceTracingBehavior("demo-service", Sampler, Dispatcher, SpanContextAccessor));
             config.Description.Behaviors.Add(new ServiceMetadataBehavior {HttpGetEnabled = true});
             config.Description.Behaviors.Add(new ServiceDebugBehavior {IncludeExceptionDetailInFaults = true});
         }
@@ -43,7 +43,7 @@ namespace Zipkin.NET.WCF.Demo
         public async Task<string> GetData(int value)
         {
             var httpClient = new HttpClient(new TracingHandler(
-                new HttpClientHandler(), TraceContextAccessor, Dispatcher, Sampler, "owin-api-wcf"));
+                new HttpClientHandler(), SpanContextAccessor, Dispatcher, Sampler, "owin-api-wcf"));
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:9055/api/owin/status"));
             var result = await httpClient.SendAsync(httpRequest);

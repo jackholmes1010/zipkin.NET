@@ -16,41 +16,41 @@ namespace Zipkin.NET.WCF.MessageInspectors
 
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly Propagator<HttpRequestMessageProperty> _propagator;
 
         public ClientTracingMessageInspector(
             string remoteServiceName,
             ISampler sampler,
             IDispatcher dispatcher,
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _remoteServiceName = remoteServiceName;
             _sampler = sampler;
             _dispatcher = dispatcher;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
             _propagator = new HttpRequestMessagePropertyB3Propagator();
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var traceContext = _traceContextAccessor.HasTrace()
-                ? _traceContextAccessor
-                    .GetTrace()
-                    .Refresh()
-                : new TraceContext();
+            var spanContext = _spanContextAccessor.HasContext()
+                ? _spanContextAccessor
+                    .GetContext()
+                    .CreateChild()
+                : new SpanContext();
 
-            traceContext.Sample(_sampler);
+            spanContext.Sample(_sampler);
 
             var httpRequest = ExtractHttpRequest(request);
 
               // Inject X-B3 headers to the outgoing request
-            _propagator.Propagate(httpRequest, traceContext);
+            _propagator.Propagate(httpRequest, spanContext);
 
-            _traceContextAccessor.SaveTrace(traceContext);
+            _spanContextAccessor.SaveContext(spanContext);
 
-            var spanBuilder = traceContext.SpanBuilder
-                .Start()
+            var spanBuilder = new SpanBuilder(spanContext);
+            spanBuilder.Start()
                 .Kind(SpanKind.Client)
                 .Tag("action", request.Headers.Action)
                 .WithRemoteEndpoint(new Endpoint
@@ -58,17 +58,17 @@ namespace Zipkin.NET.WCF.MessageInspectors
                     ServiceName = _remoteServiceName
                 });
 
-            return new Tuple<TraceContext, SpanBuilder>(traceContext, spanBuilder);
+            return spanBuilder;
         }
 
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            var context = (Tuple<TraceContext,SpanBuilder>)correlationState;
-            var span = context.Item2
+            var spanBuilder = (SpanBuilder)correlationState;
+            var span = spanBuilder
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span, context.Item1);
+            _dispatcher.Dispatch(span);
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

@@ -21,27 +21,24 @@ namespace Zipkin.NET.Dispatchers
         protected IEnumerable<IReporter> Reporters { get; }
 
         /// <summary>
-        /// Schedule a completed <see cref="Span"/> to be reported to all of the available reporters.
+        /// Post a span to all available reporters.
         /// <remarks>
-        /// Spans will only be reported if the current <see cref="TraceContext"/> Sampled 
-        /// property is not null, i.e. a sampling decision has been made for the trace.
+        /// Spans will only be reported if the current SpanContext Sampled 
+        /// property is not null, i.e. a sampling decision has been made.
         /// </remarks>
         /// </summary>
         /// <param name="span">
         /// A complete span.
         /// </param>
-        /// <param name="traceContext">
-        /// The current trace context.
-        /// </param>
-        public void Dispatch(Span span, TraceContext traceContext)
+        public void Dispatch(Span span)
         {
-            if (traceContext.Sampled == null)
+            if (span.SpanContext.Sampled == null)
             {
                 throw new Exception(
                     "TraceContext.Sampled property has not been set. Call Tracer.Sample() to set the Sampled property before reporting span.");
             }
 
-            if (traceContext.Sampled == true)
+            if (span.SpanContext.Sampled == true)
             {
                 Schedule(span);
             }

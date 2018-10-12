@@ -11,7 +11,7 @@ namespace Zipkin.NET.Core
     public static class TracingHttpClientBuilderExtensions
     {
         /// <summary>
-        /// Adds a delegating handler used to report client spans and propagate trace context.
+        /// Adds a delegating handler used to report client spans and propagate span context.
         /// </summary>
         /// <param name="builder">
         /// The <see cref="IHttpClientBuilder"/>.
@@ -36,12 +36,12 @@ namespace Zipkin.NET.Core
                 var handler = innerHandler != null
                     ? new TracingHandler(
                         innerHandler,
-                        provider.GetService<ITraceContextAccessor>(),
+                        provider.GetService<ISpanContextAccessor>(),
                         provider.GetService<IDispatcher>(),
                         provider.GetService<ISampler>(),
                         remoteEndpointName)
                     : new TracingHandler(
-                        provider.GetService<ITraceContextAccessor>(),
+                        provider.GetService<ISpanContextAccessor>(),
                         provider.GetService<IDispatcher>(),
                         provider.GetService<ISampler>(),
                         remoteEndpointName);

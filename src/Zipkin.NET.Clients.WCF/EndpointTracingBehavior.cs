@@ -14,18 +14,18 @@ namespace Zipkin.NET.Clients.WCF
         private readonly string _remoteEndpointName;
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
 
         public EndpointTracingBehavior(
             string remoteEndpointName, 
             ISampler sampler, 
             IDispatcher dispatcher,
-            ITraceContextAccessor traceContextAccessor)
+            ISpanContextAccessor spanContextAccessor)
         {
             _remoteEndpointName = remoteEndpointName;
             _sampler = sampler;
             _dispatcher = dispatcher;
-            _traceContextAccessor = traceContextAccessor;
+            _spanContextAccessor = spanContextAccessor;
         }
 
         public void Validate(ServiceEndpoint endpoint)
@@ -43,7 +43,7 @@ namespace Zipkin.NET.Clients.WCF
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             clientRuntime.ClientMessageInspectors.Add(
-                new ClientTracingMessageInspector(_remoteEndpointName, _sampler, _dispatcher, _traceContextAccessor));
+                new ClientTracingMessageInspector(_remoteEndpointName, _sampler, _dispatcher, _spanContextAccessor));
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Zipkin.NET
 {
     /// <summary>
     /// Delegating handler used by http clients to 
-    /// report client spans and propagate trace context.
+    /// report client spans and propagate span context.
     /// </summary>
     public class TracingHandler : DelegatingHandler
     {
         private readonly string _remoteEndpointName;
-        private readonly ITraceContextAccessor _traceContextAccessor;
+        private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
         private readonly Propagator<HttpRequestMessage> _propagator;
@@ -27,8 +27,8 @@ namespace Zipkin.NET
         /// <param name="innerHandler">
         /// An optional inner handler.
         /// </param>
-        /// <param name="traceContextAccessor">
-        /// A <see cref="ITraceContextAccessor"/> used to access trace context.
+        /// <param name="spanContextAccessor">
+        /// A <see cref="ISpanContextAccessor"/> used to access the parent span context.
         /// </param>
         /// <param name="dispatcher">
         /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
@@ -41,14 +41,14 @@ namespace Zipkin.NET
         /// </param>
         public TracingHandler(
             HttpMessageHandler innerHandler,
-            ITraceContextAccessor traceContextAccessor,
+            ISpanContextAccessor spanContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler,
             string remoteEndpointName) 
             : base(innerHandler)
         {
             _remoteEndpointName = remoteEndpointName ?? throw new ArgumentNullException(nameof(remoteEndpointName));
-            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _propagator = new HttpRequestMessagePropagator();
@@ -57,8 +57,8 @@ namespace Zipkin.NET
         /// <summary>
         /// Construct a new <see cref="TracingHandler"/> with an inner handler.
         /// </summary>
-        /// <param name="traceContextAccessor">
-        /// A <see cref="ITraceContextAccessor"/> used to access trace context.
+        /// <param name="spanContextAccessor">
+        /// A <see cref="ISpanContextAccessor"/> used to access span context.
         /// </param>
         /// <param name="dispatcher">
         /// A <see cref="IDispatcher"/> used to dispatch completed spans to reporters.
@@ -70,13 +70,13 @@ namespace Zipkin.NET
         /// The name of the receiver.
         /// </param>
         public TracingHandler(
-            ITraceContextAccessor traceContextAccessor,
+            ISpanContextAccessor spanContextAccessor,
             IDispatcher dispatcher,
             ISampler sampler,
             string remoteEndpointName)
         {
             _remoteEndpointName = remoteEndpointName ?? throw new ArgumentNullException(nameof(remoteEndpointName));
-            _traceContextAccessor = traceContextAccessor ?? throw new ArgumentNullException(nameof(traceContextAccessor));
+            _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _propagator = new HttpRequestMessagePropagator();
@@ -85,16 +85,16 @@ namespace Zipkin.NET
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var traceContext = _traceContextAccessor.HasTrace()
-                ? _traceContextAccessor
-                    .GetTrace()
-                    .Refresh()
-                : new TraceContext();
+            var spanContext = _spanContextAccessor.HasContext()
+                ? _spanContextAccessor
+                    .GetContext()
+                    .CreateChild()
+                : new SpanContext();
 
-            traceContext.Sample(_sampler);
+            spanContext.Sample(_sampler);
 
-            var spanBuilder = traceContext.SpanBuilder
-                .Start()
+            var spanBuilder = new SpanBuilder(spanContext);
+            spanBuilder.Start()
                 .Name(request.Method.Method)
                 .Kind(SpanKind.Client)
                 .Tag("uri", request.RequestUri.OriginalString)
@@ -105,7 +105,7 @@ namespace Zipkin.NET
                 });
 
             // Add X-B3 headers to the request
-            request = _propagator.Propagate(request, traceContext);
+            request = _propagator.Propagate(request, spanContext);
 
             try
             {
@@ -122,7 +122,7 @@ namespace Zipkin.NET
                     .End()
                     .Build();
 
-                _dispatcher.Dispatch(span, traceContext);
+                _dispatcher.Dispatch(span);
             }
         }
     }

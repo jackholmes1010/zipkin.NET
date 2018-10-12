@@ -6,21 +6,21 @@ using Zipkin.NET.Propagation;
 namespace Zipkin.NET.OWIN
 {
     /// <summary>
-    /// Used to extract a <see cref="TraceContext"/> from a 
+    /// Used to extract a <see cref="SpanContext"/> from a 
     /// <see cref="IOwinRequest"/> inside an <see cref="IOwinContext"/>.
     /// </summary>
     public class OwinContextB3Extractor : IExtractor<IOwinContext>
     {
         /// <summary>
-        /// Extracts a <see cref="TraceContext"/> from an <see cref="IOwinContext"/>.
+        /// Extracts a <see cref="SpanContext"/> from an <see cref="IOwinContext"/>.
         /// </summary>
         /// <param name="extract">
         /// The <see cref="IOwinContext"/>.
         /// </param>
         /// <returns>
-        /// The <see cref="TraceContext"/>.
+        /// The <see cref="SpanContext"/>.
         /// </returns>
-        public TraceContext Extract(IOwinContext extract)
+        public SpanContext Extract(IOwinContext extract)
         {
             string traceId = null;
             if (extract.Request.Headers.TryGetValue(B3HeaderConstants.TraceId, out var value))
@@ -46,7 +46,7 @@ namespace Zipkin.NET.OWIN
                 sampled = value.FirstOrDefault() == "1";
             }
 
-            return new TraceContext(traceId, spanId)
+            return new SpanContext(traceId, spanId)
             {
                 Debug = debug,
                 Sampled = sampled

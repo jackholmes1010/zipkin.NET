@@ -29,7 +29,7 @@ namespace Zipkin.NET.OWIN.Demo
             var builder = new ContainerBuilder();
             builder.Register(ctx => new ZipkinHttpSender("http://localhost:9411")).As<ISender>().SingleInstance();
             builder.RegisterType<AsyncActionBlockDispatcher>().As<IDispatcher>().SingleInstance();
-            builder.RegisterType<CallContextTraceContextAccessor>().As<ITraceContextAccessor>().SingleInstance();
+            builder.RegisterType<CallContextSpanContextAccessor>().As<ISpanContextAccessor>().SingleInstance();
             builder.RegisterType<ConsoleInstrumentationLogger>().As<IInstrumentationLogger>().SingleInstance();
             builder.RegisterType<RateSampler>().As<ISampler>().WithParameter("rate", 1f).SingleInstance();
             builder.RegisterType<ConsoleReporter>().As<IReporter>().SingleInstance();

@@ -30,7 +30,7 @@ namespace Zipkin.NET.Tests.SamplerTests
 
             for (var i = 0; i < 1000; i++)
             {
-                var traceContext = _fixture.Create<TraceContext>();
+                var traceContext = _fixture.Create<SpanContext>();
                 traceContext.Debug = false;
                 traceContext.Sampled = null;
 
@@ -52,7 +52,7 @@ namespace Zipkin.NET.Tests.SamplerTests
 
             for (var i = 0; i < 1000; i++)
             {
-                var traceContext = _fixture.Create<TraceContext>();
+                var traceContext = _fixture.Create<SpanContext>();
                 traceContext.Debug = false;
                 traceContext.Sampled = null;
 
@@ -74,7 +74,7 @@ namespace Zipkin.NET.Tests.SamplerTests
 
             for (var i = 0; i < 10000; i++)
             {
-                var traceContext = _fixture.Create<TraceContext>();
+                var traceContext = _fixture.Create<SpanContext>();
                 traceContext.Debug = false;
                 traceContext.Sampled = null;
 
@@ -89,13 +89,13 @@ namespace Zipkin.NET.Tests.SamplerTests
         }
 
         /// <summary>
-        /// If the trace context debug property is true, the Sampler should always sample.
+        /// If the span context debug property is true, the Sampler should always sample.
         /// </summary>
         [Fact]
         public void IsSampled_TraceContextDebug()
         {
             var rateSampler = new RateSampler(0f);
-            var traceContext = _fixture.Create<TraceContext>();
+            var traceContext = _fixture.Create<SpanContext>();
             traceContext.Debug = true;
             traceContext.Sampled = null;
 
@@ -104,7 +104,7 @@ namespace Zipkin.NET.Tests.SamplerTests
         }
 
         /// <summary>
-        /// If the trace context sampled property is not null, this means a sampling decision has already been made.
+        /// If the span context sampled property is not null, this means a sampling decision has already been made.
         /// The sampler should respect the existing sampling decision.
         /// </summary>
         [Theory]
@@ -118,7 +118,7 @@ namespace Zipkin.NET.Tests.SamplerTests
 
             for (var i = 0; i < 1000; i++)
             {
-                var traceContext = _fixture.Create<TraceContext>();
+                var traceContext = _fixture.Create<SpanContext>();
                 traceContext.Debug = false;
                 traceContext.Sampled = decision;
 

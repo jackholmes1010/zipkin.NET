@@ -16,23 +16,9 @@ namespace Zipkin.NET
         /// <summary>
         /// Construct a new <see cref="SpanBuilder"/>.
         /// </summary>
-        /// <param name="traceId">
-        /// The trace ID for the current trace context.
-        /// </param>
-        /// <param name="id">
-        /// The span ID for the current trace context.
-        /// </param>
-        /// <param name="parentId">
-        /// The parent span ID for the current trace context.
-        /// </param>
-        public SpanBuilder(string traceId, string id, string parentId)
+        public SpanBuilder(SpanContext spanContext)
         {
-            _span = new Span
-            {
-                TraceId = traceId,
-                Id = id,
-                ParentId = parentId
-            };
+            _span = new Span(spanContext);
         }
 
         /// <summary>

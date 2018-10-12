@@ -16,6 +16,16 @@ namespace Zipkin.NET.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class Span
     {
+        public Span(SpanContext spanContext)
+        {
+            SpanContext = spanContext;
+            TraceId = spanContext.TraceId;
+            Id = spanContext.Id;
+            ParentId = spanContext.ParentId;
+        }
+
+        public SpanContext SpanContext { get; }
+
         /// <summary>
         /// Unique 64-bit identifier for this operation within the trace.
         /// </summary>

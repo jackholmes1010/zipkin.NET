@@ -32,7 +32,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
         public void Dispatch_Success()
         {
             var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<TraceContext>();
+            var trace = _fixture.Create<SpanContext>();
             trace.Sampled = true;
 
             SetupMockReporters(span);
@@ -41,7 +41,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
                 new []{_mockReporter1.Object, _mockReporter2.Object},
                 _mockInstrumentationLogger.Object);
 
-            dispatcher.Dispatch(span, trace);
+            dispatcher.Dispatch(span);
 
             // Wait for processing of spans to complete
             while (!dispatcher.IsCompleted())
@@ -60,7 +60,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
         public void Dispatch_TraceContextSampledNull()
         {
             var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<TraceContext>();
+            var trace = _fixture.Create<SpanContext>();
             trace.Sampled = null;
 
             SetupMockReporters(span);
@@ -69,14 +69,14 @@ namespace Zipkin.NET.Tests.DispatcherTests
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
                 _mockInstrumentationLogger.Object);
 
-            Assert.Throws<Exception>(() => dispatcher.Dispatch(span, trace));
+            Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
         }
 
         [Fact]
         public void Dispatch_TraceContextNotFound()
         {
             var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<TraceContext>();
+            var trace = _fixture.Create<SpanContext>();
             trace.Sampled = null;
 
             SetupMockReporters(span);
@@ -85,7 +85,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
                 _mockInstrumentationLogger.Object);
 
-            Assert.Throws<Exception>(() => dispatcher.Dispatch(span, trace));
+            Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
         public void Dispatch_TraceContextSampledFalse()
         {
             var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<TraceContext>();
+            var trace = _fixture.Create<SpanContext>();
             trace.Sampled = false;
 
             SetupMockReporters(span);
@@ -104,7 +104,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
                 new[] { _mockReporter1.Object, _mockReporter2.Object },
                 _mockInstrumentationLogger.Object);
 
-            dispatcher.Dispatch(span, trace);
+            dispatcher.Dispatch(span);
 
             // Wait for processing of spans to complete
             while (!dispatcher.IsCompleted())
