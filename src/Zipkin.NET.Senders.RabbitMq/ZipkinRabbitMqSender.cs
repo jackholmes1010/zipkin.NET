@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using RabbitMQ.Client;
+using Zipkin.NET.Encoding;
 using Zipkin.NET.Models;
 
 namespace Zipkin.NET.Senders.RabbitMq
 {
     public class ZipkinRabbitMqSender : ISender
     {
+        private readonly IEncoder _encoder;
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;
 
@@ -20,6 +19,7 @@ namespace Zipkin.NET.Senders.RabbitMq
             string password = "guest", 
             string virtualHost = "/")
         {
+            _encoder = new JsonEncoder();
             _connectionFactory = new ConnectionFactory
             {
                 HostName = hostName,
@@ -54,13 +54,7 @@ namespace Zipkin.NET.Senders.RabbitMq
                     autoDelete: false,
                     arguments: null);
 
-                var message = JsonConvert.SerializeObject(
-                    spans, new JsonSerializerSettings
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    });
-
-                var body = Encoding.UTF8.GetBytes(message);
+                var body = _encoder.Encode(spans);
 
                 channel.BasicPublish(exchange: "",
                     routingKey: "zipkin",

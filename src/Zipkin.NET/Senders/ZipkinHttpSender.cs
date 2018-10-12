@@ -2,8 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Zipkin.NET.Encoding;
 using Zipkin.NET.Models;
 
 namespace Zipkin.NET.Senders
@@ -14,6 +13,7 @@ namespace Zipkin.NET.Senders
     public class ZipkinHttpSender : ISender
     {
         private readonly string _zipkinHost;
+        private readonly IEncoder _encoder;
 
         /// <summary>
         /// Construct a new <see cref="ZipkinHttpSender"/>.
@@ -24,6 +24,7 @@ namespace Zipkin.NET.Senders
         public ZipkinHttpSender(string zipkinHost)
         {
             _zipkinHost = zipkinHost;
+            _encoder = new JsonEncoder();
         }
 
         /// <summary>
@@ -38,14 +39,9 @@ namespace Zipkin.NET.Senders
         public async Task SendSpansAsync(IEnumerable<Span> spans)
         {
             var client = new HttpClient();
-            var serializedSpans = JsonConvert.SerializeObject(
-                spans, new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                });
-
-            var content = new StringContent(serializedSpans);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var encodedSpans = _encoder.Encode(spans);
+            var content = new ByteArrayContent(encodedSpans);
+            content.Headers.ContentType = new MediaTypeHeaderValue(_encoder.MediaType);
             await client.PostAsync($"{_zipkinHost}/api/v2/spans", content);
         }
     }
