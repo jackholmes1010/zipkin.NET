@@ -92,7 +92,7 @@ namespace Zipkin.NET.Tests.SamplerTests
         /// If the span context debug property is true, the Sampler should always sample.
         /// </summary>
         [Fact]
-        public void IsSampled_TraceContextDebug()
+        public void IsSampled_SpanContextDebug()
         {
             var rateSampler = new RateSampler(0f);
             var traceContext = _fixture.Create<SpanContext>();

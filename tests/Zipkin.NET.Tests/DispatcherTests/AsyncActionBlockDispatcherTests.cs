@@ -31,9 +31,9 @@ namespace Zipkin.NET.Tests.DispatcherTests
         [Fact]
         public void Dispatch_Success()
         {
-            var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<SpanContext>();
-            trace.Sampled = true;
+            var spanContext = _fixture.Create<SpanContext>();
+            spanContext.Sampled = true;
+            var span = new Span(spanContext);
 
             SetupMockReporters(span);
 
@@ -54,30 +54,14 @@ namespace Zipkin.NET.Tests.DispatcherTests
         }
 
         /// <summary>
-        /// If the TraceContext Sampled property is null should throw an exception.
+        /// If the SpanContext Sampled property is null should throw an exception.
         /// </summary>
         [Fact]
-        public void Dispatch_TraceContextSampledNull()
+        public void Dispatch_SpanContextSampledNull()
         {
-            var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<SpanContext>();
-            trace.Sampled = null;
-
-            SetupMockReporters(span);
-
-            var dispatcher = new AsyncActionBlockDispatcher(
-                new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object);
-
-            Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
-        }
-
-        [Fact]
-        public void Dispatch_TraceContextNotFound()
-        {
-            var span = _fixture.Create<Span>();
-            var trace = _fixture.Create<SpanContext>();
-            trace.Sampled = null;
+            var spanContext = _fixture.Create<SpanContext>();
+            spanContext.Sampled = null;
+            var span = new Span(spanContext);
 
             SetupMockReporters(span);
 
@@ -89,10 +73,10 @@ namespace Zipkin.NET.Tests.DispatcherTests
         }
 
         /// <summary>
-        /// If the TraceContext Sampled property is false, the dispatcher should not report the span.
+        /// If the SpanContext Sampled property is false, the dispatcher should not report the span.
         /// </summary>
         [Fact]
-        public void Dispatch_TraceContextSampledFalse()
+        public void Dispatch_SpanContextSampledFalse()
         {
             var span = _fixture.Create<Span>();
             var trace = _fixture.Create<SpanContext>();

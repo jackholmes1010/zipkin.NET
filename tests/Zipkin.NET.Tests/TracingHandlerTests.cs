@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -20,14 +19,14 @@ namespace Zipkin.NET.Tests
     [ExcludeFromCodeCoverage]
     public class TracingHandlerTests
     {
-        private readonly Mock<ISpanContextAccessor> _mockTraceContextAccessor;
+        private readonly Mock<ISpanContextAccessor> _mockSpanContextAccessor;
         private readonly Mock<IDispatcher> _mockDispatcher;
         private readonly Mock<ISampler> _mockSampler;
         private readonly IFixture _fixture;
 
         public TracingHandlerTests()
         {
-            _mockTraceContextAccessor = new Mock<ISpanContextAccessor>();
+            _mockSpanContextAccessor = new Mock<ISpanContextAccessor>();
             _mockDispatcher = new Mock<IDispatcher>();
             _mockSampler = new Mock<ISampler>();
             _fixture = new Fixture();
@@ -80,8 +79,8 @@ namespace Zipkin.NET.Tests
         {
             var traceContextFixture = _fixture.Create<SpanContext>();
 
-            _mockTraceContextAccessor.Setup(t => t.HasContext()).Returns(true);
-            _mockTraceContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
+            _mockSpanContextAccessor.Setup(t => t.HasContext()).Returns(true);
+            _mockSpanContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
 
             _mockSampler.Setup(
                     s => s.IsSampled(It.Is<SpanContext>(t => t.TraceId == traceContextFixture.TraceId)))
@@ -93,7 +92,7 @@ namespace Zipkin.NET.Tests
 
             var tracingHandler = new TracingHandler(
                 new DummyHandler(AssertPropagationHeadersAddedToRequest),
-                _mockTraceContextAccessor.Object,
+                _mockSpanContextAccessor.Object,
                 _mockDispatcher.Object,
                 _mockSampler.Object,
                 "test");
@@ -104,7 +103,7 @@ namespace Zipkin.NET.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            _mockTraceContextAccessor.VerifyAll();
+            _mockSpanContextAccessor.VerifyAll();
             _mockSampler.VerifyAll();
             _mockDispatcher.VerifyAll();
         }
@@ -119,8 +118,8 @@ namespace Zipkin.NET.Tests
             var traceContextFixture = _fixture.Create<SpanContext>();
             var exceptionFixture = new Exception(_fixture.Create<string>());
 
-            _mockTraceContextAccessor.Setup(t => t.HasContext()).Returns(true);
-            _mockTraceContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
+            _mockSpanContextAccessor.Setup(t => t.HasContext()).Returns(true);
+            _mockSpanContextAccessor.Setup(t => t.GetContext()).Returns(traceContextFixture);
 
             _mockSampler.Setup(
                     s => s.IsSampled(It.Is<SpanContext>(t => t.TraceId == traceContextFixture.TraceId)))
@@ -132,7 +131,7 @@ namespace Zipkin.NET.Tests
 
             var tracingHandler = new TracingHandler(
                 new ExceptionDummyHandler(AssertPropagationHeadersAddedToRequest, exceptionFixture), 
-                _mockTraceContextAccessor.Object,
+                _mockSpanContextAccessor.Object,
                 _mockDispatcher.Object,
                 _mockSampler.Object,
                 "test");
@@ -149,7 +148,7 @@ namespace Zipkin.NET.Tests
                 // ignored
             }
 
-            _mockTraceContextAccessor.VerifyAll();
+            _mockSpanContextAccessor.VerifyAll();
             _mockSampler.VerifyAll();
             _mockDispatcher.VerifyAll();
         }
