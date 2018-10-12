@@ -116,6 +116,24 @@ namespace Zipkin.NET
         }
 
         /// <summary>
+        /// Create a copy of the span context.
+        /// </summary>
+        /// <returns>
+        /// A new <see cref="SpanContext"/>.
+        /// </returns>
+        public SpanContext Copy()
+        {
+            return new SpanContext
+            {
+                TraceId = TraceId,
+                Id = Id,
+                ParentId = ParentId,
+                Debug = Debug,
+                Sampled = Sampled
+            };
+        }
+
+        /// <summary>
         /// Generate a 64-bit trace ID.
         /// </summary>
         /// <returns>

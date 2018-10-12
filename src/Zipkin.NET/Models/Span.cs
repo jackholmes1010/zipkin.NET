@@ -18,12 +18,12 @@ namespace Zipkin.NET.Models
     {
         public Span(SpanContext spanContext)
         {
-            SpanContext = spanContext;
-            TraceId = spanContext.TraceId;
-            Id = spanContext.Id;
-            ParentId = spanContext.ParentId;
+            SpanContext = spanContext.Copy();
         }
 
+        /// <summary>
+        /// The span context used to create this span.
+        /// </summary>
         public SpanContext SpanContext { get; }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Zipkin.NET.Models
         /// "ffdc9bb9a6453df3"
         /// </example>
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id => SpanContext.Id;
 
         /// <summary>
         /// Randomly generated, unique identifier for a trace, set on all spans within it.
@@ -48,13 +48,13 @@ namespace Zipkin.NET.Models
         /// A 128-bit trace ID looks like "4e441824ec2b6a44ffdc9bb9a6453df3".
         /// </example>
         [JsonProperty("traceId")]
-        public string TraceId { get; set; }
+        public string TraceId => SpanContext.TraceId;
 
         /// <summary>
         /// The parent span ID or absent if this the root span in a trace.
         /// </summary>
         [JsonProperty("parentId")]
-        public string ParentId { get; set; }
+        public string ParentId => SpanContext.ParentId;
 
         /// <summary>
         /// When present, kind clarifies timestamp, duration and remoteEndpoint. 
