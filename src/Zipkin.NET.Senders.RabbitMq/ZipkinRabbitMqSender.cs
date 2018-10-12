@@ -13,11 +13,20 @@ namespace Zipkin.NET.Senders.RabbitMq
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;
 
-        public ZipkinRabbitMqSender(string hostName)
+        public ZipkinRabbitMqSender(
+            string hostName = "localhost", 
+            int port = 5672, 
+            string username = "guest", 
+            string password = "guest", 
+            string virtualHost = "/")
         {
             _connectionFactory = new ConnectionFactory
             {
-                HostName = hostName
+                HostName = hostName,
+                Port = port,
+                UserName = username,
+                Password = password, 
+                VirtualHost = virtualHost
             };
         }
 
@@ -40,7 +49,7 @@ namespace Zipkin.NET.Senders.RabbitMq
             using (var channel = Connection.CreateModel())
             {
                 channel.QueueDeclare(queue: "spans",
-                    durable: true,
+                    durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: null);
@@ -57,6 +66,8 @@ namespace Zipkin.NET.Senders.RabbitMq
                     routingKey: "zipkin",
                     basicProperties: null,
                     body: body);
+
+                channel.Close();
             }
 
             return Task.CompletedTask;
