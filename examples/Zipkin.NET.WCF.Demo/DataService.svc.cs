@@ -18,31 +18,34 @@ namespace Zipkin.NET.WCF.Demo
     // NOTE: In order to launch WCF Test Client for testing this service, please select DataService.svc or DataService.svc.cs at the Solution Explorer and start debugging.
     public class DataService : IDataService
     {
+        private static readonly IDispatcher Dispatcher;
+        private static readonly ISampler Sampler;
+        private static readonly ITraceContextAccessor TraceContextAccessor;
+
+        static DataService()
+        {
+            var sender = new ZipkinHttpSender("http://localhost:9411");
+            var reporter = new ZipkinReporter(sender);
+            var reporters = new[] { reporter };
+            Sampler = new RateSampler(1f);
+            Dispatcher = new AsyncActionBlockDispatcher(reporters, new ConsoleInstrumentationLogger());
+            TraceContextAccessor = new SystemWebHttpContextTraceContextAccessor();
+        }
+
         public static void Configure(ServiceConfiguration config)
         {
-            var reporter = new ZipkinReporter(new ZipkinHttpSender("http://localhost:9411"));
-            var reporters = new[] {reporter};
-            var sampler = new RateSampler(1f);
-            var dispatcher = new AsyncActionBlockDispatcher(reporters, new ConsoleInstrumentationLogger());
-            var traceContextAccessor = new SystemWebHttpContextTraceContextAccessor();
-
             config.Description.Behaviors.Add(
-                new ServiceTracingBehavior("demo-service", sampler, dispatcher, traceContextAccessor));
+                new ServiceTracingBehavior("demo-service", Sampler, Dispatcher, TraceContextAccessor));
             config.Description.Behaviors.Add(new ServiceMetadataBehavior {HttpGetEnabled = true});
             config.Description.Behaviors.Add(new ServiceDebugBehavior {IncludeExceptionDetailInFaults = true});
         }
 
         public async Task<string> GetData(int value)
         {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:9055/api/owin/status"));
             var httpClient = new HttpClient(new TracingHandler(
-                new HttpClientHandler(),
-                new SystemWebHttpContextTraceContextAccessor(), 
-                new AsyncActionBlockDispatcher(new []
-                {
-                    new ZipkinReporter(new ZipkinHttpSender("http://localhost:9411")), 
-                }, new ConsoleInstrumentationLogger()), new RateSampler(1f), "owin-api-wcf"));
+                new HttpClientHandler(), TraceContextAccessor, Dispatcher, Sampler, "owin-api-wcf"));
 
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("http://localhost:9055/api/owin/status"));
             var result = await httpClient.SendAsync(httpRequest);
 
             return string.Format("You entered: {0}", await result.Content.ReadAsStringAsync());
