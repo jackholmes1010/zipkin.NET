@@ -1,7 +1,7 @@
 ﻿namespace Zipkin.NET
 {
     /// <summary>
-    /// Used to access the current <see cref="SpanContext"/> object across the application.
+    /// Used to access the span context of the parent span across the application.
     /// <remarks>
     /// Implementations should use some persistent store across the 
     /// context of the current request such as the HttpContext or CallContext.
@@ -10,7 +10,7 @@
     public interface ISpanContextAccessor
     {
         /// <summary>
-        /// Stores a <see cref="SpanContext"/> in the context of the current request.
+        /// Saves the current <see cref="SpanContext"/>.
         /// </summary>
         /// <param name="spanContext">
         /// The <see cref="SpanContext"/>.
@@ -18,7 +18,7 @@
         void SaveContext(SpanContext spanContext);
 
         /// <summary>
-        /// Retrieves a <see cref="SpanContext"/> from the context of the current request.
+        /// Retrieves the parent <see cref="SpanContext"/>.
         /// </summary>
         /// <returns>
         /// The <see cref="SpanContext"/>.
