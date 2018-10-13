@@ -56,7 +56,6 @@ namespace Zipkin.NET.Core
 
             var spanBuilder = new SpanBuilder(spanContext);
             spanBuilder.Start()
-                .Start()
                 .Name(context.Request.Method)
                 .Kind(SpanKind.Server)
                 .Tag("host", context.Request.Host.Value)
