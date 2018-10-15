@@ -8,7 +8,7 @@ Server tracers will build server spans from incoming requests using span context
 
 Span context is saved, usually to the current ``HttpContext``, using a ``ISpanContextAccessor`` so it can be accessed by client tracers.
 
-Completed spans are reporter using one or more ``IReporter``s.
+Completed spans will be asynchronously forwarded to one or more ``IReporter``s by the dispatcher.
 
 For .NET Core and OWIN, ``TracingMiddleware`` can be used to trace server spans
 
