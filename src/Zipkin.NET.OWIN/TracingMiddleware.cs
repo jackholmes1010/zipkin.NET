@@ -17,7 +17,7 @@ namespace Zipkin.NET.OWIN
         private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
-        private readonly IExtractor<IOwinContext> _extractor;
+        private readonly ISpanContextExtractor<IOwinContext> _spanContextExtractor;
 
         /// <summary>
         /// Construct a new <see cref="TracingMiddleware"/>.
@@ -48,12 +48,12 @@ namespace Zipkin.NET.OWIN
             _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _extractor = new OwinContextB3Extractor();
+            _spanContextExtractor = new OwinContextB3SpanContextExtractor();
         }
 
         public override async Task Invoke(IOwinContext context)
         {
-            var spanContext = _extractor
+            var spanContext = _spanContextExtractor
                 .Extract(context)
                 .Sample(_sampler);
 

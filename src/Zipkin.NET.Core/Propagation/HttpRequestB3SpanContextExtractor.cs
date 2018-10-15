@@ -7,7 +7,7 @@ namespace Zipkin.NET.Core.Propagation
     /// <summary>
     /// Extracts a <see cref="SpanContext"/> from an <see cref="HttpRequest"/>.
     /// </summary>
-    public class HttpRequestExtractor : IExtractor<HttpRequest>
+    public class HttpRequestB3SpanContextExtractor : ISpanContextExtractor<HttpRequest>
     {
         /// <summary>
         /// Extract a <see cref="SpanContext"/> from a 

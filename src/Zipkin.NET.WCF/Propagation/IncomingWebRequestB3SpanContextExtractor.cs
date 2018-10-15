@@ -4,8 +4,21 @@ using Zipkin.NET.Propagation;
 
 namespace Zipkin.NET.WCF.Propagation
 {
-    public class IncomingWebRequestB3Extractor : IExtractor<IncomingWebRequestContext>
+    /// <summary>
+    /// Extracts <see cref="SpanContext"/> from a <see cref="IncomingWebRequestContext"/>.
+    /// </summary>
+    public class IncomingWebRequestB3SpanContextExtractor : ISpanContextExtractor<IncomingWebRequestContext>
     {
+        /// <summary>
+        /// Extract <see cref="SpanContext"/> from a <see cref="IncomingWebRequestContext"/>
+        /// by reading the values of the X-B3 HTTP headers.
+        /// </summary>
+        /// <param name="extract">
+        /// The object from which to extract the span context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SpanContext"/>.
+        /// </returns>
         public SpanContext Extract(IncomingWebRequestContext extract)
         {
             var traceId = extract.Headers[B3HeaderConstants.TraceId];

@@ -9,7 +9,7 @@ namespace Zipkin.NET.OWIN
     /// Used to extract a <see cref="SpanContext"/> from a 
     /// <see cref="IOwinRequest"/> inside an <see cref="IOwinContext"/>.
     /// </summary>
-    public class OwinContextB3Extractor : IExtractor<IOwinContext>
+    public class OwinContextB3SpanContextExtractor : ISpanContextExtractor<IOwinContext>
     {
         /// <summary>
         /// Extracts a <see cref="SpanContext"/> from an <see cref="IOwinContext"/>.

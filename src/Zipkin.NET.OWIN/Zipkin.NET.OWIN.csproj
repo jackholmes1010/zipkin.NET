@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OwinContextB3Extractor.cs" />
+    <Compile Include="OwinContextB3SpanContextExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TracingAppBuilderExtensions.cs" />
     <Compile Include="TracingMiddleware.cs" />

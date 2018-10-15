@@ -7,7 +7,7 @@ namespace Zipkin.NET.Clients.WCF
     /// <summary>
     /// Propagates span context by adding X-B3 headers to a <see cref="HttpRequestMessageProperty"/>.
     /// </summary>
-    public class HttpRequestMessagePropertyB3Propagator : Propagator<HttpRequestMessageProperty>
+    public class HttpRequestMessagePropertyB3SpanContextInjector : SpanContextInjector<HttpRequestMessageProperty>
     {
         /// <summary>
         /// Propagate span context by adding X-B3 headers to the <see cref="HttpRequestMessageProperty"/>.
@@ -21,7 +21,7 @@ namespace Zipkin.NET.Clients.WCF
         /// <returns>
         /// The <see cref="HttpRequestMessageProperty"/> with X-B3 headers.
         /// </returns>
-        protected override HttpRequestMessageProperty Inject(HttpRequestMessageProperty inject, SpanContext spanContext)
+        protected override HttpRequestMessageProperty InjectSpanContext(HttpRequestMessageProperty inject, SpanContext spanContext)
         {
             inject.Headers.Add(B3HeaderConstants.TraceId, spanContext.TraceId);
             inject.Headers.Add(B3HeaderConstants.SpanId, spanContext.Id);

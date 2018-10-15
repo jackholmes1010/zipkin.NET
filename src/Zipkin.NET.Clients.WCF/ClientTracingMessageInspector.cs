@@ -23,7 +23,7 @@ namespace Zipkin.NET.Clients.WCF
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
         private readonly ISpanContextAccessor _spanContextAccessor;
-        private readonly Propagator<HttpRequestMessageProperty> _propagator;
+        private readonly ISpanContextInjector<HttpRequestMessageProperty> _spanContextInjector;
 
         public ClientTracingMessageInspector(
             string remoteServiceName, 
@@ -35,7 +35,7 @@ namespace Zipkin.NET.Clients.WCF
             _sampler = sampler;
             _dispatcher = dispatcher;
             _spanContextAccessor = spanContextAccessor;
-            _propagator = new HttpRequestMessagePropertyB3Propagator();
+            _spanContextInjector = new HttpRequestMessagePropertyB3SpanContextInjector();
         }
 
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
@@ -51,7 +51,7 @@ namespace Zipkin.NET.Clients.WCF
             var httpRequest = ExtractHttpRequest(request);
 
             // Inject X-B3 headers to the outgoing request
-            _propagator.Propagate(httpRequest, spanContext);
+            _spanContextInjector.Inject(httpRequest, spanContext);
 
             var spanBuilder = new SpanBuilder(spanContext);
             spanBuilder.Start()

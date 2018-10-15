@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
@@ -17,7 +16,7 @@ namespace Zipkin.NET.WCF.MessageInspectors
         private readonly ISampler _sampler;
         private readonly IDispatcher _dispatcher;
         private readonly ISpanContextAccessor _spanContextAccessor;
-        private readonly IExtractor<IncomingWebRequestContext> _extractor;
+        private readonly ISpanContextExtractor<IncomingWebRequestContext> _spanContextExtractor;
 
         public DispatchTracingMessageInspector(
             string localEndpointName,
@@ -29,12 +28,12 @@ namespace Zipkin.NET.WCF.MessageInspectors
             _sampler = sampler;
             _dispatcher = dispatcher;
             _spanContextAccessor = spanContextAccessor;
-            _extractor = new IncomingWebRequestB3Extractor();
+            _spanContextExtractor = new IncomingWebRequestB3SpanContextExtractor();
         }
 
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var spanContext = _extractor
+            var spanContext = _spanContextExtractor
                 .Extract(WebOperationContext.Current?.IncomingRequest);
 
             spanContext.Sample(_sampler);

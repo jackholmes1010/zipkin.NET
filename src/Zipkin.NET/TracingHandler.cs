@@ -19,7 +19,7 @@ namespace Zipkin.NET
         private readonly ISpanContextAccessor _spanContextAccessor;
         private readonly IDispatcher _dispatcher;
         private readonly ISampler _sampler;
-        private readonly Propagator<HttpRequestMessage> _propagator;
+        private readonly ISpanContextInjector<HttpRequestMessage> _spanContextInjector;
 
         /// <summary>
         /// Construct a new <see cref="TracingHandler"/> with an inner handler.
@@ -51,7 +51,7 @@ namespace Zipkin.NET
             _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _propagator = new HttpRequestMessagePropagator();
+            _spanContextInjector = new HttpRequestMessageB3SpanContextInjector();
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Zipkin.NET
             _spanContextAccessor = spanContextAccessor ?? throw new ArgumentNullException(nameof(spanContextAccessor));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
-            _propagator = new HttpRequestMessagePropagator();
+            _spanContextInjector = new HttpRequestMessageB3SpanContextInjector();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -105,7 +105,7 @@ namespace Zipkin.NET
                 });
 
             // Add X-B3 headers to the request
-            request = _propagator.Propagate(request, spanContext);
+            request = _spanContextInjector.Inject(request, spanContext);
 
             try
             {
