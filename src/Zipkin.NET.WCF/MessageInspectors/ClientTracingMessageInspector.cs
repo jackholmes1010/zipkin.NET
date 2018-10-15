@@ -46,8 +46,6 @@ namespace Zipkin.NET.WCF.MessageInspectors
               // Inject X-B3 headers to the outgoing request
             _spanContextInjector.Inject(httpRequest, spanContext);
 
-            _spanContextAccessor.SaveContext(spanContext);
-
             var spanBuilder = new SpanBuilder(spanContext);
             spanBuilder.Start()
                 .Kind(SpanKind.Client)
