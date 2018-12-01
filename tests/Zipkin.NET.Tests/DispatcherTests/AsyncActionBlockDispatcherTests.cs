@@ -18,14 +18,12 @@ namespace Zipkin.NET.Tests.DispatcherTests
         private readonly IFixture _fixture;
         private readonly Mock<IReporter> _mockReporter1;
         private readonly Mock<IReporter> _mockReporter2;
-        private readonly Mock<IInstrumentationLogger> _mockInstrumentationLogger;
 
         public AsyncActionBlockDispatcherTests()
         {
             _fixture = new Fixture();
             _mockReporter1 = new Mock<IReporter>();
             _mockReporter2 = new Mock<IReporter>();
-            _mockInstrumentationLogger = new Mock<IInstrumentationLogger>();
         }
 
         [Fact]
@@ -38,8 +36,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
             SetupMockReporters(span);
 
             var dispatcher = new AsyncActionBlockDispatcher(
-                new []{_mockReporter1.Object, _mockReporter2.Object},
-                _mockInstrumentationLogger.Object);
+                new []{_mockReporter1.Object, _mockReporter2.Object});
 
             dispatcher.Dispatch(span);
 
@@ -66,8 +63,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
             SetupMockReporters(span);
 
             var dispatcher = new AsyncActionBlockDispatcher(
-                new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object);
+                new[] { _mockReporter1.Object, _mockReporter2.Object });
 
             Assert.Throws<Exception>(() => dispatcher.Dispatch(span));
         }
@@ -85,8 +81,7 @@ namespace Zipkin.NET.Tests.DispatcherTests
             SetupMockReporters(span);
 
             var dispatcher = new AsyncActionBlockDispatcher(
-                new[] { _mockReporter1.Object, _mockReporter2.Object },
-                _mockInstrumentationLogger.Object);
+                new[] { _mockReporter1.Object, _mockReporter2.Object });
 
             dispatcher.Dispatch(span);
 

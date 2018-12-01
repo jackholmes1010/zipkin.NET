@@ -3,6 +3,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Exceptions;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Sampling;
@@ -59,7 +60,14 @@ namespace Zipkin.NET.WCF.MessageInspectors
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span);
+            try
+            {
+                _dispatcher.Dispatch(span);
+            }
+            catch (DispatchException)
+            {
+                // ignore
+            }
         }
     }
 }

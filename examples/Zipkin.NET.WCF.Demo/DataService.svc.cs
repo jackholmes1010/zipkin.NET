@@ -28,7 +28,7 @@ namespace Zipkin.NET.WCF.Demo
             var reporter = new ZipkinReporter(sender);
             var reporters = new[] { reporter };
             Sampler = new RateSampler(1f);
-            Dispatcher = new AsyncActionBlockDispatcher(reporters, new ConsoleInstrumentationLogger());
+            Dispatcher = new AsyncActionBlockDispatcher(reporters);
             SpanContextAccessor = new SystemWebHttpContextSpanContextAccessor();
         }
 

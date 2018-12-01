@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Exceptions;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Sampling;
@@ -72,7 +73,14 @@ namespace Zipkin.NET.Clients.WCF
                 .End()
                 .Build();
 
-            _dispatcher.Dispatch(span);
+            try
+            {
+                _dispatcher.Dispatch(span);
+            }
+            catch (DispatchException)
+            {
+                // ignore
+            }
         }
 
         private static HttpRequestMessageProperty ExtractHttpRequest(Message wcfMessage)

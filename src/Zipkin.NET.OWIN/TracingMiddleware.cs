@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Exceptions;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Sampling;
@@ -85,7 +86,14 @@ namespace Zipkin.NET.OWIN
                     .End()
                     .Build();
 
-                _dispatcher.Dispatch(span);
+                try
+                {
+                    _dispatcher.Dispatch(span);
+                }
+                catch (DispatchException)
+                {
+                    // ignore
+                }
             }
         }
     }

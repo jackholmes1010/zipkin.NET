@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Zipkin.NET.Exceptions;
 using Zipkin.NET.Logging;
 using Zipkin.NET.Models;
 using Zipkin.NET.Reporters;
@@ -14,7 +15,6 @@ namespace Zipkin.NET.Dispatchers
     /// </summary>
     public class AsyncActionBlockDispatcher : Dispatcher, IDisposable
     {
-        private readonly IInstrumentationLogger _logger;
         private readonly ActionBlock<Span> _processor;
 
         /// <summary>
@@ -23,15 +23,9 @@ namespace Zipkin.NET.Dispatchers
         /// <param name="reporters">
         /// A list of reporters to which to report spans.
         /// </param>
-        /// <param name="logger">
-        /// A <see cref="IInstrumentationLogger"/> used to log instrumentation errors.
-        /// </param>
-        public AsyncActionBlockDispatcher(
-            IEnumerable<IReporter> reporters,
-            IInstrumentationLogger logger) 
+        public AsyncActionBlockDispatcher(IEnumerable<IReporter> reporters) 
             : base (reporters)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processor = new ActionBlock<Span>(
                 async span => await SendToReporters(span), 
                 new ExecutionDataflowBlockOptions
@@ -78,7 +72,7 @@ namespace Zipkin.NET.Dispatchers
                 }
                 catch (Exception ex)
                 {
-                    _logger.WriteError(ex.ToString());
+                    throw new DispatchException("An error occurred reporting span.", ex);
                 }
             }
         }

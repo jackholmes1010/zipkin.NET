@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Zipkin.NET.Dispatchers;
+using Zipkin.NET.Exceptions;
 using Zipkin.NET.Models;
 using Zipkin.NET.Propagation;
 using Zipkin.NET.Sampling;
@@ -122,7 +123,14 @@ namespace Zipkin.NET
                     .End()
                     .Build();
 
-                _dispatcher.Dispatch(span);
+                try
+                {
+                    _dispatcher.Dispatch(span);
+                }
+                catch (DispatchException)
+                {
+                    // ignore
+                }
             }
         }
     }
